@@ -1,130 +1,131 @@
-# How KuroSeed Works
+# Como Funciona KuroSeed
 
-[Back to README](../README.md)
+[Volver al README](../README.md)
 
-## Overview
+## Resumen
 
-KuroSeed automates the full anime download pipeline: **discover → match → download → organize**. Everything runs locally on your machine.
+KuroSeed automatiza el pipeline completo de descarga de anime: **descubrir → filtrar → descargar → organizar**. Todo corre localmente en tu maquina.
 
-## The Download Pipeline
+## Pipeline de Descarga
 
 ```
-User adds anime via Wizard
+El usuario agrega anime via Wizard
          │
          ▼
 ┌─────────────────────┐
-│  1. SEARCH           │  Jikan API (MyAnimeList)
-│  User searches by    │  Returns: title, cover, score,
-│  name, selects from  │  episodes, airing status
-│  MAL results         │
+│  1. BUSCAR           │  Jikan API (MyAnimeList)
+│  El usuario busca    │  Retorna: titulo, portada,
+│  por nombre y        │  puntuacion, episodios,
+│  selecciona          │  estado de emision
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────┐
-│  2. CONFIGURE        │  User picks:
-│  Fansub group        │  - Erai-raws / SubsPlease / etc.
-│  Quality (1080p)     │  - Download folder
-│  Last episode seen   │  - Season auto-detected from title
+│  2. CONFIGURAR       │  El usuario elige:
+│  Grupo fansub        │  - Erai-raws / SubsPlease / etc.
+│  Calidad (1080p)     │  - Carpeta de descarga
+│  Ultimo episodio     │  - Temporada auto-detectada
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────┐
-│  3. SAVE TO DB       │  SQLite stores:
-│  Anime record with   │  - MAL metadata (cover, score)
-│  all config options   │  - Search query = MAL title
-│  Status: active       │  - Fansub, quality, folder prefs
+│  3. GUARDAR EN DB    │  SQLite almacena:
+│  Registro del anime  │  - Metadata de MAL (portada, score)
+│  con toda la config  │  - Query de busqueda = titulo MAL
+│  Estado: activo      │  - Preferencias de fansub, calidad
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────┐
-│  4. CRON CHECK       │  Runs every 30m/1h/2h/6h
-│  For each active     │
-│  anime:              │
+│  4. CRON CHECK       │  Se ejecuta cada 30m/1h/2h/6h
+│  Para cada anime     │
+│  activo:             │
 └────────┬────────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  5. NYAA RSS QUERY                       │
+│  5. CONSULTA RSS A NYAA                  │
 │                                          │
-│  Builds URL like:                        │
+│  Construye URL como:                     │
 │  nyaa.si/?page=rss                       │
 │    &q=%5BErai-raws%5D+Jujutsu+Kaisen    │
 │       +2nd+Season+1080p                  │
 │    &c=1_2&f=0                            │
 │                                          │
-│  The search query IS the MAL title       │
-│  Fansub group brackets are URL-encoded   │
+│  La query de busqueda ES el titulo MAL   │
+│  Los brackets del fansub se URL-encodean │
 └────────┬────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  6. EPISODE MATCHING (matcher.js)        │
+│  6. FILTRADO DE EPISODIOS (matcher.js)   │
 │                                          │
-│  Filters RSS results through:            │
+│  Filtra resultados RSS a traves de:      │
 │  ┌─────────────────────────────────┐     │
-│  │ ✓ Fansub group matches?         │     │
-│  │ ✓ Quality matches? (1080p)      │     │
-│  │ ✓ Season OK? (reject explicit   │     │
-│  │   different season numbers)     │     │
-│  │ ✓ Search query matches title?   │     │
-│  │   (all words must appear in     │     │
-│  │   the name portion, not the     │     │
-│  │   episode number)               │     │
-│  │ ✓ Episode > last downloaded?    │     │
-│  │ ✓ Not already in DB?           │     │
-│  │ ✓ Best seeders per episode     │     │
+│  │ ✓ Grupo fansub coincide?        │     │
+│  │ ✓ Calidad coincide? (1080p)     │     │
+│  │ ✓ Temporada OK? (rechaza solo   │     │
+│  │   numeros de temporada          │     │
+│  │   explicitamente diferentes)    │     │
+│  │ ✓ Query coincide con titulo?    │     │
+│  │   (todas las palabras deben     │     │
+│  │   aparecer en el nombre, no     │     │
+│  │   en el numero de episodio)     │     │
+│  │ ✓ Episodio > ultimo descargado? │     │
+│  │ ✓ No esta ya en la DB?         │     │
+│  │ ✓ Mejor seeders por episodio   │     │
 │  └─────────────────────────────────┘     │
 │                                          │
-│  Episode detection patterns:             │
+│  Patrones de deteccion de episodio:      │
 │  "- 09", "- 09v2", "E09", "EP09",       │
 │  "S01E09", " 09 "                        │
 └────────┬────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  7. DOWNLOAD .TORRENT FILE               │
+│  7. DESCARGAR ARCHIVO .TORRENT           │
 │                                          │
-│  Fetches from Nyaa:                      │
+│  Descarga desde Nyaa:                    │
 │  nyaa.si/download/XXXXX.torrent          │
 │                                          │
-│  Saves to organized folder:              │
+│  Guarda en carpeta organizada:           │
 │  /Anime/Jujutsu Kaisen/2nd Season/       │
 │    .torrents/JJK_S2_E03_Erai-raws.torrent│
 └────────┬────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  8. START VIDEO DOWNLOAD                 │
+│  8. INICIAR DESCARGA DE VIDEO            │
 │                                          │
-│  Built-in engine (WebTorrent):           │
-│  Reads .torrent → connects to peers     │
-│  → downloads .mkv to:                    │
+│  Motor integrado (WebTorrent):           │
+│  Lee .torrent → conecta a peers         │
+│  → descarga .mkv a:                      │
 │  /Anime/Jujutsu Kaisen/2nd Season/       │
 │                                          │
-│  OR qBittorrent (if configured):         │
-│  Sends .torrent via Web API              │
-│  → qBittorrent handles the download     │
+│  O qBittorrent (si esta configurado):    │
+│  Envia .torrent via Web API              │
+│  → qBittorrent maneja la descarga       │
 └────────┬────────────────────────────────┘
          │
          ▼
 ┌─────────────────────────────────────────┐
-│  9. LOG & UPDATE                         │
+│  9. REGISTRAR Y ACTUALIZAR               │
 │                                          │
-│  - Add episode to DB                     │
-│  - Update last_downloaded_episode        │
-│  - Log success/failure                   │
-│  - If finished airing + all eps done:    │
-│    auto-pause the anime                  │
-│  - Send browser notification             │
+│  - Agregar episodio a la DB              │
+│  - Actualizar ultimo episodio descargado │
+│  - Registrar exito/fallo                 │
+│  - Si termino de emitirse + todos los    │
+│    episodios descargados: auto-pausar    │
+│  - Enviar notificacion al navegador      │
 └─────────────────────────────────────────┘
 ```
 
-## Folder Organization
+## Organizacion de Carpetas
 
-When you select a download folder (e.g. `/Movies/anime`), KuroSeed automatically creates this structure:
+Cuando seleccionas una carpeta de descarga (ej. `/Peliculas/anime`), KuroSeed crea automaticamente esta estructura:
 
 ```
-/Movies/anime/
+/Peliculas/anime/
 ├── Jujutsu Kaisen/
 │   ├── 2nd Season/
 │   │   ├── [Erai-raws] Jujutsu Kaisen 2nd Season - 01.mkv
@@ -145,43 +146,43 @@ When you select a download folder (e.g. `/Movies/anime`), KuroSeed automatically
         └── ...
 ```
 
-**Smart folder detection:** If you select `/Movies/anime/Jujutsu Kaisen` as the folder (already has the series name), KuroSeed won't create a duplicate `Jujutsu Kaisen/Jujutsu Kaisen/` — it detects the overlap.
+**Deteccion inteligente de carpetas:** Si seleccionas `/Peliculas/anime/Jujutsu Kaisen` como carpeta (ya tiene el nombre de la serie), KuroSeed no creara un duplicado `Jujutsu Kaisen/Jujutsu Kaisen/` — detecta la superposicion.
 
-## Season Detection
+## Deteccion de Temporada
 
-Seasons are auto-detected from the anime title selected in MAL:
+Las temporadas se auto-detectan del titulo del anime seleccionado en MAL:
 
-| MAL Title | Detected Season |
-|-----------|----------------|
+| Titulo en MAL | Temporada Detectada |
+|---------------|---------------------|
 | Jujutsu Kaisen | 1 |
 | Jujutsu Kaisen 2nd Season | 2 |
 | My Hero Academia Season 7 | 7 |
 | Mob Psycho 100 III | 3 |
-| Jujutsu Kaisen: Shimetsu Kaiyuu - Zenpen | 1 (arc name, no season number) |
+| Jujutsu Kaisen: Shimetsu Kaiyuu - Zenpen | 1 (nombre de arco, sin numero) |
 
-The season number is used for folder naming and `.torrent` filenames, but the real filtering is done by matching the full MAL title against Nyaa torrent titles.
+El numero de temporada se usa para nombrar carpetas y archivos `.torrent`, pero el filtrado real se hace comparando el titulo completo de MAL contra los titulos de torrents en Nyaa.
 
-## Cross-Season Protection
+## Proteccion Cruzada entre Temporadas
 
-A common problem: searching for "Anime Name 2" on Nyaa also returns "Anime Name - 02" (episode 2 of season 1). KuroSeed prevents this by verifying that **all words from the search query appear in the title portion** (before the episode number), not in the episode number itself.
+Un problema comun: buscar "Anime 2" en Nyaa tambien retorna "Anime - 02" (episodio 2 de la temporada 1). KuroSeed previene esto verificando que **todas las palabras de la query aparezcan en la porcion del titulo** (antes del numero de episodio), no en el numero de episodio.
 
 ```
-Search query: "...Ken 2"
-✓ PASS:   "...Ken 2 - 01 [1080p]"     → "Ken 2" found in title
-✗ REJECT: "...Ken - 02 [1080p]"       → "2" only in episode number
+Query de busqueda: "...Ken 2"
+✓ PASA:    "...Ken 2 - 01 [1080p]"     → "Ken 2" encontrado en el titulo
+✗ RECHAZA: "...Ken - 02 [1080p]"       → "2" solo en el numero de episodio
 ```
 
-## Data Storage
+## Almacenamiento de Datos
 
-Everything is stored in a local SQLite database (`kuroseed.db`):
+Todo se almacena en una base de datos SQLite local (`kuroseed.db`):
 
-| Table | Purpose |
-|-------|---------|
-| `animes` | Watchlist entries with config (fansub, quality, folder, MAL metadata) |
-| `episodes` | Downloaded episode records (prevents re-downloading) |
-| `downloads` | Log of every download attempt (success/failure) |
-| `settings` | App configuration (engine, folders, cron interval, language) |
+| Tabla | Proposito |
+|-------|-----------|
+| `animes` | Entradas del watchlist con config (fansub, calidad, carpeta, metadata MAL) |
+| `episodes` | Registros de episodios descargados (previene re-descargas) |
+| `downloads` | Log de cada intento de descarga (exito/fallo) |
+| `settings` | Configuracion de la app (motor, carpetas, intervalo cron, idioma) |
 
 ---
 
-[Back to README](../README.md) · [Architecture](ARCHITECTURE.md)
+[Volver al README](../README.md) · [Arquitectura](ARCHITECTURE.md)

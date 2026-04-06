@@ -5,109 +5,109 @@
 </p>
 
 <p align="center">
-  <strong>Local anime auto-downloader with built-in torrent engine</strong><br>
-  No cloud. No accounts. Everything stays on your machine.
+  <strong>Descargador automatico de anime con motor de torrents integrado</strong><br>
+  Sin nube. Sin cuentas. Todo se queda en tu maquina.
 </p>
 
 <p align="center">
-  <a href="https://onilabs.site">Built by onilabs.site</a> ·
-  <a href="https://ko-fi.com/onilabs">Support us on Ko-fi</a>
+  <a href="https://onilabs.site">Creado por onilabs.site</a> ·
+  <a href="https://ko-fi.com/onilabs">Apoyanos en Ko-fi</a>
 </p>
 
 ---
 
-## What is KuroSeed?
+## Que es KuroSeed?
 
-KuroSeed monitors Nyaa.si RSS feeds and automatically downloads new anime episodes as they release. It runs entirely on your local machine — no cloud servers, no subscriptions, no accounts.
+KuroSeed monitorea los feeds RSS de Nyaa.si y descarga automaticamente nuevos episodios de anime conforme se publican. Todo corre en tu maquina local — sin servidores en la nube, sin suscripciones, sin cuentas.
 
-Search anime by name, pick the one you want, and KuroSeed handles the rest: checking for new episodes, downloading torrents, and organizing your files.
+Busca un anime por nombre, seleccionalo, y KuroSeed se encarga del resto: verificar nuevos episodios, descargar torrents y organizar tus archivos.
 
-## Quick Start
+## Inicio Rapido
 
 ```bash
-git clone https://github.com/onilabs/kuroseed.git
+git clone https://github.com/OnichanDevTeam/kuroseed.git
 cd kuroseed
 npm install
 node index.js
 ```
 
-Open **http://localhost:3000** in your browser.
+Abre **http://localhost:3000** en tu navegador.
 
-## Features
+## Caracteristicas
 
-- **Wizard-based setup** — Search anime from MyAnimeList with cover art, scores, and episode info
-- **Built-in torrent engine** — Downloads videos directly, no external torrent client needed
-- **Auto-download** — Checks for new episodes on a configurable schedule (30m to 6h)
-- **Smart matching** — Handles fansub groups, quality preferences, season detection, and episode deduplication
-- **Organized folders** — Auto-creates `Series / Season / episodes + .torrents/` structure
-- **Real-time progress** — Download speed, ETA, and progress bars in the UI
-- **Auto-complete** — Pauses tracking when anime finishes airing and all episodes are downloaded
-- **Browser notifications** — Get notified when new episodes are found and downloaded
-- **Grid & list views** — Switch between poster grid and detailed list
-- **Bilingual** — English and Spanish UI
-- **Optional qBittorrent** — Use the built-in engine or connect to qBittorrent if you prefer
+- **Wizard paso a paso** — Busca anime desde MyAnimeList con portada, puntuacion e info de episodios
+- **Motor de torrents integrado** — Descarga videos directamente, sin necesidad de cliente externo
+- **Descarga automatica** — Verifica nuevos episodios en un intervalo configurable (30m a 6h)
+- **Matching inteligente** — Maneja grupos fansub, preferencias de calidad, deteccion de temporada y deduplicacion de episodios
+- **Carpetas organizadas** — Crea automaticamente la estructura `Serie / Temporada / episodios + .torrents/`
+- **Progreso en tiempo real** — Velocidad de descarga, ETA y barras de progreso en la UI
+- **Auto-completado** — Pausa el seguimiento cuando el anime termina de emitirse y todos los episodios estan descargados
+- **Notificaciones del navegador** — Recibe alertas cuando se encuentran y descargan nuevos episodios
+- **Vista grid y lista** — Cambia entre grid de portadas y lista detallada
+- **Bilingue** — Interfaz en ingles y espanol
+- **qBittorrent opcional** — Usa el motor integrado o conecta qBittorrent si prefieres
 
-## Privacy & Data
+## Privacidad y Datos
 
-> **KuroSeed does not store anything in the cloud.**
+> **KuroSeed no almacena nada en la nube.**
 
-| Data | Location |
-|------|----------|
-| Anime watchlist & settings | Local SQLite database (`kuroseed.db`) |
-| .torrent files | Your configured download folder |
-| Downloaded videos (media) | Your configured download folder |
-| Anime metadata (covers, scores) | Fetched from Jikan API, cached in local DB |
+| Dato | Ubicacion |
+|------|-----------|
+| Lista de anime y ajustes | Base de datos SQLite local (`kuroseed.db`) |
+| Archivos .torrent | Tu carpeta de descarga configurada |
+| Videos descargados (media) | Tu carpeta de descarga configurada |
+| Metadata de anime (portadas, puntuaciones) | Obtenida de Jikan API, almacenada en DB local |
 
-The only external network calls are:
-- **Nyaa.si** — RSS feed queries to find new episodes
-- **Jikan API** — Anime metadata from MyAnimeList (covers, episode count, scores)
+Las unicas llamadas externas son:
+- **Nyaa.si** — Consultas RSS para encontrar nuevos episodios
+- **Jikan API** — Metadata de anime desde MyAnimeList (portadas, conteo de episodios, puntuaciones)
 
-No telemetry. No analytics. No user accounts. No data leaves your machine.
+Sin telemetria. Sin analytics. Sin cuentas de usuario. Ningun dato sale de tu maquina.
 
-## Documentation
+## Documentacion
 
-- **[Architecture](docs/ARCHITECTURE.md)** — System design, module responsibilities, data flow diagrams
-- **[How It Works](docs/HOW-IT-WORKS.md)** — Step-by-step explanation of the download pipeline
+- **[Arquitectura](docs/ARCHITECTURE.md)** — Diseno del sistema, responsabilidades de modulos, diagramas de flujo
+- **[Como Funciona](docs/HOW-IT-WORKS.md)** — Explicacion paso a paso del pipeline de descarga
 
-## System Requirements
+## Requisitos del Sistema
 
 - **Node.js** 18+
 - **macOS / Windows / Linux**
-- Internet connection for Nyaa.si RSS and torrent downloading
+- Conexion a internet para RSS de Nyaa.si y descarga de torrents
 
-### First Run on macOS
-macOS will ask to allow incoming network connections for Node.js — click **Allow**. This is required for the torrent engine to receive data from peers.
+### Primera ejecucion en macOS
+macOS pedira permiso para permitir conexiones de red entrantes a Node.js — dale **Allow**. Es necesario para que el motor de torrents reciba datos de los peers.
 
-### First Run on Windows
-Windows Firewall will prompt to allow Node.js — check **Private networks** and click **Allow access**.
+### Primera ejecucion en Windows
+Windows Firewall mostrara un dialogo para permitir Node.js — marca **Redes privadas** y dale **Permitir acceso**.
 
-## Configuration
+## Configuracion
 
-All settings are in the web UI under **Settings**:
+Todos los ajustes estan en la UI web en **Ajustes**:
 
-| Setting | Description |
-|---------|-------------|
-| Download Engine | Built-in (WebTorrent) or qBittorrent |
-| Download Folder | Where videos and .torrent files are saved |
-| Check Interval | How often to check for new episodes |
-| Language | English or Spanish |
+| Ajuste | Descripcion |
+|--------|-------------|
+| Motor de Descarga | Integrado (WebTorrent) o qBittorrent |
+| Carpeta de Descarga | Donde se guardan los videos y archivos .torrent |
+| Intervalo de Verificacion | Cada cuanto buscar nuevos episodios |
+| Idioma | Ingles o Espanol |
 
-## Support the Project
+## Apoya el Proyecto
 
-If KuroSeed is useful to you, consider supporting development:
+Si KuroSeed te es util, considera apoyar el desarrollo:
 
 <a href="https://ko-fi.com/onilabs">
-  <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support on Ko-fi">
+  <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Apoyar en Ko-fi">
 </a>
 
-Every contribution helps us keep building free, open-source tools.
+Cada aporte nos ayuda a seguir construyendo herramientas libres y de codigo abierto.
 
-## License
+## Licencia
 
 MIT
 
 ---
 
 <p align="center">
-  Built with care by <a href="https://onilabs.site">onilabs.site</a>
+  Construido con cuidado por <a href="https://onilabs.site">onilabs.site</a>
 </p>
