@@ -1,0 +1,7 @@
+node_modules/
+*.db
+*.db-wal
+*.db-shm
+torrents/
+downloads/
+.DS_Store

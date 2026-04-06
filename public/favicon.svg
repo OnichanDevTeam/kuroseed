@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6c5ce7"/>
+      <stop offset="100%" stop-color="#a29bfe"/>
+    </linearGradient>
+  </defs>
+  <!-- Circle background -->
+  <circle cx="32" cy="32" r="30" fill="#0f0f13" stroke="url(#g)" stroke-width="2.5"/>
+  <!-- Torii gate (Japanese shrine gate) simplified -->
+  <g fill="none" stroke="url(#g)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top beam (kasagi) with curved ends -->
+    <path d="M14 18 Q32 12 50 18" stroke-width="3"/>
+    <!-- Second beam (nuki) -->
+    <line x1="16" y1="23" x2="48" y2="23"/>
+    <!-- Left pillar -->
+    <line x1="20" y1="23" x2="20" y2="44"/>
+    <!-- Right pillar -->
+    <line x1="44" y1="23" x2="44" y2="44"/>
+  </g>
+  <!-- Seed/download arrow below gate -->
+  <g fill="url(#g)">
+    <path d="M32 30 L32 42" stroke="url(#g)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <path d="M26 38 L32 45 L38 38" stroke="url(#g)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- Small dots (stars/seeds) -->
+  <circle cx="28" cy="50" r="1.5" fill="#a29bfe" opacity="0.6"/>
+  <circle cx="36" cy="50" r="1.5" fill="#a29bfe" opacity="0.6"/>
+  <circle cx="32" cy="53" r="1.5" fill="#6c5ce7" opacity="0.4"/>
+</svg>

@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KuroSeed</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a24;
+    --surface2: #242433;
+    --border: #2e2e42;
+    --text: #e4e4f0;
+    --text2: #9999b0;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --red: #e17055;
+    --yellow: #fdcb6e;
+    --radius: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  header h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent2); letter-spacing: 0.5px; }
+  header h1 span { font-weight: 400; font-size: 0.7rem; color: var(--text2); margin-left: 8px; }
+
+  .header-status {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 0.85rem; color: var(--text2);
+  }
+
+  .header-status span { white-space: nowrap; }
+
+  nav {
+    display: flex; gap: 4px; padding: 12px 24px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+
+  nav button {
+    padding: 8px 20px; background: transparent;
+    border: 1px solid var(--border); color: var(--text2);
+    border-radius: var(--radius); cursor: pointer;
+    font-size: 0.9rem; transition: all 0.15s;
+  }
+
+  nav button:hover { background: var(--surface2); color: var(--text); }
+  nav button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  main { max-width: 1100px; margin: 24px auto; padding: 0 24px; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; margin-bottom: 4px; font-size: 0.85rem; color: var(--text2); }
+
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); font-size: 0.9rem; outline: none;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 18px; border: none; border-radius: var(--radius);
+    font-size: 0.9rem; cursor: pointer; transition: all 0.15s; font-weight: 500;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { opacity: 0.85; }
+  .btn-sm { padding: 5px 12px; font-size: 0.8rem; }
+
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  }
+
+  .badge-active { background: rgba(0,184,148,0.15); color: var(--green); }
+  .badge-paused { background: rgba(253,203,110,0.15); color: var(--yellow); }
+  .badge-error { background: rgba(225,112,85,0.15); color: var(--red); }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 200px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--text2); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; }
+  tr:hover { background: var(--surface2); }
+
+  .empty { text-align: center; padding: 40px; color: var(--text2); }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px; width: 90%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+  }
+
+  .modal h3 { margin-bottom: 20px; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 20px; font-size: 0.85rem;
+    z-index: 300; transform: translateY(100px); opacity: 0; transition: all 0.3s;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { border-color: var(--red); }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+  }
+
+  .spinner-lg { width: 32px; height: 32px; border-width: 3px; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── View toggle ── */
+  .view-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .view-toggle {
+    display: flex; gap: 2px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 3px;
+  }
+
+  .view-toggle button {
+    padding: 5px 10px; background: none; border: none; color: var(--text2);
+    border-radius: 5px; cursor: pointer; font-size: 0.85rem; transition: all 0.15s;
+  }
+
+  .view-toggle button.active { background: var(--accent); color: #fff; }
+
+  /* ── Anime watchlist LIST view ── */
+  .wl-card {
+    display: flex; gap: 16px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 12px; transition: border-color 0.15s;
+  }
+  .wl-card:hover { border-color: var(--accent); }
+
+  .wl-poster {
+    width: 60px; height: 85px; border-radius: 6px;
+    object-fit: cover; flex-shrink: 0; background: var(--surface2);
+  }
+
+  .wl-info { flex: 1; min-width: 0; }
+  .wl-info h4 { font-size: 1rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .wl-meta { font-size: 0.78rem; color: var(--text2); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+  .wl-actions { display: flex; gap: 6px; flex-shrink: 0; align-items: flex-start; }
+
+  .dl-toggle {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.75rem; color: var(--accent2); cursor: pointer;
+    background: none; border: none; padding: 4px 0; margin-top: 6px;
+  }
+
+  .dl-toggle:hover { color: var(--text); }
+
+  /* ── Anime watchlist GRID view ── */
+  .wl-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 16px;
+  }
+
+  .wl-grid-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; transition: all 0.2s;
+    position: relative;
+  }
+
+  .wl-grid-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .wl-grid-card img {
+    width: 100%; height: 240px; object-fit: cover; display: block;
+  }
+
+  .wl-grid-card .grid-info {
+    padding: 10px 12px;
+  }
+
+  .wl-grid-card .grid-info h4 {
+    font-size: 0.85rem; line-height: 1.3; margin-bottom: 4px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .wl-grid-card .grid-meta {
+    font-size: 0.72rem; color: var(--text2);
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+
+  .wl-grid-card .grid-badge {
+    position: absolute; top: 8px; left: 8px; z-index: 2;
+  }
+
+  .wl-grid-card .grid-badge .badge {
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+
+  .wl-grid-card .grid-actions {
+    display: flex; border-top: 1px solid var(--border);
+  }
+
+  .wl-grid-card .grid-actions button {
+    flex: 1; padding: 7px; background: none; border: none; border-right: 1px solid var(--border);
+    color: var(--text2); font-size: 0.72rem; cursor: pointer; transition: all 0.15s;
+  }
+
+  .wl-grid-card .grid-actions button:last-child { border-right: none; }
+  .wl-grid-card .grid-actions button:hover { background: var(--surface2); color: var(--text); }
+  .wl-grid-card .grid-actions button.del:hover { color: var(--red); }
+
+  .grid-dl-indicator {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.7); border-radius: 50%; padding: 2px;
+  }
+
+  .airing-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px;
+  }
+
+  .airing-dot.airing { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .airing-dot.finished { background: var(--text2); }
+  .airing-dot.upcoming { background: var(--yellow); }
+
+  .badge-finished { background: rgba(153,153,176,0.15); color: var(--text2); }
+  .badge-airing { background: rgba(0,184,148,0.15); color: var(--green); }
+  .badge-upcoming { background: rgba(253,203,110,0.15); color: var(--yellow); }
+  .badge-completed { background: rgba(108,92,231,0.15); color: var(--accent2); }
+
+  /* ── Wizard fullscreen modal ── */
+  .wizard-overlay {
+    display: none; position: fixed; inset: 0;
+    background: var(--bg); z-index: 250; overflow-y: auto;
+  }
+
+  .wizard-overlay.open { display: block; }
+
+  .wizard {
+    max-width: 800px; margin: 0 auto; padding: 24px;
+    min-height: 100vh;
+  }
+
+  .wizard-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .wizard-header h2 { font-size: 1.3rem; }
+
+  .wizard-close {
+    background: none; border: none; color: var(--text2);
+    font-size: 1.6rem; cursor: pointer; padding: 4px 8px;
+    line-height: 1;
+  }
+
+  .wizard-close:hover { color: var(--text); }
+
+  /* Steps indicator */
+  .steps {
+    display: flex; gap: 0; margin-bottom: 32px;
+    border-bottom: 2px solid var(--border); padding-bottom: 0;
+  }
+
+  .step-tab {
+    flex: 1; text-align: center; padding: 12px 8px;
+    font-size: 0.85rem; color: var(--text2);
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    font-weight: 500; transition: all 0.2s;
+  }
+
+  .step-tab.active { color: var(--accent2); border-bottom-color: var(--accent); }
+  .step-tab.done { color: var(--green); }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%; font-size: 0.75rem;
+    background: var(--surface2); margin-right: 6px; font-weight: 700;
+  }
+  .step-tab.active .step-num { background: var(--accent); color: #fff; }
+  .step-tab.done .step-num { background: var(--green); color: #fff; }
+
+  .step-content { display: none; }
+  .step-content.active { display: block; }
+
+  /* Step 1: anime search grid */
+  .anime-search-bar {
+    display: flex; gap: 8px; margin-bottom: 20px;
+  }
+  .anime-search-bar input { flex: 1; font-size: 1rem; padding: 12px 16px; }
+
+  .anime-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .anime-result {
+    background: var(--surface); border: 2px solid var(--border);
+    border-radius: 10px; overflow: hidden; cursor: pointer;
+    transition: all 0.2s; position: relative;
+  }
+
+  .anime-result:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .anime-result.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+  .anime-result img {
+    width: 100%; height: 280px; object-fit: cover; display: block;
+  }
+
+  .anime-result-info { padding: 12px; }
+  .anime-result-info h4 {
+    font-size: 0.88rem; line-height: 1.3; margin-bottom: 6px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .anime-result-meta {
+    display: flex; gap: 10px; font-size: 0.75rem; color: var(--text2); flex-wrap: wrap;
+  }
+
+  .anime-result-meta span { display: flex; align-items: center; gap: 3px; }
+  .star { color: var(--yellow); }
+
+  .selected-check {
+    position: absolute; top: 10px; right: 10px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); display: none;
+    align-items: center; justify-content: center;
+    font-size: 0.9rem; color: #fff;
+  }
+  .anime-result.selected .selected-check { display: flex; }
+
+  /* Step 2: config */
+  .config-header {
+    display: flex; gap: 20px; margin-bottom: 24px;
+    background: var(--surface); border-radius: 10px;
+    padding: 16px; border: 1px solid var(--border);
+  }
+
+  .config-poster {
+    width: 100px; height: 140px; border-radius: 8px;
+    object-fit: cover; flex-shrink: 0;
+  }
+
+  .config-info { flex: 1; }
+  .config-info h3 { font-size: 1.1rem; margin-bottom: 6px; }
+  .config-info p { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+
+  .config-stats {
+    display: flex; gap: 16px; font-size: 0.8rem; color: var(--text2);
+    margin: 8px 0;
+  }
+
+  .config-stats span { display: flex; align-items: center; gap: 4px; }
+
+  /* Step 3: summary */
+  .summary-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 24px; display: flex; gap: 24px;
+  }
+
+  .summary-poster {
+    width: 140px; height: 200px; border-radius: 8px;
+    object-fit: cover; flex-shrink: 0;
+  }
+
+  .summary-details { flex: 1; }
+  .summary-details h3 { font-size: 1.2rem; margin-bottom: 12px; }
+
+  .summary-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+
+  .summary-row:last-child { border: none; }
+  .summary-label { color: var(--text2); }
+  .summary-value { font-weight: 500; text-align: right; max-width: 60%; word-break: break-all; }
+
+  /* Folder picker */
+  .folder-pick { display: flex; gap: 8px; }
+  .folder-pick input { flex: 1; cursor: pointer; }
+  .folder-pick button { flex-shrink: 0; }
+
+  .browser-path {
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 12px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    font-size: 0.82rem; color: var(--text2); margin-bottom: 12px;
+    word-break: break-all;
+  }
+  .browser-path strong { color: var(--text); }
+
+  .folder-list {
+    max-height: 350px; overflow-y: auto;
+    border: 1px solid var(--border); border-radius: var(--radius);
+  }
+
+  .folder-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; cursor: pointer;
+    border-bottom: 1px solid var(--border); font-size: 0.9rem; transition: background 0.1s;
+  }
+  .folder-item:last-child { border-bottom: none; }
+  .folder-item:hover { background: var(--surface2); }
+  .folder-item.parent-item { color: var(--accent2); font-weight: 500; }
+
+  .new-folder-row { display: flex; gap: 8px; margin-top: 12px; }
+  .new-folder-row input { flex: 1; padding: 7px 10px; font-size: 0.85rem; }
+
+  .search-results { max-height: 400px; overflow-y: auto; font-size: 0.85rem; }
+  .search-results table { min-width: 100%; }
+
+  .wizard-footer {
+    display: flex; justify-content: space-between; margin-top: 28px;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+
+  /* Download progress */
+  .dl-progress-list { margin-top: 16px; }
+
+  .dl-ep {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 8px; font-size: 0.85rem;
+  }
+
+  .dl-ep-num {
+    font-weight: 700; font-size: 0.9rem; min-width: 50px;
+    color: var(--accent2);
+  }
+
+  .dl-bar-wrap {
+    flex: 1; height: 8px; background: var(--surface2);
+    border-radius: 4px; overflow: hidden;
+  }
+
+  .dl-bar {
+    height: 100%; border-radius: 4px; transition: width 0.5s ease;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .dl-bar.complete { background: var(--green); }
+  .dl-bar.seeding { background: linear-gradient(90deg, var(--green), #55efc4); }
+
+  .dl-info {
+    min-width: 120px; text-align: right;
+    font-size: 0.78rem; color: var(--text2);
+    white-space: nowrap;
+  }
+
+  .dl-state {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+  }
+
+  .dl-state.downloading { background: rgba(108,92,231,0.2); color: var(--accent2); }
+  .dl-state.complete { background: rgba(0,184,148,0.15); color: var(--green); }
+  .dl-state.seeding { background: rgba(0,184,148,0.15); color: #55efc4; }
+  .dl-state.paused { background: rgba(253,203,110,0.15); color: var(--yellow); }
+  .dl-state.stalled { background: rgba(153,153,176,0.15); color: var(--text2); }
+  .dl-state.error { background: rgba(225,112,85,0.15); color: var(--red); }
+
+  .dl-speed { color: var(--accent2); font-weight: 500; }
+
+  /* Circle progress (small) */
+  .circle-progress {
+    width: 36px; height: 36px; flex-shrink: 0; position: relative;
+  }
+
+  .circle-progress svg { transform: rotate(-90deg); }
+
+  .circle-progress .pct {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 700;
+  }
+
+  /* Post-save status */
+  .post-save-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px; text-align: center; margin-bottom: 24px;
+  }
+
+  .post-save-card .status-icon {
+    font-size: 3rem; margin-bottom: 12px; line-height: 1;
+  }
+
+  .post-save-card h3 { margin-bottom: 8px; }
+  .post-save-card p { color: var(--text2); font-size: 0.9rem; }
+
+  .progress-steps { margin: 28px 0; text-align: left; }
+
+  .progress-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-left: 2px solid var(--border);
+    margin-left: 11px; position: relative;
+  }
+
+  .progress-step:last-child { border-left-color: transparent; }
+
+  .progress-dot {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; flex-shrink: 0;
+    position: absolute; left: -13px;
+    background: var(--surface2); border: 2px solid var(--border);
+    color: var(--text2);
+  }
+
+  .progress-step.done .progress-dot { background: var(--green); border-color: var(--green); color: #fff; }
+  .progress-step.active .progress-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .progress-step.error .progress-dot { background: var(--red); border-color: var(--red); color: #fff; }
+
+  .progress-text { margin-left: 20px; }
+  .progress-text .label { font-size: 0.9rem; font-weight: 500; }
+  .progress-text .detail { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
+
+  .progress-step.active .label { color: var(--accent2); }
+  .progress-step.done .label { color: var(--green); }
+  .progress-step.error .label { color: var(--red); }
+
+  @media (max-width: 700px) {
+    .anime-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .anime-result img { height: 200px; }
+    .wl-card { flex-direction: column; }
+    .wl-actions { width: 100%; justify-content: flex-end; }
+    .config-header { flex-direction: column; align-items: center; text-align: center; }
+    .summary-card { flex-direction: column; align-items: center; text-align: center; }
+    .summary-row { flex-direction: column; gap: 2px; }
+    .summary-value { text-align: left; max-width: 100%; }
+    .row > * { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="headerTitle">KuroSeed</h1>
+  <div class="header-status">
+    <span id="statusLastCheck">--</span>
+    <span id="statusNextCheck">--</span>
+    <button class="btn btn-sm btn-secondary" onclick="runManualCheck()" id="btnRunCheck">Run Check Now</button>
+  </div>
+</header>
+
+<nav>
+  <button class="active" data-page="watchlist" onclick="showPage('watchlist', this)">Watchlist</button>
+  <button data-page="search" onclick="showPage('search', this)">Search</button>
+  <button data-page="logs" onclick="showPage('logs', this)">Logs</button>
+  <button data-page="settings" onclick="showPage('settings', this)">Settings</button>
+</nav>
+
+<main>
+  <!-- WATCHLIST PAGE -->
+  <div id="page-watchlist" class="page active">
+    <div class="view-bar">
+      <h2 data-t="my_watchlist">My Watchlist</h2>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="view-toggle">
+          <button class="active" onclick="setView('grid', this)" title="Grid">&#9638;</button>
+          <button onclick="setView('list', this)" title="List">&#9776;</button>
+        </div>
+        <button class="btn btn-primary" onclick="openWizard()" data-t="add_anime">+ Add Anime</button>
+      </div>
+    </div>
+    <div id="animeList"></div>
+  </div>
+
+  <!-- SEARCH PAGE -->
+  <div id="page-search" class="page">
+    <h2 style="margin-bottom:16px" data-t="search_nyaa">Search Nyaa.si</h2>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <input type="text" id="searchInput" placeholder="e.g. [Erai-raws] Jujutsu Kaisen 1080p" onkeydown="if(event.key==='Enter')doSearch()" style="flex:1">
+      <button class="btn btn-primary" onclick="doSearch()" data-t="search_btn">Search</button>
+    </div>
+    <div id="searchLoading" style="display:none;text-align:center;padding:20px"><div class="spinner"></div> <span data-t="searching">Searching...</span></div>
+    <div id="searchResults" class="search-results"></div>
+  </div>
+
+  <!-- LOGS PAGE -->
+  <div id="page-logs" class="page">
+    <h2 style="margin-bottom:16px" data-t="download_logs">Download Logs</h2>
+    <div id="logsList"></div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div id="page-settings" class="page">
+    <h2 style="margin-bottom:16px" data-t="settings">Settings</h2>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px" data-t="download_engine">Download Engine</h3>
+      <div class="form-group">
+        <label data-t="engine_label">How to download video files</label>
+        <select id="setEngine" onchange="toggleEngineSettings()">
+          <option value="builtin" data-t="engine_builtin">Built-in (no external app needed)</option>
+          <option value="qbittorrent" data-t="engine_qbt">qBittorrent (external client)</option>
+        </select>
+      </div>
+      <p style="font-size:0.8rem;color:var(--text2);margin-top:-8px" id="engineDesc"></p>
+    </div>
+
+    <div class="card" id="qbtSettings" style="display:none">
+      <h3 style="margin-bottom:16px" data-t="qbt_connection">qBittorrent Connection</h3>
+      <p style="font-size:0.82rem;color:var(--text2);margin-bottom:16px" data-t="qbt_help"></p>
+      <div class="form-group">
+        <label data-t="qbt_url">qBittorrent URL</label>
+        <input type="text" id="setQbtUrl" placeholder="http://localhost:8080">
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label data-t="username">Username</label>
+          <input type="text" id="setQbtUser" placeholder="admin">
+        </div>
+        <div class="form-group">
+          <label data-t="password">Password</label>
+          <input type="password" id="setQbtPass">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary" onclick="testQbt()" data-t="test_connection">Test Connection</button>
+        <span id="qbtStatus" style="font-size:0.82rem"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px" data-t="download_settings">Download Settings</h3>
+      <div class="form-group">
+        <label data-t="default_folder_label">Global Default Download Folder</label>
+        <div class="folder-pick">
+          <input type="text" id="setDefaultFolder" readonly data-tp="select_folder">
+          <button class="btn btn-secondary btn-sm" onclick="openFolderPicker('setDefaultFolder')" data-t="browse">Browse</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-t="watch_folder_label">qBittorrent Watch Folder</label>
+        <div class="folder-pick">
+          <input type="text" id="setWatchFolder" readonly data-tp="select_folder">
+          <button class="btn btn-secondary btn-sm" onclick="openFolderPicker('setWatchFolder')" data-t="browse">Browse</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px" data-t="schedule">Schedule</h3>
+      <div class="form-group">
+        <label data-t="check_interval">Check Interval</label>
+        <select id="setCronInterval">
+          <option value="30" data-t="every_30m">Every 30 minutes</option>
+          <option value="60" data-t="every_1h">Every 1 hour</option>
+          <option value="120" data-t="every_2h">Every 2 hours</option>
+          <option value="360" data-t="every_6h">Every 6 hours</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px" data-t="language">Language</h3>
+      <div class="form-group">
+        <select id="setLang" onchange="setLang(this.value)">
+          <option value="en">English</option>
+          <option value="es">Espanol</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveSettings()" data-t="save_settings">Save All Settings</button>
+      <button class="btn btn-secondary" onclick="runManualCheck()" data-t="run_check">Run Check Now</button>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ ADD ANIME WIZARD (fullscreen) ═══ -->
+<div class="wizard-overlay" id="wizardOverlay">
+  <div class="wizard">
+    <div class="wizard-header">
+      <h2 data-t="wizard_title">Add Anime</h2>
+      <button class="wizard-close" onclick="closeWizard()">&times;</button>
+    </div>
+
+    <div class="steps" id="wizardSteps">
+      <div class="step-tab active" id="stepTab1"><span class="step-num">1</span> <span data-t="step_find">Find Anime</span></div>
+      <div class="step-tab" id="stepTab2"><span class="step-num">2</span> <span data-t="step_configure">Configure</span></div>
+      <div class="step-tab" id="stepTab3"><span class="step-num">3</span> <span data-t="step_confirm">Confirm</span></div>
+    </div>
+
+    <!-- STEP 1: Search & select anime -->
+    <div class="step-content active" id="step1">
+      <div class="anime-search-bar">
+        <input type="text" id="wizardSearch" data-tp="search_anime_placeholder" onkeydown="if(event.key==='Enter')wizardDoSearch()">
+        <button class="btn btn-primary" onclick="wizardDoSearch()" data-t="search_btn">Search</button>
+      </div>
+      <div id="wizardSearchLoading" style="display:none;text-align:center;padding:40px">
+        <div class="spinner spinner-lg"></div>
+        <p style="margin-top:12px;color:var(--text2)" data-t="searching_mal">Searching MyAnimeList...</p>
+      </div>
+      <div id="wizardGrid" class="anime-grid"></div>
+      <div class="wizard-footer" id="step1Footer" style="display:none">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToStep(2)" data-t="continue_btn">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Configure -->
+    <div class="step-content" id="step2">
+      <div class="config-header" id="configHeader"></div>
+
+      <div class="row">
+        <div class="form-group">
+          <label data-t="fansub_group">Fansub Group</label>
+          <select id="wFansub">
+            <option value="Erai-raws">Erai-raws</option>
+            <option value="SubsPlease">SubsPlease</option>
+            <option value="Judas">Judas</option>
+            <option value="__custom" data-t="custom">Custom...</option>
+          </select>
+        </div>
+        <div class="form-group" id="wCustomFansubWrap" style="display:none">
+          <label data-t="custom_group">Custom Group</label>
+          <input type="text" id="wFansubCustom">
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group">
+          <label data-t="quality">Quality</label>
+          <select id="wQuality">
+            <option value="1080p">1080p</option>
+            <option value="720p">720p</option>
+            <option value="480p">480p</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-t="last_downloaded_ep">Last Downloaded Ep</label>
+          <input type="number" id="wLastEp" value="0" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label data-t="download_folder">Download Folder</label>
+        <div class="folder-pick">
+          <input type="text" id="wFolder" readonly data-tp="select_folder">
+          <button class="btn btn-secondary btn-sm" onclick="openFolderPicker('wFolder')" data-t="browse">Browse</button>
+        </div>
+      </div>
+      <div class="wizard-footer">
+        <button class="btn btn-secondary" onclick="goToStep(1)" data-t="back_btn">Back</button>
+        <button class="btn btn-primary" onclick="goToStep(3)" data-t="continue_btn">Continue</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Summary -->
+    <div class="step-content" id="step3">
+      <div id="summaryContent"></div>
+      <div class="wizard-footer">
+        <button class="btn btn-secondary" onclick="goToStep(2)" data-t="back_btn">Back</button>
+        <button class="btn btn-primary" onclick="wizardSave()" id="wizardSaveBtn" data-t="add_to_watchlist">Add to Watchlist</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Post-save status -->
+    <div class="step-content" id="step4">
+      <div id="postSaveContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EDIT ANIME MODAL (simple) ═══ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3 data-t="edit_anime">Edit Anime</h3>
+    <input type="hidden" id="editId">
+    <div class="form-group">
+      <label data-t="search_query_label">Search Query (Nyaa RSS)</label>
+      <input type="text" id="eName">
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label data-t="fansub_group">Fansub Group</label>
+        <select id="eFansub">
+          <option value="Erai-raws">Erai-raws</option>
+          <option value="SubsPlease">SubsPlease</option>
+          <option value="Judas">Judas</option>
+          <option value="__custom" data-t="custom">Custom...</option>
+        </select>
+      </div>
+      <div class="form-group" id="eCustomWrap" style="display:none">
+        <label data-t="custom_group">Custom Group</label>
+        <input type="text" id="eFansubCustom">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label data-t="quality">Quality</label>
+        <select id="eQuality"><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select>
+      </div>
+      <div class="form-group">
+        <label data-t="season">Season</label>
+        <input type="number" id="eSeason" value="1" min="1">
+      </div>
+      <div class="form-group">
+        <label data-t="last_ep">Last EP</label>
+        <input type="number" id="eLastEp" value="0" min="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-t="download_folder">Download Folder</label>
+      <div class="folder-pick">
+        <input type="text" id="eFolder" readonly data-tp="select_folder">
+        <button class="btn btn-secondary btn-sm" onclick="openFolderPicker('eFolder')" data-t="browse">Browse</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeEdit()" data-t="cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()" data-t="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EPISODES MODAL -->
+<div class="modal-overlay" id="episodesModal">
+  <div class="modal" style="max-width:700px">
+    <h3 id="epModalTitle" data-t="episodes_title">Episodes</h3>
+    <div id="episodesList"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('episodesModal').classList.remove('open')" data-t="close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOLDER BROWSER MODAL -->
+<div class="modal-overlay" id="folderModal" style="z-index:300">
+  <div class="modal" style="max-width:520px">
+    <h3 data-t="select_folder_title">Select Folder</h3>
+    <div class="browser-path">
+      <strong data-t="location">Location</strong>: <span id="browserPath">-</span>
+    </div>
+    <div class="folder-list" id="folderList"></div>
+    <div class="new-folder-row">
+      <input type="text" id="newFolderName" data-tp="new_folder_placeholder">
+      <button class="btn btn-secondary btn-sm" onclick="createFolder()" data-t="create">Create</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeFolderPicker()" data-t="cancel">Cancel</button>
+      <button class="btn btn-primary" onclick="selectCurrentFolder()" data-t="select_this">Select This Folder</button>
+    </div>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:24px;font-size:0.75rem;color:var(--text2);border-top:1px solid var(--border);margin-top:40px">
+  Built by <a href="https://onilabs.site" target="_blank" style="color:var(--accent2);text-decoration:none">onilabs.site</a>
+  &nbsp;&middot;&nbsp;
+  <a href="https://ko-fi.com/onilabs" target="_blank" style="color:var(--text2);text-decoration:none">&#9749; Support on Ko-fi</a>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+
+// ═══════════════════════════════════
+// ═══ i18n TRANSLATIONS ═══════════
+// ═══════════════════════════════════
+const LANGS = {
+  en: {
+    // Header & Nav
+    last_check: 'Last', next_check: 'Next', run_check: 'Run Check Now',
+    nav_watchlist: 'Watchlist', nav_search: 'Search', nav_logs: 'Logs', nav_settings: 'Settings',
+    // Watchlist
+    my_watchlist: 'My Watchlist', add_anime: '+ Add Anime',
+    empty_watchlist: 'No anime in watchlist. Click "+ Add Anime" to get started.',
+    episodes: 'Episodes', pause: 'Pause', resume: 'Resume', edit: 'Edit', delete: 'Delete',
+    confirm_delete: 'Delete "{name}" and all its data?',
+    downloading_count: '{n} downloading...',
+    // Badges
+    badge_active: 'active', badge_paused: 'paused', badge_complete: 'complete',
+    badge_airing: 'Airing', badge_finished: 'Finished', badge_upcoming: 'Upcoming', badge_unknown: 'Unknown',
+    // Search page
+    search_nyaa: 'Search Nyaa.si', search_btn: 'Search', searching: 'Searching...',
+    no_results: 'No results found.',
+    th_title: 'Title', th_size: 'Size', th_seeders: 'Seeders', th_date: 'Date',
+    // Logs
+    download_logs: 'Download Logs', no_logs: 'No download logs yet.',
+    th_time: 'Time', th_anime: 'Anime', th_ep: 'EP', th_status: 'Status', th_message: 'Message',
+    // Settings
+    settings: 'Settings',
+    download_engine: 'Download Engine', engine_label: 'How to download video files',
+    engine_builtin: 'Built-in (no external app needed)',
+    engine_qbt: 'qBittorrent (external client)',
+    engine_desc_builtin: 'KuroSeed downloads videos directly using WebTorrent. No setup required.',
+    engine_desc_qbt: 'Videos are downloaded by qBittorrent. Requires qBittorrent running with Web UI enabled.',
+    qbt_connection: 'qBittorrent Connection',
+    qbt_help: 'Enable Web UI in qBittorrent: Tools > Options > Web UI > Enable.',
+    qbt_url: 'qBittorrent URL', username: 'Username', password: 'Password',
+    test_connection: 'Test Connection', testing: 'Testing...',
+    connected: 'Connected! qBittorrent', connection_failed: 'Failed:',
+    download_settings: 'Download Settings',
+    default_folder_label: 'Global Default Download Folder (where videos are saved)',
+    watch_folder_label: 'qBittorrent Watch Folder (optional fallback)',
+    schedule: 'Schedule', check_interval: 'Check Interval',
+    every_30m: 'Every 30 minutes', every_1h: 'Every 1 hour', every_2h: 'Every 2 hours', every_6h: 'Every 6 hours',
+    save_settings: 'Save All Settings', settings_saved: 'Settings saved',
+    language: 'Language',
+    // Wizard
+    wizard_title: 'Add Anime',
+    step_find: 'Find Anime', step_configure: 'Configure', step_confirm: 'Confirm',
+    search_anime_placeholder: 'Search anime by name...',
+    searching_mal: 'Searching MyAnimeList...',
+    no_anime_found: 'No anime found. Try a different search term.',
+    continue_btn: 'Continue', back_btn: 'Back',
+    fansub_group: 'Fansub Group', custom: 'Custom...', custom_group: 'Custom Group',
+    quality: 'Quality', last_downloaded_ep: 'Last Downloaded Ep',
+    download_folder: 'Download Folder', select_folder: 'Select folder...', browse: 'Browse',
+    summary_fansub: 'Fansub Group', summary_quality: 'Quality', summary_season: 'Season',
+    summary_auto: 'auto-detected', summary_start_ep: 'Start from EP',
+    summary_download_all: 'Download all', summary_after_ep: 'After EP',
+    summary_total_eps: 'Total Episodes', summary_ongoing: 'Ongoing',
+    summary_folder: 'Download Folder', summary_default: 'Default', summary_score: 'Score',
+    add_to_watchlist: 'Add to Watchlist',
+    // Wizard Step 4
+    ws_adding: 'Adding to watchlist...', ws_added: 'Added to watchlist',
+    ws_checking: 'Checking for available episodes', ws_check_done: 'Episode check complete',
+    ws_episodes_found: '{n} new episode(s) found', ws_check_failed: 'Episode check failed',
+    ws_downloading: 'Downloading torrents', ws_torrents_done: 'Torrents downloaded',
+    ws_torrent_files: '{n} .torrent file(s) saved',
+    ws_no_torrents: 'No new torrents needed', ws_up_to_date: 'All episodes up to date',
+    ws_starting: 'Starting video downloads', ws_videos_dl: 'Videos are downloading!',
+    ws_started: '{n} episode(s) started', ws_dl_error: 'Download error',
+    ws_check_logs: 'Check Logs for details', ws_starting_soon: 'Downloads starting...',
+    ws_begin_shortly: 'Videos will begin shortly',
+    ws_no_episodes: 'No episodes to download', ws_auto_schedule: 'Will check automatically on schedule',
+    ws_failed_add: 'Failed to add',
+    dl_progress: 'Download Progress', dl_waiting: 'Waiting for downloads to start...',
+    dl_complete: '{name} - Downloads complete!', dl_complete_detail: '{n} episode(s) finished downloading',
+    add_another: 'Add Another', done: 'Done', close: 'Close',
+    // Edit modal
+    edit_anime: 'Edit Anime', search_query_label: 'Search Query (Nyaa RSS)',
+    season: 'Season', last_ep: 'Last EP', cancel: 'Cancel', save: 'Save', updated: 'Updated',
+    // Episodes modal
+    episodes_title: 'Episodes', no_episodes: 'No episodes downloaded yet.',
+    th_downloaded: 'Downloaded',
+    // Folder browser
+    select_folder_title: 'Select Folder', location: 'Location',
+    parent_folder: 'Parent folder', no_subfolders: 'No subfolders',
+    new_folder_placeholder: 'New folder name...', create: 'Create', folder_created: 'Folder created',
+    select_this: 'Select This Folder',
+    // Download states
+    dl_downloading: 'Downloading', dl_stalled: 'Stalled', dl_paused: 'Paused',
+    dl_queued: 'Queued', dl_seeding: 'Seeding', dl_completed: 'Complete',
+    dl_checking: 'Checking', dl_error: 'Error',
+    // Manual check
+    running_check: 'Running check...', check_running: 'Check already running',
+    check_complete: 'Check complete. {n} new episode(s) found.',
+    check_done: 'Check complete', check_failed: 'Check failed:',
+    notif_new_eps: 'New episodes found!', notif_eps_dl: '{n} episode(s) downloading:',
+    // No active downloads
+    no_active_dl: 'No active downloads',
+    // Misc
+    eps: 'eps', deleted: 'Deleted', added: 'Added {name} to watchlist!',
+    select_anime_first: 'Select an anime first',
+  },
+  es: {
+    last_check: 'Ultima', next_check: 'Siguiente', run_check: 'Verificar Ahora',
+    nav_watchlist: 'Mi Lista', nav_search: 'Buscar', nav_logs: 'Historial', nav_settings: 'Ajustes',
+    my_watchlist: 'Mi Lista', add_anime: '+ Agregar Anime',
+    empty_watchlist: 'No hay anime en la lista. Haz clic en "+ Agregar Anime" para comenzar.',
+    episodes: 'Episodios', pause: 'Pausar', resume: 'Reanudar', edit: 'Editar', delete: 'Eliminar',
+    confirm_delete: 'Eliminar "{name}" y todos sus datos?',
+    downloading_count: '{n} descargando...',
+    badge_active: 'activo', badge_paused: 'pausado', badge_complete: 'completo',
+    badge_airing: 'En emision', badge_finished: 'Finalizado', badge_upcoming: 'Proximo', badge_unknown: 'Desconocido',
+    search_nyaa: 'Buscar en Nyaa.si', search_btn: 'Buscar', searching: 'Buscando...',
+    no_results: 'No se encontraron resultados.',
+    th_title: 'Titulo', th_size: 'Tamano', th_seeders: 'Seeds', th_date: 'Fecha',
+    download_logs: 'Historial de Descargas', no_logs: 'No hay descargas registradas.',
+    th_time: 'Hora', th_anime: 'Anime', th_ep: 'EP', th_status: 'Estado', th_message: 'Mensaje',
+    settings: 'Ajustes',
+    download_engine: 'Motor de Descarga', engine_label: 'Como descargar los videos',
+    engine_builtin: 'Integrado (sin app externa)',
+    engine_qbt: 'qBittorrent (cliente externo)',
+    engine_desc_builtin: 'KuroSeed descarga los videos directamente con WebTorrent. Sin configuracion.',
+    engine_desc_qbt: 'Los videos se descargan con qBittorrent. Requiere qBittorrent con Web UI activada.',
+    qbt_connection: 'Conexion qBittorrent',
+    qbt_help: 'Activa la Web UI en qBittorrent: Tools > Options > Web UI > Enable.',
+    qbt_url: 'URL de qBittorrent', username: 'Usuario', password: 'Contrasena',
+    test_connection: 'Probar Conexion', testing: 'Probando...',
+    connected: 'Conectado! qBittorrent', connection_failed: 'Fallo:',
+    download_settings: 'Configuracion de Descargas',
+    default_folder_label: 'Carpeta de descarga global (donde se guardan los videos)',
+    watch_folder_label: 'Carpeta vigilada de qBittorrent (respaldo opcional)',
+    schedule: 'Programacion', check_interval: 'Intervalo de Verificacion',
+    every_30m: 'Cada 30 minutos', every_1h: 'Cada 1 hora', every_2h: 'Cada 2 horas', every_6h: 'Cada 6 horas',
+    save_settings: 'Guardar Ajustes', settings_saved: 'Ajustes guardados',
+    language: 'Idioma',
+    wizard_title: 'Agregar Anime',
+    step_find: 'Buscar Anime', step_configure: 'Configurar', step_confirm: 'Confirmar',
+    search_anime_placeholder: 'Buscar anime por nombre...',
+    searching_mal: 'Buscando en MyAnimeList...',
+    no_anime_found: 'No se encontro ningun anime. Intenta con otro nombre.',
+    continue_btn: 'Continuar', back_btn: 'Volver',
+    fansub_group: 'Grupo Fansub', custom: 'Personalizado...', custom_group: 'Grupo Personalizado',
+    quality: 'Calidad', last_downloaded_ep: 'Ultimo EP Descargado',
+    download_folder: 'Carpeta de Descarga', select_folder: 'Seleccionar carpeta...', browse: 'Explorar',
+    summary_fansub: 'Grupo Fansub', summary_quality: 'Calidad', summary_season: 'Temporada',
+    summary_auto: 'auto-detectada', summary_start_ep: 'Comenzar desde EP',
+    summary_download_all: 'Descargar todos', summary_after_ep: 'Despues del EP',
+    summary_total_eps: 'Total de Episodios', summary_ongoing: 'En emision',
+    summary_folder: 'Carpeta de Descarga', summary_default: 'Por defecto', summary_score: 'Puntuacion',
+    add_to_watchlist: 'Agregar a Mi Lista',
+    ws_adding: 'Agregando a la lista...', ws_added: 'Agregado a la lista',
+    ws_checking: 'Buscando episodios disponibles', ws_check_done: 'Busqueda completada',
+    ws_episodes_found: '{n} episodio(s) nuevo(s)', ws_check_failed: 'Error al buscar episodios',
+    ws_downloading: 'Descargando torrents', ws_torrents_done: 'Torrents descargados',
+    ws_torrent_files: '{n} archivo(s) .torrent guardados',
+    ws_no_torrents: 'No hay torrents nuevos', ws_up_to_date: 'Todos los episodios al dia',
+    ws_starting: 'Iniciando descarga de videos', ws_videos_dl: 'Los videos se estan descargando!',
+    ws_started: '{n} episodio(s) iniciados', ws_dl_error: 'Error de descarga',
+    ws_check_logs: 'Revisa el Historial', ws_starting_soon: 'Iniciando descargas...',
+    ws_begin_shortly: 'Los videos comenzaran pronto',
+    ws_no_episodes: 'No hay episodios para descargar', ws_auto_schedule: 'Se verificara automaticamente',
+    ws_failed_add: 'Error al agregar',
+    dl_progress: 'Progreso de Descarga', dl_waiting: 'Esperando que inicien las descargas...',
+    dl_complete: '{name} - Descargas completas!', dl_complete_detail: '{n} episodio(s) descargados',
+    add_another: 'Agregar Otro', done: 'Listo', close: 'Cerrar',
+    edit_anime: 'Editar Anime', search_query_label: 'Busqueda en Nyaa (RSS)',
+    season: 'Temporada', last_ep: 'Ultimo EP', cancel: 'Cancelar', save: 'Guardar', updated: 'Actualizado',
+    episodes_title: 'Episodios', no_episodes: 'No hay episodios descargados.',
+    th_downloaded: 'Descargado',
+    select_folder_title: 'Seleccionar Carpeta', location: 'Ubicacion',
+    parent_folder: 'Carpeta superior', no_subfolders: 'Sin subcarpetas',
+    new_folder_placeholder: 'Nombre de nueva carpeta...', create: 'Crear', folder_created: 'Carpeta creada',
+    select_this: 'Seleccionar Esta Carpeta',
+    dl_downloading: 'Descargando', dl_stalled: 'Detenido', dl_paused: 'Pausado',
+    dl_queued: 'En cola', dl_seeding: 'Compartiendo', dl_completed: 'Completo',
+    dl_checking: 'Verificando', dl_error: 'Error',
+    running_check: 'Verificando...', check_running: 'Ya se esta verificando',
+    check_complete: 'Verificacion completa. {n} episodio(s) nuevo(s).',
+    check_done: 'Verificacion completa', check_failed: 'Error al verificar:',
+    notif_new_eps: 'Nuevos episodios encontrados!', notif_eps_dl: '{n} episodio(s) descargando:',
+    no_active_dl: 'Sin descargas activas',
+    eps: 'eps', deleted: 'Eliminado', added: '{name} agregado a la lista!',
+    select_anime_first: 'Selecciona un anime primero',
+  }
+};
+
+let currentLang = localStorage.getItem('aniwatch_lang') || 'en';
+
+function t(key, params = {}) {
+  let str = (LANGS[currentLang] && LANGS[currentLang][key]) || LANGS.en[key] || key;
+  for (const [k, v] of Object.entries(params)) {
+    str = str.replace(`{${k}}`, v);
+  }
+  return str;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('aniwatch_lang', lang);
+  rebuildUI();
+}
+
+function translateStatic() {
+  // Translate all elements with data-t attribute (textContent)
+  document.querySelectorAll('[data-t]').forEach(el => {
+    el.textContent = t(el.getAttribute('data-t'));
+  });
+  // Translate all elements with data-tp attribute (placeholder)
+  document.querySelectorAll('[data-tp]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-tp'));
+  });
+  // Nav buttons need special handling (data-page)
+  document.querySelectorAll('nav button[data-page]').forEach(b => {
+    b.textContent = t('nav_' + b.getAttribute('data-page'));
+  });
+  // Engine description
+  toggleEngineSettings();
+}
+
+function rebuildUI() {
+  translateStatic();
+  const activePage = document.querySelector('.page.active');
+  if (activePage) {
+    const id = activePage.id.replace('page-', '');
+    if (id === 'watchlist') loadAnimes();
+    if (id === 'logs') loadLogs();
+    if (id === 'settings') loadSettings();
+  }
+  loadStatus();
+}
+
+// ── Helpers ──
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => el.className = 'toast', 3000);
+}
+
+function esc(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts,
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  return res.json();
+}
+
+function airingInfo(anime) {
+  const s = (anime.airing_status || '').toLowerCase();
+  if (s.includes('currently')) return { label: t('badge_airing'), css: 'airing' };
+  if (s.includes('finished')) return { label: t('badge_finished'), css: 'finished' };
+  if (s.includes('not yet')) return { label: t('badge_upcoming'), css: 'upcoming' };
+  return { label: t('badge_unknown'), css: 'finished' };
+}
+
+function stripSeasonText(q) {
+  return q.replace(/\b(?:season|s)\s*\d+\b/gi, '').replace(/\b\d+(?:st|nd|rd|th)\s*season\b/gi, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+// ── Nav ──
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'watchlist') loadAnimes();
+  if (name === 'logs') loadLogs();
+  if (name === 'settings') loadSettings();
+}
+
+// ── Status ──
+async function loadStatus() {
+  try {
+    const s = await api('/api/status');
+    document.getElementById('statusLastCheck').textContent = t('last_check') + ': ' + (s.lastRun ? new Date(s.lastRun).toLocaleTimeString() : '--');
+    document.getElementById('statusNextCheck').textContent = t('next_check') + ': ' + (s.nextRun ? new Date(s.nextRun).toLocaleTimeString() : '--');
+  } catch {}
+}
+
+// ── Folder Browser ──
+let folderTargetInput = null;
+let folderCurrentPath = '';
+
+function openFolderPicker(inputId) {
+  folderTargetInput = inputId;
+  const currentVal = document.getElementById(inputId).value;
+  document.getElementById('folderModal').classList.add('open');
+  document.getElementById('newFolderName').value = '';
+  browseTo(currentVal || '');
+}
+
+function closeFolderPicker() { document.getElementById('folderModal').classList.remove('open'); }
+
+function selectCurrentFolder() {
+  if (folderTargetInput && folderCurrentPath) {
+    document.getElementById(folderTargetInput).value = folderCurrentPath;
+  }
+  closeFolderPicker();
+}
+
+async function browseTo(dirPath) {
+  const url = '/api/browse' + (dirPath ? '?path=' + encodeURIComponent(dirPath) : '');
+  try {
+    const data = await api(url);
+    if (data.error) { toast(data.error, true); return; }
+    folderCurrentPath = data.current;
+    document.getElementById('browserPath').textContent = data.current;
+    const list = document.getElementById('folderList');
+    list.innerHTML = '';
+
+    if (data.parent) {
+      const el = document.createElement('div');
+      el.className = 'folder-item parent-item';
+      el.innerHTML = `<span style="width:22px;text-align:center;flex-shrink:0">..</span><span>${t('parent_folder')}</span>`;
+      el.addEventListener('click', () => browseTo(data.parent));
+      list.appendChild(el);
+    }
+
+    if (data.folders.length === 0) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'padding:16px;color:var(--text2);text-align:center';
+      empty.textContent = t('no_subfolders');
+      list.appendChild(empty);
+    }
+
+    for (const f of data.folders) {
+      const el = document.createElement('div');
+      el.className = 'folder-item';
+      el.innerHTML = `<span style="width:22px;text-align:center;flex-shrink:0">&#128193;</span><span>${esc(f.name)}</span>`;
+      el.addEventListener('click', () => {
+        list.querySelectorAll('.folder-item').forEach(i => i.style.background = '');
+        el.style.background = 'var(--surface2)';
+        folderCurrentPath = f.path;
+        document.getElementById('browserPath').textContent = f.path;
+      });
+      el.addEventListener('dblclick', () => browseTo(f.path));
+      list.appendChild(el);
+    }
+  } catch (e) { toast('Browse error: ' + e.message, true); }
+}
+
+async function createFolder() {
+  const name = document.getElementById('newFolderName').value.trim();
+  if (!name) return;
+  const sep = folderCurrentPath.endsWith('/') ? '' : '/';
+  try {
+    const res = await api('/api/browse/mkdir', { method: 'POST', body: { path: folderCurrentPath + sep + name } });
+    if (res.error) { toast(res.error, true); return; }
+    document.getElementById('newFolderName').value = '';
+    browseTo(folderCurrentPath);
+    toast(t('folder_created'));
+  } catch (e) { toast(e.message, true); }
+}
+
+// ═══════════════════════════════════
+// ═══ WIZARD (Add Anime) ══════════
+// ═══════════════════════════════════
+let wizardAnime = null; // selected anime from Jikan
+
+function openWizard() {
+  wizardAnime = null;
+  document.getElementById('wizardOverlay').classList.add('open');
+  document.getElementById('wizardSearch').value = '';
+  document.getElementById('wizardGrid').innerHTML = `<div class="empty">${t('search_anime_placeholder')}</div>`;
+  document.getElementById('wizardSearchLoading').style.display = 'none';
+  document.getElementById('step1Footer').style.display = 'none';
+  document.getElementById('wFansub').value = 'Erai-raws';
+  document.getElementById('wCustomFansubWrap').style.display = 'none';
+  document.getElementById('wQuality').value = '1080p';
+  document.getElementById('wLastEp').value = '0';
+  document.getElementById('wFolder').value = '';
+  goToStep(1);
+  setTimeout(() => document.getElementById('wizardSearch').focus(), 100);
+}
+
+function closeWizard() {
+  stopProgressPoll();
+  document.getElementById('wizardOverlay').classList.remove('open');
+}
+
+function goToStep(n) {
+  [1,2,3,4].forEach(i => {
+    const step = document.getElementById('step' + i);
+    if (step) step.classList.toggle('active', i === n);
+    const tab = document.getElementById('stepTab' + i);
+    if (tab) {
+      tab.classList.remove('active', 'done');
+      if (i < n) tab.classList.add('done');
+      if (i === n) tab.classList.add('active');
+    }
+  });
+
+  // Hide steps bar on step 4 (post-save)
+  document.getElementById('wizardSteps').style.display = n === 4 ? 'none' : '';
+
+  if (n === 2) buildConfigStep();
+  if (n === 3) buildSummaryStep();
+}
+
+// Step 1: Search
+async function wizardDoSearch() {
+  const q = document.getElementById('wizardSearch').value.trim();
+  if (!q) return;
+
+  document.getElementById('wizardSearchLoading').style.display = 'block';
+  document.getElementById('wizardGrid').innerHTML = '';
+  document.getElementById('step1Footer').style.display = 'none';
+  wizardAnime = null;
+
+  try {
+    const results = await api('/api/anime/search?q=' + encodeURIComponent(q));
+    document.getElementById('wizardSearchLoading').style.display = 'none';
+
+    if (results.error) throw new Error(results.error);
+    if (!results.length) {
+      document.getElementById('wizardGrid').innerHTML = `<div class="empty">${t('no_anime_found')}</div>`;
+      return;
+    }
+
+    const grid = document.getElementById('wizardGrid');
+    grid.innerHTML = '';
+
+    for (const a of results) {
+      const card = document.createElement('div');
+      card.className = 'anime-result';
+      const img = a.images?.jpg?.large_image_url || a.images?.jpg?.image_url || '';
+      const eps = a.episodes || '?';
+      const score = a.score || '-';
+      const year = a.year || (a.aired?.from ? new Date(a.aired.from).getFullYear() : '');
+      const type = a.type || '';
+
+      card.innerHTML = `
+        <div class="selected-check">&#10003;</div>
+        <img src="${esc(img)}" alt="" loading="lazy" onerror="this.style.background='var(--surface2)'">
+        <div class="anime-result-info">
+          <h4>${esc(a.title)}</h4>
+          <div class="anime-result-meta">
+            <span class="star">&#9733; ${score}</span>
+            <span>${eps} ${t('eps')}</span>
+            ${type ? `<span>${esc(type)}</span>` : ''}
+            ${year ? `<span>${year}</span>` : ''}
+          </div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        grid.querySelectorAll('.anime-result').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        // Auto-detect season number from title or Jikan's "season" field
+        let seasonNum = 1;
+        const titleLower = (a.title || '').toLowerCase();
+        // Check for "2nd Season", "3rd Season", "Season 2", "Part 2", "S2" patterns
+        const ordMatch = titleLower.match(/(\d+)(?:st|nd|rd|th)\s*season/);
+        const sMatch = titleLower.match(/season\s*(\d+)/);
+        const partMatch = titleLower.match(/part\s*(\d+)/);
+        const romanMatch = titleLower.match(/\b(ii|iii|iv|v)\b/);
+        if (ordMatch) seasonNum = parseInt(ordMatch[1]);
+        else if (sMatch) seasonNum = parseInt(sMatch[1]);
+        else if (partMatch) seasonNum = parseInt(partMatch[1]);
+        else if (romanMatch) {
+          const rom = { ii: 2, iii: 3, iv: 4, v: 5 };
+          seasonNum = rom[romanMatch[1]] || 1;
+        }
+        // If Jikan says this has sequels/prequels, it's likely not season 1
+        // But the title patterns above cover most cases
+
+        wizardAnime = {
+          mal_id: a.mal_id,
+          title: a.title,
+          title_english: a.title_english,
+          image_url: img,
+          episodes: a.episodes,
+          score: a.score,
+          synopsis: a.synopsis,
+          year: year,
+          type: type,
+          season: seasonNum,
+          airing_status: a.status,  // "Finished Airing", "Currently Airing", "Not yet aired"
+        };
+        document.getElementById('step1Footer').style.display = 'flex';
+      });
+
+      grid.appendChild(card);
+    }
+  } catch (e) {
+    document.getElementById('wizardSearchLoading').style.display = 'none';
+    document.getElementById('wizardGrid').innerHTML = `<div class="empty" style="color:var(--red)">${esc(e.message)}</div>`;
+  }
+}
+
+// Step 2: Config
+function buildConfigStep() {
+  if (!wizardAnime) { goToStep(1); toast('Select an anime first', true); return; }
+
+  const a = wizardAnime;
+  const synopsis = a.synopsis ? (a.synopsis.length > 200 ? a.synopsis.substring(0, 200) + '...' : a.synopsis) : '';
+
+  document.getElementById('configHeader').innerHTML = `
+    <img src="${esc(a.image_url)}" class="config-poster" alt="">
+    <div class="config-info">
+      <h3>${esc(a.title)}</h3>
+      <div class="config-stats">
+        <span class="star">&#9733; ${a.score || '-'}</span>
+        <span>${a.episodes || '?'} episodes</span>
+        <span>${esc(a.type || '')}</span>
+        <span>${a.year || ''}</span>
+        <span>${esc(a.status || '')}</span>
+      </div>
+      <p>${esc(synopsis)}</p>
+    </div>
+  `;
+}
+
+document.getElementById('wFansub').addEventListener('change', function() {
+  document.getElementById('wCustomFansubWrap').style.display = this.value === '__custom' ? '' : 'none';
+});
+
+// Step 3: Summary
+function buildSummaryStep() {
+  if (!wizardAnime) { goToStep(1); return; }
+  const a = wizardAnime;
+
+  let fansub = document.getElementById('wFansub').value;
+  if (fansub === '__custom') fansub = document.getElementById('wFansubCustom').value || 'Erai-raws';
+  const quality = document.getElementById('wQuality').value;
+  const lastEp = document.getElementById('wLastEp').value;
+  const folder = document.getElementById('wFolder').value;
+
+  document.getElementById('summaryContent').innerHTML = `
+    <div class="summary-card">
+      <img src="${esc(a.image_url)}" class="summary-poster" alt="">
+      <div class="summary-details">
+        <h3>${esc(a.title)}</h3>
+        <div class="summary-row"><span class="summary-label">${t('summary_fansub')}</span><span class="summary-value">${esc(fansub)}</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_quality')}</span><span class="summary-value">${esc(quality)}</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_season')}</span><span class="summary-value">${a.season} (${t('summary_auto')})</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_start_ep')}</span><span class="summary-value">${lastEp == 0 ? t('summary_download_all') : t('summary_after_ep') + ' ' + lastEp}</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_total_eps')}</span><span class="summary-value">${a.episodes || t('summary_ongoing')}</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_folder')}</span><span class="summary-value">${folder ? esc(folder) : t('summary_default')}</span></div>
+        <div class="summary-row"><span class="summary-label">${t('summary_score')}</span><span class="summary-value">&#9733; ${a.score || '-'}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+async function wizardSave() {
+  if (!wizardAnime) return;
+  const a = wizardAnime;
+
+  let fansub = document.getElementById('wFansub').value;
+  if (fansub === '__custom') fansub = document.getElementById('wFansubCustom').value || 'Erai-raws';
+
+  const data = {
+    name: a.title,
+    search_query: a.title,
+    fansub_group: fansub,
+    quality: document.getElementById('wQuality').value,
+    season: a.season || 1,
+    last_downloaded_episode: parseInt(document.getElementById('wLastEp').value) || 0,
+    download_folder: document.getElementById('wFolder').value.trim(),
+    image_url: a.image_url,
+    mal_id: a.mal_id,
+    total_episodes: a.episodes,
+    score: a.score,
+    synopsis: a.synopsis,
+    airing_status: a.airing_status,
+  };
+
+  // Go to step 4: post-save progress
+  goToStep(4);
+  const container = document.getElementById('postSaveContent');
+
+  function renderProgress(steps) {
+    return `
+      <div class="post-save-card">
+        <img src="${esc(a.image_url)}" style="width:80px;height:110px;border-radius:8px;object-fit:cover;margin-bottom:12px">
+        <h3>${esc(a.title)}</h3>
+        <p>${esc(fansub)} &middot; ${esc(data.quality)}</p>
+        <div class="progress-steps">
+          ${steps.map(s => `
+            <div class="progress-step ${s.status}">
+              <div class="progress-dot">${s.status === 'done' ? '&#10003;' : s.status === 'error' ? '!' : s.status === 'active' ? '<div class="spinner" style="width:14px;height:14px;border-width:2px"></div>' : ''}</div>
+              <div class="progress-text">
+                <div class="label">${s.label}</div>
+                ${s.detail ? `<div class="detail">${s.detail}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  const steps = [
+    { label: t('ws_adding'), detail: '', status: 'active' },
+    { label: t('ws_checking'), detail: '', status: '' },
+    { label: t('ws_downloading'), detail: '', status: '' },
+    { label: t('ws_starting'), detail: '', status: '' },
+  ];
+
+  container.innerHTML = renderProgress(steps);
+
+  // Step 1: Save to DB
+  let animeId;
+  try {
+    const res = await api('/api/animes', { method: 'POST', body: data });
+    animeId = res.id;
+    steps[0] = { label: t('ws_added'), detail: '', status: 'done' };
+    steps[1].status = 'active';
+    container.innerHTML = renderProgress(steps);
+  } catch (e) {
+    steps[0] = { label: t('ws_failed_add'), detail: e.message, status: 'error' };
+    container.innerHTML = renderProgress(steps);
+    addPostSaveFooter(container, false);
+    return;
+  }
+
+  // Step 2: Check for episodes (trigger a check)
+  let checkResults;
+  try {
+    checkResults = await api('/api/check', { method: 'POST' });
+    const found = Array.isArray(checkResults)
+      ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
+      : 0;
+    steps[1] = { label: t('ws_check_done'), detail: t('ws_episodes_found', { n: found }), status: 'done' };
+    steps[2] = { label: found > 0 ? t('ws_torrents_done') : t('ws_no_torrents'), detail: found > 0 ? t('ws_torrent_files', { n: found }) : t('ws_up_to_date'), status: 'done' };
+    container.innerHTML = renderProgress(steps);
+  } catch (e) {
+    steps[1] = { label: t('ws_check_failed'), detail: e.message, status: 'error' };
+    container.innerHTML = renderProgress(steps);
+    addPostSaveFooter(container, true);
+    return;
+  }
+
+  // Step 3: Check video download status
+  const settings = await api('/api/settings');
+  const found = Array.isArray(checkResults)
+    ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
+    : 0;
+
+  if (found > 0) {
+    const logs = await api(`/api/animes/${animeId}/downloads`);
+    const successes = logs.filter(l => l.status === 'success').length;
+    const errors = logs.filter(l => l.status === 'failed').length;
+
+    if (successes > 0) {
+      steps[3] = { label: t('ws_videos_dl'), detail: t('ws_started', { n: successes }), status: 'done' };
+    } else if (errors > 0) {
+      steps[3] = { label: t('ws_dl_error'), detail: t('ws_check_logs'), status: 'error' };
+    } else {
+      steps[3] = { label: t('ws_starting_soon'), detail: t('ws_begin_shortly'), status: 'done' };
+    }
+  } else {
+    steps[3] = { label: t('ws_no_episodes'), detail: t('ws_auto_schedule'), status: 'done' };
+  }
+
+  container.innerHTML = renderProgress(steps);
+
+  // Add live download progress section
+  if (found > 0) {
+    const dlSection = document.createElement('div');
+    dlSection.className = 'card';
+    dlSection.style.marginTop = '20px';
+    dlSection.innerHTML = `<h3 style="margin-bottom:12px">${t('dl_progress')}</h3><div id="wizardDlProgress"><div class="spinner"></div> ${t('dl_waiting')}</div>`;
+    container.appendChild(dlSection);
+
+    setTimeout(() => {
+      startProgressPoll(a.title, 'wizardDlProgress', (completed) => {
+        sendNotification(
+          `${a.title} - Downloads complete!`,
+          `${completed.length} episode(s) finished downloading`
+        );
+      });
+    }, 2000);
+  }
+
+  // Send browser notification
+  const allDone = steps.every(s => s.status === 'done');
+  sendNotification(
+    allDone ? `${a.title} is ready!` : `${a.title} added`,
+    allDone && found > 0
+      ? `${found} episode(s) are downloading now`
+      : 'Added to watchlist. Will check for new episodes automatically.'
+  );
+
+  addPostSaveFooter(container, true);
+  loadAnimes();
+  loadStatus();
+}
+
+function addPostSaveFooter(container, showDone) {
+  const footer = document.createElement('div');
+  footer.style.cssText = 'display:flex;justify-content:center;gap:12px;margin-top:20px';
+  if (showDone) {
+    footer.innerHTML = `
+      <button class="btn btn-secondary" onclick="openWizard()">${t('add_another')}</button>
+      <button class="btn btn-primary" onclick="closeWizard()">${t('done')}</button>
+    `;
+  } else {
+    footer.innerHTML = `<button class="btn btn-primary" onclick="closeWizard()">${t('close')}</button>`;
+  }
+  container.appendChild(footer);
+}
+
+// Browser notifications
+function sendNotification(title, body) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    new Notification(title, { body, icon: wizardAnime?.image_url || '' });
+  } else if (Notification.permission !== 'denied') {
+    Notification.requestPermission().then(p => {
+      if (p === 'granted') new Notification(title, { body, icon: wizardAnime?.image_url || '' });
+    });
+  }
+}
+
+// Request notification permission on first load
+if ('Notification' in window && Notification.permission === 'default') {
+  // Will ask on first wizard save
+}
+
+// ═══════════════════════════════════
+// ═══ DOWNLOAD PROGRESS ══════════
+// ═══════════════════════════════════
+let progressPollTimer = null;
+let activeDownloads = [];
+
+function formatBytes(bytes) {
+  if (!bytes || bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+}
+
+function formatEta(seconds) {
+  if (!seconds || seconds >= 8640000) return '';
+  if (seconds < 60) return seconds + 's';
+  if (seconds < 3600) return Math.floor(seconds / 60) + 'm ' + (seconds % 60) + 's';
+  return Math.floor(seconds / 3600) + 'h ' + Math.floor((seconds % 3600) / 60) + 'm';
+}
+
+function mapState(state) {
+  const map = {
+    downloading: { key: 'dl_downloading', css: 'downloading' },
+    stalledDL: { key: 'dl_stalled', css: 'stalled' },
+    pausedDL: { key: 'dl_paused', css: 'paused' },
+    queuedDL: { key: 'dl_queued', css: 'stalled' },
+    forcedDL: { key: 'dl_downloading', css: 'downloading' },
+    uploading: { key: 'dl_seeding', css: 'seeding' },
+    stalledUP: { key: 'dl_completed', css: 'complete' },
+    pausedUP: { key: 'dl_completed', css: 'complete' },
+    forcedUP: { key: 'dl_seeding', css: 'seeding' },
+    queuedUP: { key: 'dl_completed', css: 'complete' },
+    checkingDL: { key: 'dl_checking', css: 'stalled' },
+    checkingUP: { key: 'dl_checking', css: 'stalled' },
+    error: { key: 'dl_error', css: 'error' },
+    missingFiles: { key: 'dl_error', css: 'error' },
+  };
+  const m = map[state] || { key: 'dl_stalled', css: 'stalled' };
+  return { label: t(m.key), css: m.css };
+}
+
+function circleProgressSvg(pct, size = 36, stroke = 3) {
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct * circ);
+  const color = pct >= 1 ? 'var(--green)' : 'var(--accent2)';
+  return `<svg width="${size}" height="${size}">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--surface2)" stroke-width="${stroke}"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+  </svg><span class="pct">${Math.round(pct * 100)}%</span>`;
+}
+
+async function fetchDownloadProgress() {
+  try {
+    activeDownloads = await api('/api/qbt/torrents');
+    return activeDownloads;
+  } catch {
+    return [];
+  }
+}
+
+function matchTorrentsToAnime(torrents, animeName) {
+  if (!torrents.length) return [];
+
+  // Strategy 1: Match by save_path (most reliable — contains our organized folder name)
+  const safeName = animeName.replace(/[<>:"/\\|?*]/g, '').trim().toLowerCase();
+  let matched = torrents.filter(t => {
+    const sp = (t.save_path || '').toLowerCase();
+    return sp.includes(safeName);
+  });
+  if (matched.length > 0) return matched;
+
+  // Strategy 2: Match by torrent name — require ALL significant words from anime name
+  // to be present (strict matching avoids cross-contamination between seasons)
+  const words = safeName.split(/[\s\-]+/).filter(w => w.length > 2);
+  if (words.length === 0) return [];
+
+  return torrents.filter(t => {
+    const tLower = t.name.toLowerCase();
+    return words.every(w => tLower.includes(w));
+  });
+}
+
+function renderEpisodeProgress(torrents) {
+  if (!torrents.length) return `<div style="color:var(--text2);font-size:0.85rem;padding:8px 0">${t('no_active_dl')}</div>`;
+
+  return torrents.map(t => {
+    const st = mapState(t.state);
+    const pct = Math.round(t.progress * 100);
+    const isComplete = t.progress >= 1;
+    const barClass = isComplete ? (st.css === 'seeding' ? 'seeding' : 'complete') : '';
+
+    return `<div class="dl-ep">
+      <div class="circle-progress">${circleProgressSvg(t.progress)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(t.name)}">${esc(t.name)}</div>
+        <div class="dl-bar-wrap" style="margin-top:4px">
+          <div class="dl-bar ${barClass}" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="dl-info">
+        <span class="dl-state ${st.css}">${st.label}</span><br>
+        ${!isComplete && t.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(t.dlspeed)}/s</span>` : ''}
+        ${!isComplete && t.eta < 8640000 ? ` <span>${formatEta(t.eta)}</span>` : ''}
+        ${isComplete ? `<span>${formatBytes(t.size)}</span>` : `<span>${formatBytes(t.downloaded)} / ${formatBytes(t.size)}</span>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startProgressPoll(animeName, containerId, onAllComplete) {
+  stopProgressPoll();
+
+  async function poll() {
+    const torrents = await fetchDownloadProgress();
+    const matched = matchTorrentsToAnime(torrents, animeName);
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.innerHTML = renderEpisodeProgress(matched);
+    }
+
+    // Check if all matched torrents are complete
+    if (matched.length > 0 && matched.every(t => t.progress >= 1)) {
+      stopProgressPoll();
+      if (onAllComplete) onAllComplete(matched);
+    }
+  }
+
+  poll();
+  progressPollTimer = setInterval(poll, 2000);
+}
+
+function stopProgressPoll() {
+  if (progressPollTimer) {
+    clearInterval(progressPollTimer);
+    progressPollTimer = null;
+  }
+}
+
+// ═══════════════════════════════════
+// ═══ WATCHLIST ═══════════════════
+// ═══════════════════════════════════
+let wlView = localStorage.getItem('aniwatch_view') || 'grid';
+let wlRefreshTimer = null;
+
+function setView(view, btn) {
+  wlView = view;
+  localStorage.setItem('aniwatch_view', view);
+  document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadAnimes();
+}
+
+function renderDownloadsForList(downloading) {
+  if (!downloading.length) return '';
+  return `
+    <button class="dl-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      &#9660; ${t('downloading_count', { n: downloading.length })}
+    </button>
+    <div class="dl-progress-list" style="display:block">
+      ${downloading.map(t => {
+        const st = mapState(t.state);
+        const pct = Math.round(t.progress * 100);
+        return `<div class="dl-ep">
+          <div class="circle-progress">${circleProgressSvg(t.progress)}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(t.name)}">${esc(t.name)}</div>
+            <div class="dl-bar-wrap" style="margin-top:3px">
+              <div class="dl-bar" style="width:${pct}%"></div>
+            </div>
+          </div>
+          <div class="dl-info">
+            <span class="dl-state ${st.css}">${st.label}</span><br>
+            ${t.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(t.dlspeed)}/s</span> ` : ''}
+            ${t.eta < 8640000 ? `<span>${formatEta(t.eta)}</span>` : ''}
+            <span>${formatBytes(t.downloaded)}/${formatBytes(t.size)}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+async function loadAnimes() {
+  const animes = await api('/api/animes');
+  const container = document.getElementById('animeList');
+
+  if (animes.length === 0) {
+    container.innerHTML = `<div class="empty">${t('empty_watchlist')}</div>`;
+    return;
+  }
+
+  // Fetch qBittorrent torrents
+  let torrents = [];
+  try { torrents = await api('/api/qbt/torrents'); } catch {}
+
+  // Restore view toggle state
+  document.querySelectorAll('.view-toggle button').forEach(b => {
+    b.classList.toggle('active', (wlView === 'grid' && b.title === 'Grid') || (wlView === 'list' && b.title === 'List'));
+  });
+
+  if (wlView === 'grid') {
+    container.innerHTML = '<div class="wl-grid">' + animes.map(a => {
+      const matched = matchTorrentsToAnime(torrents, a.name);
+      const downloading = matched.filter(t => t.progress < 1);
+      const hasActive = downloading.length > 0;
+      const avgProgress = hasActive ? downloading.reduce((s, t) => s + t.progress, 0) / downloading.length : 0;
+      const air = airingInfo(a);
+      const isAllDone = a.total_episodes && a.last_downloaded_episode >= a.total_episodes;
+
+      return `<div class="wl-grid-card" style="${hasActive ? 'border-color:var(--accent)' : ''}">
+        <span class="grid-badge">
+          ${a.status === 'paused' ? `<span class="badge badge-paused">${t('badge_paused')}</span>` : ''}
+          ${isAllDone ? `<span class="badge badge-completed">${t('badge_complete')}</span>` : `<span class="badge badge-${air.css}">${air.label}</span>`}
+        </span>
+        ${hasActive ? `<div class="grid-dl-indicator"><div class="circle-progress" style="width:28px;height:28px">${circleProgressSvg(avgProgress, 28, 2)}</div></div>` : ''}
+        <img src="${a.image_url ? esc(a.image_url) : ''}" alt="" style="${a.image_url ? '' : 'background:var(--surface2);height:240px'}" loading="lazy">
+        <div class="grid-info">
+          <h4>${esc(a.name)}</h4>
+          <div class="grid-meta">
+            <span>EP ${a.last_downloaded_episode}${a.total_episodes ? '/' + a.total_episodes : ''}</span>
+            ${a.score ? `<span>&#9733; ${a.score}</span>` : ''}
+            <span>${esc(a.fansub_group)}</span>
+          </div>
+        </div>
+        <div class="grid-actions">
+          <button onclick="viewEpisodes(${a.id},'${esc(a.name)}')">${t('episodes')}</button>
+          ${isAllDone ? '' : `<button onclick="toggleAnime(${a.id})">${a.status === 'active' ? t('pause') : t('resume')}</button>`}
+          <button onclick="editAnime(${a.id})">${t('edit')}</button>
+          <button class="del" onclick="deleteAnime(${a.id},'${esc(a.name)}')">${t('delete')}</button>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  } else {
+    // List view
+    container.innerHTML = animes.map(a => {
+      const matched = matchTorrentsToAnime(torrents, a.name);
+      const downloading = matched.filter(t => t.progress < 1);
+      const hasActive = downloading.length > 0;
+
+      return `
+      <div class="wl-card" style="${hasActive ? 'border-color:var(--accent)' : ''}">
+        <img class="wl-poster" src="${a.image_url ? esc(a.image_url) : ''}" alt="" style="${a.image_url ? '' : 'background:var(--surface2)'}">
+        <div class="wl-info">
+          <h4>
+            ${esc(a.name)}
+            <span class="badge badge-${a.status === 'active' ? 'active' : 'paused'}">${a.status === 'active' ? t('badge_active') : t('badge_paused')}</span>
+          </h4>
+          <div class="wl-meta">
+            <span>${esc(a.fansub_group)} &middot; ${esc(a.quality)}</span>
+            <span>EP ${a.last_downloaded_episode}${a.total_episodes ? ' / ' + a.total_episodes : ''}</span>
+            ${a.score ? `<span>&#9733; ${a.score}</span>` : ''}
+          </div>
+          ${renderDownloadsForList(downloading)}
+        </div>
+        <div class="wl-actions">
+          <button class="btn btn-sm btn-secondary" onclick="viewEpisodes(${a.id},'${esc(a.name)}')">${t('episodes')}</button>
+          <button class="btn btn-sm btn-secondary" onclick="toggleAnime(${a.id})">${a.status === 'active' ? t('pause') : t('resume')}</button>
+          <button class="btn btn-sm btn-secondary" onclick="editAnime(${a.id})">${t('edit')}</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteAnime(${a.id},'${esc(a.name)}')">${t('delete')}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Auto-refresh if any downloads are active
+  if (torrents.some(t => t.progress < 1)) {
+    clearTimeout(wlRefreshTimer);
+    wlRefreshTimer = setTimeout(loadAnimes, 5000);
+  }
+}
+
+async function toggleAnime(id) {
+  await api(`/api/animes/${id}/toggle`, { method: 'POST' });
+  loadAnimes();
+}
+
+async function deleteAnime(id, name) {
+  if (!confirm(t('confirm_delete', { name }))) return;
+  await api(`/api/animes/${id}`, { method: 'DELETE' });
+  loadAnimes();
+  toast(t('deleted') + ' ' + name);
+}
+
+// ── Edit modal ──
+async function editAnime(id) {
+  const anime = (await api('/api/animes')).find(a => a.id === id);
+  if (!anime) return;
+
+  document.getElementById('editId').value = id;
+  document.getElementById('eName').value = anime.search_query;
+
+  const known = ['Erai-raws', 'SubsPlease', 'Judas'];
+  if (known.includes(anime.fansub_group)) {
+    document.getElementById('eFansub').value = anime.fansub_group;
+    document.getElementById('eCustomWrap').style.display = 'none';
+  } else {
+    document.getElementById('eFansub').value = '__custom';
+    document.getElementById('eFansubCustom').value = anime.fansub_group;
+    document.getElementById('eCustomWrap').style.display = '';
+  }
+
+  document.getElementById('eQuality').value = anime.quality;
+  document.getElementById('eSeason').value = anime.season;
+  document.getElementById('eLastEp').value = anime.last_downloaded_episode;
+  document.getElementById('eFolder').value = anime.download_folder || '';
+  document.getElementById('editModal').classList.add('open');
+}
+
+document.getElementById('eFansub').addEventListener('change', function() {
+  document.getElementById('eCustomWrap').style.display = this.value === '__custom' ? '' : 'none';
+});
+
+function closeEdit() { document.getElementById('editModal').classList.remove('open'); }
+
+async function saveEdit() {
+  const id = document.getElementById('editId').value;
+  let fansub = document.getElementById('eFansub').value;
+  if (fansub === '__custom') fansub = document.getElementById('eFansubCustom').value;
+
+  await api(`/api/animes/${id}`, { method: 'PUT', body: {
+    search_query: document.getElementById('eName').value.trim(),
+    fansub_group: fansub,
+    quality: document.getElementById('eQuality').value,
+    season: parseInt(document.getElementById('eSeason').value) || 1,
+    last_downloaded_episode: parseInt(document.getElementById('eLastEp').value) || 0,
+    download_folder: document.getElementById('eFolder').value.trim(),
+  }});
+
+  closeEdit();
+  loadAnimes();
+  toast(t('updated'));
+}
+
+// ── Episodes Modal ──
+async function viewEpisodes(animeId, name) {
+  document.getElementById('epModalTitle').textContent = name + ' - ' + t('episodes_title');
+  const container = document.getElementById('episodesList');
+  container.innerHTML = '<div class="spinner"></div>';
+  document.getElementById('episodesModal').classList.add('open');
+
+  const episodes = await api(`/api/animes/${animeId}/episodes`);
+  if (episodes.length === 0) {
+    container.innerHTML = `<div class="empty">${t('no_episodes')}</div>`;
+    return;
+  }
+
+  container.innerHTML = `<table><thead><tr><th>${t('th_ep')}</th><th>${t('th_title')}</th><th>${t('th_size')}</th><th>${t('th_downloaded')}</th></tr></thead><tbody>
+    ${episodes.map(e => `<tr>
+      <td><strong>${e.episode_number}</strong></td>
+      <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(e.title)}">${esc(e.title)}</td>
+      <td>${esc(e.file_size)}</td>
+      <td>${new Date(e.downloaded_at).toLocaleString()}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ── Nyaa Search Page ──
+async function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) return;
+  document.getElementById('searchLoading').style.display = 'block';
+  document.getElementById('searchResults').innerHTML = '';
+
+  try {
+    const results = await api('/api/search?q=' + encodeURIComponent(q));
+    document.getElementById('searchLoading').style.display = 'none';
+    if (results.error) throw new Error(results.error);
+    if (!results.length) {
+      document.getElementById('searchResults').innerHTML = `<div class="empty">${t('no_results')}</div>`;
+      return;
+    }
+    document.getElementById('searchResults').innerHTML = `<table><thead><tr><th>${t('th_title')}</th><th>${t('th_size')}</th><th>${t('th_seeders')}</th><th>${t('th_date')}</th></tr></thead><tbody>
+      ${results.map(r => `<tr>
+        <td style="max-width:500px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.title)}">
+          <a href="${esc(r.link)}" target="_blank" style="color:var(--accent2);text-decoration:none">${esc(r.title)}</a>
+        </td>
+        <td>${esc(r.size)}</td><td>${r.seeders}</td>
+        <td>${r.published ? new Date(r.published).toLocaleDateString() : ''}</td>
+      </tr>`).join('')}
+    </tbody></table>`;
+  } catch (e) {
+    document.getElementById('searchLoading').style.display = 'none';
+    document.getElementById('searchResults').innerHTML = `<div class="empty" style="color:var(--red)">${esc(e.message)}</div>`;
+  }
+}
+
+// ── Logs ──
+async function loadLogs() {
+  const logs = await api('/api/downloads');
+  const container = document.getElementById('logsList');
+  if (!logs.length) { container.innerHTML = `<div class="empty">${t('no_logs')}</div>`; return; }
+  container.innerHTML = `<div class="card"><table><thead><tr><th>${t('th_time')}</th><th>${t('th_anime')}</th><th>${t('th_ep')}</th><th>${t('th_status')}</th><th>${t('th_message')}</th></tr></thead><tbody>
+    ${logs.map(l => `<tr>
+      <td style="white-space:nowrap">${new Date(l.created_at).toLocaleString()}</td>
+      <td>${esc(l.anime_name || '')}</td>
+      <td>${l.episode_number || '-'}</td>
+      <td><span class="badge badge-${l.status === 'success' ? 'active' : 'error'}">${l.status}</span></td>
+      <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(l.message)}">${esc(l.message)}</td>
+    </tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+// ── Settings ──
+async function loadSettings() {
+  const s = await api('/api/settings');
+  document.getElementById('setEngine').value = s.download_engine || 'builtin';
+  document.getElementById('setQbtUrl').value = s.qbittorrent_url || '';
+  document.getElementById('setQbtUser').value = s.qbittorrent_username || 'admin';
+  document.getElementById('setQbtPass').value = s.qbittorrent_password || '';
+  document.getElementById('setWatchFolder').value = s.qbittorrent_watch_folder || '';
+  document.getElementById('setDefaultFolder').value = s.default_download_folder || '';
+  document.getElementById('setCronInterval').value = s.cron_interval || '60';
+  document.getElementById('setLang').value = currentLang;
+  toggleEngineSettings();
+}
+
+function toggleEngineSettings() {
+  const engine = document.getElementById('setEngine').value;
+  document.getElementById('qbtSettings').style.display = engine === 'qbittorrent' ? '' : 'none';
+  document.getElementById('engineDesc').textContent = engine === 'builtin'
+    ? t('engine_desc_builtin')
+    : t('engine_desc_qbt');
+}
+
+async function saveSettings() {
+  await api('/api/settings/bulk', { method: 'PUT', body: {
+    download_engine: document.getElementById('setEngine').value,
+    qbittorrent_url: document.getElementById('setQbtUrl').value.trim(),
+    qbittorrent_username: document.getElementById('setQbtUser').value.trim(),
+    qbittorrent_password: document.getElementById('setQbtPass').value,
+    qbittorrent_watch_folder: document.getElementById('setWatchFolder').value.trim(),
+    default_download_folder: document.getElementById('setDefaultFolder').value.trim(),
+    cron_interval: document.getElementById('setCronInterval').value,
+  }});
+  toast(t('settings_saved'));
+  loadStatus();
+}
+
+async function testQbt() {
+  const statusEl = document.getElementById('qbtStatus');
+  const url = document.getElementById('setQbtUrl').value.trim();
+  const user = document.getElementById('setQbtUser').value.trim();
+  const pass = document.getElementById('setQbtPass').value;
+
+  if (!url) { toast(t('qbt_url'), true); return; }
+
+  statusEl.innerHTML = `<span class="spinner"></span> ${t('testing')}`;
+  statusEl.style.color = 'var(--text2)';
+
+  try {
+    const res = await api('/api/qbt/test', { method: 'POST', body: { url, username: user, password: pass } });
+    if (res.error) throw new Error(res.error);
+    statusEl.textContent = t('connected') + ' ' + (res.version || '');
+    statusEl.style.color = 'var(--green)';
+  } catch (e) {
+    statusEl.textContent = t('connection_failed') + ' ' + e.message;
+    statusEl.style.color = 'var(--red)';
+  }
+}
+
+// ── Manual check ──
+async function runManualCheck() {
+  toast(t('running_check'));
+  try {
+    const results = await api('/api/check', { method: 'POST' });
+    if (results.skipped) { toast(t('check_running')); }
+    else if (Array.isArray(results)) {
+      const total = results.reduce((s, r) => s + (r.episodes || 0), 0);
+      toast(t('check_complete', { n: total }));
+      if (total > 0) {
+        const names = results.filter(r => r.episodes > 0).map(r => r.anime).join(', ');
+        sendNotification(t('notif_new_eps'), t('notif_eps_dl', { n: total }) + ' ' + names);
+      }
+    } else { toast(t('check_done')); }
+    loadStatus();
+    loadAnimes();
+  } catch (e) { toast(t('check_failed') + ' ' + e.message, true); }
+}
+
+// ── Modal overlay clicks ──
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', (e) => {
+    if (e.target === el) el.classList.remove('open');
+  });
+});
+
+// ── Init ──
+translateStatic();
+loadAnimes();
+loadStatus();
+setInterval(loadStatus, 60000);
+</script>
+</body>
+</html>
