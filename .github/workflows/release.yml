@@ -73,9 +73,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: |
-            dist/*.dmg
-            dist/*.zip
+          path: dist/*.zip
 
   release:
     needs: [build-windows, build-mac]
@@ -93,5 +91,4 @@ jobs:
           generate_release_notes: true
           files: |
             artifacts/windows-portable/*.exe
-            artifacts/macos-build/*.dmg
             artifacts/macos-build/*.zip
