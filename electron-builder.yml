@@ -1,0 +1,43 @@
+appId: com.kuroseed.app
+productName: KuroSeed
+copyright: Copyright © 2024
+
+directories:
+  output: dist
+
+files:
+  - "**/*"
+  - "!dist/**"
+  - "!downloads/**"
+  - "!torrents/**"
+  - "!*.db"
+  - "!*.db-shm"
+  - "!*.db-wal"
+  - "!docs/**"
+  - "!.git/**"
+
+asar: true
+
+mac:
+  category: public.app-category.utilities
+  target:
+    - dmg
+    - zip
+  icon: build/icon.icns
+
+win:
+  target:
+    - nsis
+  icon: build/icon-256.png
+
+nsis:
+  oneClick: true
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+linux:
+  target:
+    - AppImage
+  category: Utility
+  icon: build/icon-512.png

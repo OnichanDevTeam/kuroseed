@@ -5,3 +5,5 @@ node_modules/
 torrents/
 downloads/
 .DS_Store
+dist/
+build/
