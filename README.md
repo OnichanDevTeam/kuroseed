@@ -1,8 +1,8 @@
-# KuroSeed
-
 <p align="center">
-  <img src="public/favicon.svg" width="80" alt="KuroSeed">
+  <img src="public/favicon.svg" width="120" alt="KuroSeed">
 </p>
+
+<h1 align="center">KuroSeed</h1>
 
 <p align="center">
   <strong>Descargador automatico de anime con motor de torrents integrado</strong><br>
@@ -10,9 +10,41 @@
 </p>
 
 <p align="center">
-  <a href="https://onilabs.site">Creado por onilabs.site</a> ·
-  <a href="https://ko-fi.com/onilabs">Apoyanos en Ko-fi</a>
+  <a href="https://github.com/OnichanDevTeam/kuroseed/stargazers">
+    <img src="https://img.shields.io/github/stars/OnichanDevTeam/kuroseed?style=for-the-badge&logo=github&color=6c5ce7&labelColor=0f0f13" alt="Stars">
+  </a>
+  <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest">
+    <img src="https://img.shields.io/github/v/release/OnichanDevTeam/kuroseed?style=for-the-badge&color=a29bfe&labelColor=0f0f13" alt="Release">
+  </a>
+  <a href="https://github.com/OnichanDevTeam/kuroseed/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/OnichanDevTeam/kuroseed?style=for-the-badge&color=00b894&labelColor=0f0f13" alt="License">
+  </a>
 </p>
+
+---
+
+## Descargar
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <h3>Windows</h3>
+      <p>Portable — un solo <code>.exe</code>, sin instalacion</p>
+      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed.1.0.1.exe">
+        <img src="https://img.shields.io/badge/Descargar_Windows-6c5ce7?style=for-the-badge&logo=windows&logoColor=white" alt="Descargar Windows">
+      </a>
+    </td>
+    <td align="center" width="50%">
+      <h3>macOS</h3>
+      <p>DMG — arrastra a Aplicaciones</p>
+      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed-1.0.1.dmg">
+        <img src="https://img.shields.io/badge/Descargar_macOS-a29bfe?style=for-the-badge&logo=apple&logoColor=white" alt="Descargar macOS">
+      </a>
+    </td>
+  </tr>
+</table>
+
+> Tambien puedes ver todas las versiones en [**Releases**](https://github.com/OnichanDevTeam/kuroseed/releases).
 
 ---
 
@@ -21,17 +53,6 @@
 KuroSeed monitorea los feeds RSS de Nyaa.si y descarga automaticamente nuevos episodios de anime conforme se publican. Todo corre en tu maquina local — sin servidores en la nube, sin suscripciones, sin cuentas.
 
 Busca un anime por nombre, seleccionalo, y KuroSeed se encarga del resto: verificar nuevos episodios, descargar torrents y organizar tus archivos.
-
-## Inicio Rapido
-
-```bash
-git clone https://github.com/OnichanDevTeam/kuroseed.git
-cd kuroseed
-npm install
-node index.js
-```
-
-Abre **http://localhost:3000** en tu navegador.
 
 ## Caracteristicas
 
@@ -46,6 +67,17 @@ Abre **http://localhost:3000** en tu navegador.
 - **Vista grid y lista** — Cambia entre grid de portadas y lista detallada
 - **Bilingue** — Interfaz en ingles y espanol
 - **qBittorrent opcional** — Usa el motor integrado o conecta qBittorrent si prefieres
+
+## Inicio Rapido (modo desarrollo)
+
+```bash
+git clone https://github.com/OnichanDevTeam/kuroseed.git
+cd kuroseed
+npm install
+node index.js
+```
+
+Abre **http://localhost:3000** en tu navegador.
 
 ## Privacidad y Datos
 
@@ -69,21 +101,17 @@ Sin telemetria. Sin analytics. Sin cuentas de usuario. Ningun dato sale de tu ma
 - **[Arquitectura](docs/ARCHITECTURE.md)** — Diseno del sistema, responsabilidades de modulos, diagramas de flujo
 - **[Como Funciona](docs/HOW-IT-WORKS.md)** — Explicacion paso a paso del pipeline de descarga
 
-## Requisitos del Sistema
+## Primera ejecucion
 
-- **Node.js** 18+
-- **macOS / Windows / Linux**
-- Conexion a internet para RSS de Nyaa.si y descarga de torrents
+### Windows
+Windows Firewall mostrara un dialogo para permitir la app — marca **Redes privadas** y dale **Permitir acceso**.
 
-### Primera ejecucion en macOS
-macOS pedira permiso para permitir conexiones de red entrantes a Node.js — dale **Allow**. Es necesario para que el motor de torrents reciba datos de los peers.
-
-### Primera ejecucion en Windows
-Windows Firewall mostrara un dialogo para permitir Node.js — marca **Redes privadas** y dale **Permitir acceso**.
+### macOS
+macOS pedira permiso para permitir conexiones de red entrantes — dale **Allow**. Es necesario para que el motor de torrents reciba datos de los peers.
 
 ## Configuracion
 
-Todos los ajustes estan en la UI web en **Ajustes**:
+Todos los ajustes estan en la UI en **Ajustes**:
 
 | Ajuste | Descripcion |
 |--------|-------------|
@@ -92,15 +120,20 @@ Todos los ajustes estan en la UI web en **Ajustes**:
 | Intervalo de Verificacion | Cada cuanto buscar nuevos episodios |
 | Idioma | Ingles o Espanol |
 
-## Apoya el Proyecto
+---
 
-Si KuroSeed te es util, considera apoyar el desarrollo:
+## Dale una estrella
 
-<a href="https://ko-fi.com/onilabs">
-  <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Apoyar en Ko-fi">
-</a>
+Si KuroSeed te es util, regalanos una estrella — nos ayuda a crecer y motiva el desarrollo.
 
-Cada aporte nos ayuda a seguir construyendo herramientas libres y de codigo abierto.
+<p align="center">
+  <a href="https://github.com/OnichanDevTeam/kuroseed/stargazers">
+    <img src="https://img.shields.io/badge/Dale_una_%E2%AD%90_en_GitHub-6c5ce7?style=for-the-badge&logo=github&logoColor=white" alt="Star en GitHub">
+  </a>
+  <a href="https://ko-fi.com/onilabs">
+    <img src="https://img.shields.io/badge/Apoyar_en_Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi">
+  </a>
+</p>
 
 ## Licencia
 

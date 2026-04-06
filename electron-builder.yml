@@ -17,27 +17,24 @@ files:
   - "!.git/**"
 
 asar: true
+npmRebuild: true
+buildDependenciesFromSource: true
+
+icon: build/icon.png
+afterPack: ./scripts/after-pack.js
 
 mac:
   category: public.app-category.utilities
   target:
     - dmg
     - zip
-  icon: build/icon.icns
 
 win:
   target:
-    - nsis
-  icon: build/icon-256.png
-
-nsis:
-  oneClick: true
-  allowToChangeInstallationDirectory: false
-  createDesktopShortcut: true
-  createStartMenuShortcut: true
+    - portable
+  signAndEditExecutable: false
 
 linux:
   target:
     - AppImage
   category: Utility
-  icon: build/icon-512.png

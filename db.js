@@ -1,7 +1,29 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const fs = require('fs');
 
-const db = new Database(path.join(__dirname, 'kuroseed.db'));
+function getDatabasePath() {
+  // Dev/server mode keeps DB in project root for easy inspection.
+  if (!process.versions.electron) {
+    return path.join(__dirname, 'kuroseed.db');
+  }
+
+  // Installed Electron app should store writable data in user profile.
+  try {
+    const { app } = require('electron');
+    if (app) {
+      return path.join(app.getPath('userData'), 'kuroseed.db');
+    }
+  } catch {}
+
+  // Fallback for rare early-init cases.
+  const appData = process.env.APPDATA || process.env.LOCALAPPDATA || __dirname;
+  return path.join(appData, 'KuroSeed', 'kuroseed.db');
+}
+
+const dbPath = getDatabasePath();
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+const db = new Database(dbPath);
 
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');

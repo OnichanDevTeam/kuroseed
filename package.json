@@ -1,25 +1,29 @@
 {
   "name": "kuroseed",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local anime auto-downloader with Nyaa.si RSS and built-in torrent engine",
+  "author": "OnichanDevTeam",
   "main": "electron-main.js",
   "scripts": {
     "start": "node index.js",
     "electron:dev": "electron .",
-    "electron:build": "electron-builder",
-    "electron:build:win": "electron-builder --win",
-    "electron:build:mac": "electron-builder --mac",
+    "electron:build": "electron-builder install-app-deps && electron-builder",
+    "electron:build:win": "electron-builder install-app-deps && electron-builder --win",
+    "electron:build:mac": "electron-builder install-app-deps && electron-builder --mac",
+    "electron:icons": "node scripts/generate-icons.js",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "better-sqlite3": "^11.7.0",
-    "express": "^4.21.0",
-    "fast-xml-parser": "^4.5.0",
-    "node-cron": "^3.0.3",
-    "webtorrent": "^2.8.5"
+    "better-sqlite3": "11.7.0",
+    "express": "4.21.0",
+    "fast-xml-parser": "4.5.0",
+    "node-cron": "3.0.3",
+    "webtorrent": "2.8.5"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "electron-builder": "^25.0.0"
+    "electron": "33.0.0",
+    "electron-builder": "25.0.0",
+    "rcedit": "5.0.2",
+    "sharp": "0.33.5"
   }
 }

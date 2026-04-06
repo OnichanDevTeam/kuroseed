@@ -415,18 +415,23 @@ app.get('/api/status', (req, res) => {
 // ── Start ──────────────────────────────────────────────
 function startServer(port) {
   const p = port || PORT;
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const server = app.listen(p, () => {
-      console.log(`[KuroSeed] Server running at http://localhost:${p}`);
+      const actualPort = server.address()?.port || p;
+      console.log(`[KuroSeed] Server running at http://localhost:${actualPort}`);
       startCron();
-      resolve(server);
+      resolve({ server, port: actualPort });
     });
+    server.on('error', (err) => reject(err));
   });
 }
 
 // Auto-start only when run directly (not required by Electron)
 if (require.main === module) {
-  startServer();
+  startServer().catch((err) => {
+    console.error('[KuroSeed] Failed to start server:', err?.message || err);
+    process.exitCode = 1;
+  });
 }
 
 module.exports = { startServer };
