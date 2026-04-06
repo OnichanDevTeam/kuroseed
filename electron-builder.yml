@@ -25,6 +25,7 @@ afterPack: ./scripts/after-pack.js
 mac:
   category: public.app-category.utilities
   target:
+    - dmg
     - zip
 
 win:

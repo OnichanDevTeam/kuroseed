@@ -36,8 +36,8 @@
     </td>
     <td align="center" width="50%">
       <h3>macOS</h3>
-      <p>ZIP — descomprime y ejecuta</p>
-      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed-1.0.1-mac.zip">
+      <p>DMG — arrastra a Aplicaciones</p>
+      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed-1.0.1.dmg">
         <img src="https://img.shields.io/badge/Descargar_macOS-a29bfe?style=for-the-badge&logo=apple&logoColor=white" alt="Descargar macOS">
       </a>
     </td>
