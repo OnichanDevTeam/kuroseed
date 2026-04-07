@@ -239,10 +239,97 @@ async function downloadAndSave(url, anime, episodeNumber, settings) {
   return { filename, results };
 }
 
+/**
+ * Build a .torrent filename for a batch release.
+ */
+function buildBatchTorrentFilename(animeName, season, fansubGroup, range) {
+  const safeName = safeFolderName(animeName);
+  const safeGroup = fansubGroup ? fansubGroup.replace(/[^a-zA-Z0-9\-_]/g, '_') : 'Unknown';
+  const rangePart = range ? `_${String(range.start).padStart(2, '0')}-${String(range.end).padStart(2, '0')}` : '';
+  return `${safeName}_S${season}_Batch${rangePart}_${safeGroup}.torrent`;
+}
+
+/**
+ * Download and save a batch torrent release.
+ * Same logic as downloadAndSave but adapted for batch naming.
+ */
+async function downloadAndSaveBatch(url, anime, range, settings) {
+  const filename = buildBatchTorrentFilename(anime.name, anime.season, anime.fansub_group, range);
+  const results = [];
+  const engine = settings.download_engine || 'builtin';
+  const qbtUrl = settings.qbittorrent_url;
+  const qbtUser = settings.qbittorrent_username;
+  const qbtPass = settings.qbittorrent_password;
+  const watchFolder = settings.qbittorrent_watch_folder;
+
+  const baseFolder = anime.download_folder || settings.default_download_folder || path.join(__dirname, 'downloads');
+  const paths = buildAnimePaths(baseFolder, anime);
+  ensurePaths(paths);
+
+  const torrentPath = path.join(paths.torrentDir, filename);
+  let torrentDownloaded = false;
+
+  try {
+    await downloadTorrent(url, torrentPath);
+    torrentDownloaded = true;
+    results.push({ target: 'torrent_file', success: true, filePath: torrentPath });
+  } catch (err) {
+    results.push({ target: 'torrent_file', success: false, error: err.message });
+  }
+
+  if (!torrentDownloaded) return { filename, results };
+
+  let downloaded = false;
+
+  if (engine === 'builtin' || (!qbtUrl && !watchFolder)) {
+    try {
+      const torrentEngine = require('./torrent-engine');
+      await torrentEngine.addTorrent(torrentPath, paths.videoDir, {
+        animeId: anime.id,
+        animeName: anime.name,
+        isBatch: true,
+      });
+      results.push({ target: 'builtin', success: true, message: `Downloading batch to ${paths.videoDir}` });
+      console.log(`[KuroSeed] WebTorrent downloading batch: ${filename} → ${paths.videoDir}`);
+      downloaded = true;
+    } catch (err) {
+      results.push({ target: 'builtin', success: false, error: err.message });
+      console.error(`[KuroSeed] WebTorrent batch error: ${err.message}`);
+    }
+  }
+
+  if (!downloaded && qbtUrl && engine !== 'builtin') {
+    try {
+      await qbt.login(qbtUrl, qbtUser || 'admin', qbtPass || 'adminadmin');
+      await qbt.addTorrentFile(qbtUrl, torrentPath, paths.videoDir);
+      results.push({ target: 'qbittorrent', success: true, message: `Batch sent to qBittorrent → ${paths.videoDir}` });
+      downloaded = true;
+    } catch (err) {
+      results.push({ target: 'qbittorrent', success: false, error: err.message });
+    }
+  }
+
+  if (!downloaded && watchFolder) {
+    try {
+      const watchPath = path.join(watchFolder, filename);
+      if (!fs.existsSync(watchFolder)) fs.mkdirSync(watchFolder, { recursive: true });
+      fs.copyFileSync(torrentPath, watchPath);
+      results.push({ target: 'watch_folder', success: true, filePath: watchPath });
+      downloaded = true;
+    } catch (err) {
+      results.push({ target: 'watch_folder', success: false, error: err.message });
+    }
+  }
+
+  return { filename, results };
+}
+
 module.exports = {
   downloadTorrent,
   buildTorrentFilename,
+  buildBatchTorrentFilename,
   buildAnimePaths,
   extractSeriesName,
   downloadAndSave,
+  downloadAndSaveBatch,
 };

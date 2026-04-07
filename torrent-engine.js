@@ -103,11 +103,40 @@ function getAllTorrents() {
 }
 
 function getTorrentState(t) {
-  if (t.paused) return 'pausedDL';
+  if (pausedTorrents.has(t.infoHash)) return 'pausedDL';
   if (t.done) return 'stalledUP'; // seeding / complete
   if (t.downloadSpeed > 0) return 'downloading';
   if (t.numPeers > 0) return 'downloading';
   return 'stalledDL';
+}
+
+// Track paused torrents
+const pausedTorrents = new Set();
+
+/**
+ * Pause a torrent by deselecting all files (stops downloading).
+ */
+function pauseTorrent(infoHash) {
+  if (!client) return false;
+  const torrent = client.torrents.find(t => t.infoHash === infoHash);
+  if (!torrent) return false;
+  pausedTorrents.add(infoHash);
+  torrent.files.forEach(f => f.deselect());
+  // Disconnect all peers to stop transfer immediately
+  torrent.wires.forEach(wire => wire.destroy());
+  return true;
+}
+
+/**
+ * Resume a torrent by re-selecting all files.
+ */
+function resumeTorrent(infoHash) {
+  if (!client) return false;
+  const torrent = client.torrents.find(t => t.infoHash === infoHash);
+  if (!torrent) return false;
+  pausedTorrents.delete(infoHash);
+  torrent.files.forEach(f => f.select());
+  return true;
 }
 
 /**
@@ -161,6 +190,8 @@ function destroy() {
 module.exports = {
   addTorrent,
   getAllTorrents,
+  pauseTorrent,
+  resumeTorrent,
   removeTorrent,
   removeCompleted,
   getStats,

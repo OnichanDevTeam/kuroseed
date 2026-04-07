@@ -206,6 +206,39 @@ async function getTransferInfo(baseUrl) {
 }
 
 /**
+ * Pause torrents by hash.
+ */
+async function pauseTorrents(baseUrl, hashes) {
+  const res = await qbRequest(baseUrl, '/api/v2/torrents/pause', {
+    method: 'POST',
+    formData: { hashes: hashes.join('|') },
+  });
+  return res.status === 200;
+}
+
+/**
+ * Resume torrents by hash.
+ */
+async function resumeTorrents(baseUrl, hashes) {
+  const res = await qbRequest(baseUrl, '/api/v2/torrents/resume', {
+    method: 'POST',
+    formData: { hashes: hashes.join('|') },
+  });
+  return res.status === 200;
+}
+
+/**
+ * Delete torrents by hash (optionally delete files).
+ */
+async function deleteTorrents(baseUrl, hashes, deleteFiles = false) {
+  const res = await qbRequest(baseUrl, '/api/v2/torrents/delete', {
+    method: 'POST',
+    formData: { hashes: hashes.join('|'), deleteFiles: deleteFiles ? 'true' : 'false' },
+  });
+  return res.status === 200;
+}
+
+/**
  * Test connection to qBittorrent.
  */
 async function testConnection(baseUrl, username, password) {
@@ -219,6 +252,9 @@ module.exports = {
   addTorrentFile,
   addTorrentUrl,
   getTorrents,
+  pauseTorrents,
+  resumeTorrents,
+  deleteTorrents,
   getTransferInfo,
   testConnection,
 };

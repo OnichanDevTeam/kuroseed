@@ -14,6 +14,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── State ──────────────────────────────────────────────
@@ -42,8 +46,81 @@ async function runCheck() {
 
       const newEpisodes = matcher.findNewEpisodes(items, anime, db.hasEpisode);
 
+      // Fallback: if no individual episodes, look for batch/complete releases
       if (newEpisodes.length === 0) {
-        results.push({ anime: anime.name, episodes: 0 });
+        const batchReleases = matcher.findBatchReleases(items, anime);
+        if (batchReleases.length === 0) {
+          results.push({ anime: anime.name, episodes: 0 });
+          continue;
+        }
+
+        // Download the best batch (highest seeders, already sorted)
+        const batch = batchReleases[0];
+        try {
+          const dlResult = await downloader.downloadAndSaveBatch(
+            batch.link,
+            anime,
+            batch.episode_range,
+            settings
+          );
+
+          const anySuccess = dlResult.results.some((r) => r.success);
+          const rangeLabel = batch.episode_range
+            ? `Ep ${batch.episode_range.start}-${batch.episode_range.end}`
+            : 'Complete';
+
+          if (anySuccess) {
+            db.addEpisode({
+              anime_id: anime.id,
+              episode_number: 0,
+              title: batch.title,
+              torrent_url: batch.link,
+              file_size: batch.size,
+              is_batch: true,
+            });
+
+            // Mark all episodes as downloaded if we know the range or total
+            const lastEp = batch.episode_range
+              ? batch.episode_range.end
+              : (anime.total_episodes || 0);
+            if (lastEp > anime.last_downloaded_episode) {
+              db.updateAnime(anime.id, { last_downloaded_episode: lastEp });
+            }
+
+            db.addDownloadLog({
+              anime_id: anime.id,
+              episode_number: 0,
+              status: 'success',
+              message: `Downloaded batch: ${rangeLabel} — ${dlResult.filename}`,
+              torrent_url: batch.link,
+              file_name: dlResult.filename,
+            });
+
+            console.log(`[KuroSeed] Downloaded batch: ${anime.name} (${rangeLabel})`);
+          } else {
+            const errors = dlResult.results.map((r) => r.error).filter(Boolean).join('; ');
+            db.addDownloadLog({
+              anime_id: anime.id,
+              episode_number: 0,
+              status: 'failed',
+              message: `Batch failed: ${errors}`,
+              torrent_url: batch.link,
+              file_name: dlResult.filename,
+            });
+            console.error(`[KuroSeed] Batch failed: ${anime.name} - ${errors}`);
+          }
+        } catch (dlErr) {
+          db.addDownloadLog({
+            anime_id: anime.id,
+            episode_number: 0,
+            status: 'failed',
+            message: `Batch error: ${dlErr.message}`,
+            torrent_url: batch.link,
+          });
+          console.error(`[KuroSeed] Batch error: ${anime.name} - ${dlErr.message}`);
+        }
+
+        results.push({ anime: anime.name, episodes: 0, batch: 1 });
         continue;
       }
 
@@ -238,6 +315,70 @@ app.get('/api/qbt/torrents', async (req, res) => {
   res.json(allTorrents);
 });
 
+// Pause a torrent
+app.post('/api/torrents/:hash/pause', async (req, res) => {
+  const hash = req.params.hash;
+  const engineSetting = db.getSetting('download_engine') || 'builtin';
+  try {
+    if (engineSetting === 'builtin') {
+      const engine = require('./torrent-engine');
+      engine.pauseTorrent(hash);
+    } else {
+      const qbtUrl = db.getSetting('qbittorrent_url');
+      const qbtUser = db.getSetting('qbittorrent_username');
+      const qbtPass = db.getSetting('qbittorrent_password');
+      await qbt.login(qbtUrl, qbtUser || 'admin', qbtPass || '');
+      await qbt.pauseTorrents(qbtUrl, [hash]);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Resume a torrent
+app.post('/api/torrents/:hash/resume', async (req, res) => {
+  const hash = req.params.hash;
+  const engineSetting = db.getSetting('download_engine') || 'builtin';
+  try {
+    if (engineSetting === 'builtin') {
+      const engine = require('./torrent-engine');
+      engine.resumeTorrent(hash);
+    } else {
+      const qbtUrl = db.getSetting('qbittorrent_url');
+      const qbtUser = db.getSetting('qbittorrent_username');
+      const qbtPass = db.getSetting('qbittorrent_password');
+      await qbt.login(qbtUrl, qbtUser || 'admin', qbtPass || '');
+      await qbt.resumeTorrents(qbtUrl, [hash]);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cancel/remove a torrent (with optional file deletion)
+app.delete('/api/torrents/:hash', async (req, res) => {
+  const hash = req.params.hash;
+  const deleteFiles = req.query.deleteFiles === 'true';
+  const engineSetting = db.getSetting('download_engine') || 'builtin';
+  try {
+    if (engineSetting === 'builtin') {
+      const engine = require('./torrent-engine');
+      engine.removeTorrent(hash, deleteFiles);
+    } else {
+      const qbtUrl = db.getSetting('qbittorrent_url');
+      const qbtUser = db.getSetting('qbittorrent_username');
+      const qbtPass = db.getSetting('qbittorrent_password');
+      await qbt.login(qbtUrl, qbtUser || 'admin', qbtPass || '');
+      await qbt.deleteTorrents(qbtUrl, [hash], deleteFiles);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Remove completed torrents (stop seeding)
 app.post('/api/torrents/cleanup', (req, res) => {
   try {
@@ -269,7 +410,65 @@ app.put('/api/animes/:id', (req, res) => {
   res.json({ success: true });
 });
 
-app.delete('/api/animes/:id', (req, res) => {
+app.delete('/api/animes/:id', async (req, res) => {
+  const deleteFiles = req.query.deleteFiles === 'true';
+  const anime = db.getAnime(req.params.id);
+
+  // Remove associated active torrents
+  if (anime) {
+    try {
+      const engineSetting = db.getSetting('download_engine') || 'builtin';
+      if (engineSetting === 'builtin') {
+        const engine = require('./torrent-engine');
+        const torrents = engine.getAllTorrents();
+        const safeName = anime.name.replace(/[<>:"/\\|?*]/g, '').trim().toLowerCase();
+        for (const t of torrents) {
+          const sp = (t.save_path || '').toLowerCase();
+          const tn = (t.name || '').toLowerCase();
+          if (sp.includes(safeName) || tn.includes(safeName)) {
+            engine.removeTorrent(t.hash, deleteFiles);
+          }
+        }
+      } else {
+        const qbtUrl = db.getSetting('qbittorrent_url');
+        const qbtUser = db.getSetting('qbittorrent_username');
+        const qbtPass = db.getSetting('qbittorrent_password');
+        if (qbtUrl) {
+          await qbt.login(qbtUrl, qbtUser || 'admin', qbtPass || '');
+          const torrents = await qbt.getTorrents(qbtUrl);
+          const safeName = anime.name.replace(/[<>:"/\\|?*]/g, '').trim().toLowerCase();
+          const hashes = torrents
+            .filter(t => {
+              const sp = (t.save_path || '').toLowerCase();
+              const tn = (t.name || '').toLowerCase();
+              return sp.includes(safeName) || tn.includes(safeName);
+            })
+            .map(t => t.hash);
+          if (hashes.length) {
+            await qbt.deleteTorrents(qbtUrl, hashes, deleteFiles);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('[KuroSeed] Error removing torrents for anime:', err.message);
+    }
+
+    // Delete the series folder (not the base folder!)
+    if (deleteFiles) {
+      try {
+        const baseFolder = anime.download_folder || db.getSetting('default_download_folder') || path.join(__dirname, 'downloads');
+        const paths = downloader.buildAnimePaths(baseFolder, anime);
+        // Only delete the series-specific directory, never the base folder
+        if (paths.seriesDir && paths.seriesDir !== baseFolder && fs.existsSync(paths.seriesDir)) {
+          fs.rmSync(paths.seriesDir, { recursive: true, force: true });
+          console.log(`[KuroSeed] Deleted series folder: ${paths.seriesDir}`);
+        }
+      } catch (err) {
+        console.error('[KuroSeed] Error deleting folder:', err.message);
+      }
+    }
+  }
+
   db.deleteAnime(req.params.id);
   res.json({ success: true });
 });
@@ -315,6 +514,98 @@ app.get('/api/anime/search', async (req, res) => {
     });
     res.json(response.data || []);
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Search for alternative torrents (no fansub filter) — used when configured fansub has no results
+app.get('/api/search/alternatives', async (req, res) => {
+  const { q, quality, season } = req.query;
+  if (!q) return res.status(400).json({ error: 'Query required' });
+
+  try {
+    const items = await nyaa.searchNyaa(q + (quality ? ' ' + quality : ''));
+    const seasonNum = parseInt(season, 10) || 1;
+
+    const results = [];
+    for (const item of items) {
+      if (!matcher.matchesSeason(item.title, seasonNum)) continue;
+
+      const epNum = matcher.extractEpisodeNumber(item.title);
+      const isBatch = matcher.isBatchRelease(item.title);
+      if (!epNum && !isBatch) continue;
+
+      // Extract fansub from title [GroupName]
+      const fansubMatch = item.title.match(/^\[([^\]]+)\]/);
+      const fansub = fansubMatch ? fansubMatch[1] : '';
+
+      results.push({
+        title: item.title,
+        link: item.link,
+        size: item.size,
+        seeders: item.seeders,
+        fansub,
+        is_batch: isBatch,
+        episode_number: epNum,
+        episode_range: isBatch ? matcher.extractEpisodeRange(item.title) : null,
+      });
+    }
+
+    // Sort: batches first (by seeders), then individual eps
+    results.sort((a, b) => {
+      if (a.is_batch !== b.is_batch) return a.is_batch ? -1 : 1;
+      return (b.seeders || 0) - (a.seeders || 0);
+    });
+
+    res.json(results.slice(0, 15));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Download a specific torrent for an anime (used when picking an alternative)
+app.post('/api/animes/:id/download-torrent', async (req, res) => {
+  const anime = db.getAnime(req.params.id);
+  if (!anime) return res.status(404).json({ error: 'Anime not found' });
+
+  const { torrent_url, title, size, is_batch, episode_range } = req.body;
+  if (!torrent_url) return res.status(400).json({ error: 'torrent_url required' });
+
+  const settings = db.getAllSettings();
+
+  try {
+    let dlResult;
+    if (is_batch) {
+      dlResult = await downloader.downloadAndSaveBatch(torrent_url, anime, episode_range || null, settings);
+    } else {
+      const epNum = matcher.extractEpisodeNumber(title || '') || 1;
+      dlResult = await downloader.downloadAndSave(torrent_url, anime, epNum, settings);
+    }
+
+    const anySuccess = dlResult.results.some(r => r.success);
+
+    if (anySuccess) {
+      if (is_batch) {
+        db.addEpisode({ anime_id: anime.id, episode_number: 0, title: title || '', torrent_url, file_size: size || '', is_batch: true });
+        const lastEp = episode_range ? episode_range.end : (anime.total_episodes || 0);
+        if (lastEp > anime.last_downloaded_episode) {
+          db.updateAnime(anime.id, { last_downloaded_episode: lastEp });
+        }
+      } else {
+        const epNum = matcher.extractEpisodeNumber(title || '') || 1;
+        db.addEpisode({ anime_id: anime.id, episode_number: epNum, title: title || '', torrent_url, file_size: size || '' });
+        db.updateAnime(anime.id, { last_downloaded_episode: epNum });
+      }
+
+      db.addDownloadLog({ anime_id: anime.id, episode_number: is_batch ? 0 : null, status: 'success', message: `Downloaded: ${dlResult.filename}`, torrent_url, file_name: dlResult.filename });
+      res.json({ success: true, filename: dlResult.filename });
+    } else {
+      const errors = dlResult.results.map(r => r.error).filter(Boolean).join('; ');
+      db.addDownloadLog({ anime_id: anime.id, status: 'failed', message: errors, torrent_url, file_name: dlResult.filename });
+      res.status(500).json({ error: errors });
+    }
+  } catch (err) {
+    db.addDownloadLog({ anime_id: anime.id, status: 'failed', message: err.message, torrent_url });
     res.status(500).json({ error: err.message });
   }
 });

@@ -506,6 +506,16 @@
 
   .dl-speed { color: var(--accent2); font-weight: 500; }
 
+  .dl-controls { display: flex; gap: 2px; margin-left: 8px; align-items: center; }
+  .dl-controls button {
+    width: 28px; height: 28px; padding: 0; font-size: 1rem; line-height: 1;
+    border: 1px solid var(--border); border-radius: 4px; cursor: pointer;
+    background: var(--surface2); color: var(--text2); transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .dl-controls button:hover { background: var(--border); color: var(--text); }
+  .dl-controls button.dl-stop:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
   /* Circle progress (small) */
   .circle-progress {
     width: 36px; height: 36px; flex-shrink: 0; position: relative;
@@ -911,8 +921,11 @@ const LANGS = {
     // Watchlist
     my_watchlist: 'My Watchlist', add_anime: '+ Add Anime',
     empty_watchlist: 'No anime in watchlist. Click "+ Add Anime" to get started.',
-    episodes: 'Episodes', pause: 'Pause', resume: 'Resume', edit: 'Edit', delete: 'Delete',
+    episodes: 'Episodes', pause: 'Disable', resume: 'Enable', edit: 'Edit', delete: 'Delete',
     confirm_delete: 'Delete "{name}" and all its data?',
+    confirm_delete_files: 'Also delete downloaded files from disk?',
+    dl_pause: 'Pause', dl_resume: 'Resume', dl_cancel: 'Cancel',
+    confirm_cancel_dl: 'Cancel this download?',
     downloading_count: '{n} downloading...',
     // Badges
     badge_active: 'active', badge_paused: 'paused', badge_complete: 'complete',
@@ -970,6 +983,10 @@ const LANGS = {
     ws_started: '{n} episode(s) started', ws_dl_error: 'Download error',
     ws_check_logs: 'Check Logs for details', ws_starting_soon: 'Downloads starting...',
     ws_begin_shortly: 'Videos will begin shortly',
+    ws_batch_found: 'Complete package found', ws_batch_detail: 'Batch — {info}',
+    ws_nothing_found: 'No torrents found for "{fansub}"', ws_change_config: 'Change Settings',
+    ws_alternatives: 'But we found these alternatives:', ws_alt_batch: 'Batch', ws_alt_ep: 'EP {n}',
+    ws_alt_seeders: '{n} seeders', ws_use_this: 'Use this',
     ws_no_episodes: 'No episodes to download', ws_auto_schedule: 'Will check automatically on schedule',
     ws_failed_add: 'Failed to add',
     dl_progress: 'Download Progress', dl_waiting: 'Waiting for downloads to start...',
@@ -979,7 +996,7 @@ const LANGS = {
     edit_anime: 'Edit Anime', search_query_label: 'Search Query (Nyaa RSS)',
     season: 'Season', last_ep: 'Last EP', cancel: 'Cancel', save: 'Save', updated: 'Updated',
     // Episodes modal
-    episodes_title: 'Episodes', no_episodes: 'No episodes downloaded yet.',
+    episodes_title: 'Episodes', no_episodes: 'No episodes downloaded yet.', ep_batch: 'Batch',
     th_downloaded: 'Downloaded',
     // Folder browser
     select_folder_title: 'Select Folder', location: 'Location',
@@ -1006,8 +1023,11 @@ const LANGS = {
     nav_watchlist: 'Mi Lista', nav_search: 'Buscar', nav_logs: 'Historial', nav_settings: 'Ajustes',
     my_watchlist: 'Mi Lista', add_anime: '+ Agregar Anime',
     empty_watchlist: 'No hay anime en la lista. Haz clic en "+ Agregar Anime" para comenzar.',
-    episodes: 'Episodios', pause: 'Pausar', resume: 'Reanudar', edit: 'Editar', delete: 'Eliminar',
+    episodes: 'Episodios', pause: 'Desactivar', resume: 'Activar', edit: 'Editar', delete: 'Eliminar',
     confirm_delete: 'Eliminar "{name}" y todos sus datos?',
+    confirm_delete_files: 'Tambien eliminar archivos descargados del disco?',
+    dl_pause: 'Pausar', dl_resume: 'Reanudar', dl_cancel: 'Cancelar',
+    confirm_cancel_dl: 'Cancelar esta descarga?',
     downloading_count: '{n} descargando...',
     badge_active: 'activo', badge_paused: 'pausado', badge_complete: 'completo',
     badge_airing: 'En emision', badge_finished: 'Finalizado', badge_upcoming: 'Proximo', badge_unknown: 'Desconocido',
@@ -1059,6 +1079,10 @@ const LANGS = {
     ws_started: '{n} episodio(s) iniciados', ws_dl_error: 'Error de descarga',
     ws_check_logs: 'Revisa el Historial', ws_starting_soon: 'Iniciando descargas...',
     ws_begin_shortly: 'Los videos comenzaran pronto',
+    ws_batch_found: 'Paquete completo encontrado', ws_batch_detail: 'Batch — {info}',
+    ws_nothing_found: 'No se encontraron torrents para "{fansub}"', ws_change_config: 'Cambiar Configuracion',
+    ws_alternatives: 'Pero encontramos estas alternativas:', ws_alt_batch: 'Batch', ws_alt_ep: 'EP {n}',
+    ws_alt_seeders: '{n} seeders', ws_use_this: 'Usar este',
     ws_no_episodes: 'No hay episodios para descargar', ws_auto_schedule: 'Se verificara automaticamente',
     ws_failed_add: 'Error al agregar',
     dl_progress: 'Progreso de Descarga', dl_waiting: 'Esperando que inicien las descargas...',
@@ -1066,7 +1090,7 @@ const LANGS = {
     add_another: 'Agregar Otro', done: 'Listo', close: 'Cerrar',
     edit_anime: 'Editar Anime', search_query_label: 'Busqueda en Nyaa (RSS)',
     season: 'Temporada', last_ep: 'Ultimo EP', cancel: 'Cancelar', save: 'Guardar', updated: 'Actualizado',
-    episodes_title: 'Episodios', no_episodes: 'No hay episodios descargados.',
+    episodes_title: 'Episodios', no_episodes: 'No hay episodios descargados.', ep_batch: 'Batch',
     th_downloaded: 'Descargado',
     select_folder_title: 'Seleccionar Carpeta', location: 'Ubicacion',
     parent_folder: 'Carpeta superior', no_subfolders: 'Sin subcarpetas',
@@ -1285,6 +1309,8 @@ function openWizard() {
 function closeWizard() {
   stopProgressPoll();
   document.getElementById('wizardOverlay').classList.remove('open');
+  loadAnimes();
+  loadStatus();
 }
 
 function goToStep(n) {
@@ -1532,8 +1558,64 @@ async function wizardSave() {
     const found = Array.isArray(checkResults)
       ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
       : 0;
-    steps[1] = { label: t('ws_check_done'), detail: t('ws_episodes_found', { n: found }), status: 'done' };
-    steps[2] = { label: found > 0 ? t('ws_torrents_done') : t('ws_no_torrents'), detail: found > 0 ? t('ws_torrent_files', { n: found }) : t('ws_up_to_date'), status: 'done' };
+    const batchFound = Array.isArray(checkResults)
+      ? checkResults.some(r => r.batch)
+      : false;
+
+    if (found === 0 && !batchFound) {
+      // Nothing found — search for alternatives without fansub filter
+      steps[1] = { label: t('ws_check_done'), detail: t('ws_nothing_found', { fansub: fansub || 'any' }), status: 'error' };
+      container.innerHTML = renderProgress(steps);
+
+      // Delete the just-created anime so user can re-add with different settings
+      try { await api(`/api/animes/${animeId}`, { method: 'DELETE' }); } catch {}
+
+      // Search for alternatives
+      try {
+        const alts = await api(`/api/search/alternatives?q=${encodeURIComponent(a.title)}&quality=${encodeURIComponent(data.quality)}&season=${data.season}`);
+        if (alts.length > 0) {
+          const altSection = document.createElement('div');
+          altSection.className = 'card';
+          altSection.style.cssText = 'margin-top:16px;padding:16px';
+          altSection.innerHTML = `
+            <p style="margin-bottom:12px;color:var(--accent);font-weight:600">${t('ws_alternatives')}</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              ${alts.slice(0, 8).map((alt, i) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-weight:600;font-size:0.85em;margin-bottom:2px">${alt.fansub ? '[' + esc(alt.fansub) + ']' : ''} ${alt.is_batch ? '<span style="background:#6c5ce7;color:#fff;padding:1px 6px;border-radius:4px;font-size:0.8em;margin-left:4px">' + t('ws_alt_batch') + '</span>' : t('ws_alt_ep', { n: alt.episode_number })}</div>
+                    <div style="font-size:0.78em;color:var(--text-secondary)">${esc(alt.size)} &middot; ${t('ws_alt_seeders', { n: alt.seeders })}${alt.episode_range ? ' &middot; Ep ' + alt.episode_range.start + '-' + alt.episode_range.end : ''}</div>
+                  </div>
+                  <button class="btn btn-primary" style="padding:4px 14px;font-size:0.82em;margin-left:10px;white-space:nowrap" onclick="wizardUseAlternative(${i})">${t('ws_use_this')}</button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          container.appendChild(altSection);
+
+          // Store alternatives globally so the button can access them
+          window._wizardAlternatives = alts.slice(0, 8);
+        }
+      } catch {}
+
+      const backFooter = document.createElement('div');
+      backFooter.style.cssText = 'display:flex;justify-content:center;gap:12px;margin-top:16px';
+      backFooter.innerHTML = `
+        <button class="btn btn-secondary" onclick="goToStep(2)" style="min-width:180px">${t('ws_change_config')}</button>
+        <button class="btn btn-primary" onclick="closeWizard()">${t('close')}</button>
+      `;
+      container.appendChild(backFooter);
+      loadAnimes();
+      return;
+    }
+
+    if (batchFound) {
+      steps[1] = { label: t('ws_check_done'), detail: t('ws_batch_found'), status: 'done' };
+      steps[2] = { label: t('ws_torrents_done'), detail: t('ws_torrent_files', { n: 1 }), status: 'done' };
+    } else {
+      steps[1] = { label: t('ws_check_done'), detail: t('ws_episodes_found', { n: found }), status: 'done' };
+      steps[2] = { label: t('ws_torrents_done'), detail: t('ws_torrent_files', { n: found }), status: 'done' };
+    }
     container.innerHTML = renderProgress(steps);
   } catch (e) {
     steps[1] = { label: t('ws_check_failed'), detail: e.message, status: 'error' };
@@ -1544,17 +1626,19 @@ async function wizardSave() {
 
   // Step 3: Check video download status
   const settings = await api('/api/settings');
-  const found = Array.isArray(checkResults)
+  const foundEps = Array.isArray(checkResults)
     ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
     : 0;
+  const hasBatch = Array.isArray(checkResults) && checkResults.some(r => r.batch);
+  const hasDownloads = foundEps > 0 || hasBatch;
 
-  if (found > 0) {
+  if (hasDownloads) {
     const logs = await api(`/api/animes/${animeId}/downloads`);
     const successes = logs.filter(l => l.status === 'success').length;
     const errors = logs.filter(l => l.status === 'failed').length;
 
     if (successes > 0) {
-      steps[3] = { label: t('ws_videos_dl'), detail: t('ws_started', { n: successes }), status: 'done' };
+      steps[3] = { label: t('ws_videos_dl'), detail: hasBatch ? t('ws_batch_found') : t('ws_started', { n: successes }), status: 'done' };
     } else if (errors > 0) {
       steps[3] = { label: t('ws_dl_error'), detail: t('ws_check_logs'), status: 'error' };
     } else {
@@ -1566,21 +1650,51 @@ async function wizardSave() {
 
   container.innerHTML = renderProgress(steps);
 
-  // Add live download progress section
-  if (found > 0) {
+  // Add footer buttons FIRST (before download progress so they're always visible)
+  addPostSaveFooter(container, true);
+
+  // Add live download progress section below the buttons
+  if (hasDownloads) {
     const dlSection = document.createElement('div');
     dlSection.className = 'card';
     dlSection.style.marginTop = '20px';
-    dlSection.innerHTML = `<h3 style="margin-bottom:12px">${t('dl_progress')}</h3><div id="wizardDlProgress"><div class="spinner"></div> ${t('dl_waiting')}</div>`;
+    const dlContainerId = 'wizardDlProgress';
+    dlSection.innerHTML = `<h3 style="margin-bottom:12px">${t('dl_progress')}</h3><div id="${dlContainerId}"><div class="spinner"></div> ${t('dl_waiting')}</div>`;
     container.appendChild(dlSection);
 
-    setTimeout(() => {
-      startProgressPoll(a.title, 'wizardDlProgress', (completed) => {
-        sendNotification(
-          `${a.title} - Downloads complete!`,
-          `${completed.length} episode(s) finished downloading`
-        );
-      });
+    // Inline poll — self-contained to avoid any scoping issues
+    const _pollAnimeName = a.title;
+    let _pollSeen = false, _pollEmpty = 0, _pollDone = false;
+    const _pollInterval = setInterval(async () => {
+      if (_pollDone) return;
+      try {
+        const res = await fetch('/api/qbt/torrents');
+        const torrents = await res.json();
+        let matched = matchTorrentsToAnime(torrents, _pollAnimeName);
+        if (matched.length === 0 && torrents.length > 0) {
+          matched = torrents.filter(dl => dl.progress < 1);
+        }
+        const el = document.getElementById(dlContainerId);
+        if (!el) { clearInterval(_pollInterval); _pollDone = true; return; }
+
+        if (matched.length > 0) {
+          _pollSeen = true;
+          _pollEmpty = 0;
+          el.innerHTML = renderEpisodeProgress(matched);
+          if (matched.every(dl => dl.progress >= 1)) {
+            clearInterval(_pollInterval); _pollDone = true;
+            el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+          }
+        } else if (_pollSeen) {
+          clearInterval(_pollInterval); _pollDone = true;
+          el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+        } else if (++_pollEmpty >= 8) {
+          clearInterval(_pollInterval); _pollDone = true;
+          el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+        }
+      } catch (e) {
+        // silent retry
+      }
     }, 2000);
   }
 
@@ -1593,9 +1707,96 @@ async function wizardSave() {
       : 'Added to watchlist. Will check for new episodes automatically.'
   );
 
-  addPostSaveFooter(container, true);
   loadAnimes();
   loadStatus();
+}
+
+async function wizardUseAlternative(index) {
+  const alt = window._wizardAlternatives && window._wizardAlternatives[index];
+  if (!alt || !wizardAnime) return;
+  const a = wizardAnime;
+  const fansub = alt.fansub || '';
+
+  // Go to step 4 with progress UI
+  goToStep(4);
+  const container = document.getElementById('postSaveContent');
+  const quality = document.getElementById('wQuality')?.value || '1080p';
+
+  const steps = [
+    { label: t('ws_adding'), detail: '', status: 'active' },
+    { label: t('ws_checking'), detail: '', status: '' },
+    { label: t('ws_downloading'), detail: '', status: '' },
+    { label: t('ws_starting'), detail: '', status: '' },
+  ];
+
+  function renderProgress(steps) {
+    return `
+      <div class="post-save-card">
+        <img src="${esc(a.image_url)}" style="width:80px;height:110px;border-radius:8px;object-fit:cover;margin-bottom:12px">
+        <h3>${esc(a.title)}</h3>
+        <p>${esc(fansub || 'Any')} &middot; ${esc(quality)}</p>
+        <div class="progress-steps">
+          ${steps.map(s => `
+            <div class="progress-step ${s.status}">
+              <div class="progress-dot">${s.status === 'done' ? '&#10003;' : s.status === 'error' ? '!' : s.status === 'active' ? '<div class="spinner" style="width:14px;height:14px;border-width:2px"></div>' : ''}</div>
+              <div class="progress-text">
+                <div class="label">${s.label}</div>
+                ${s.detail ? `<div class="detail">${s.detail}</div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = renderProgress(steps);
+
+  // Step 1: Save anime with the alternative's fansub
+  let animeId;
+  try {
+    const data = {
+      name: a.title, search_query: a.title, fansub_group: fansub, quality,
+      season: a.season || 1,
+      last_downloaded_episode: parseInt(document.getElementById('wLastEp')?.value) || 0,
+      download_folder: document.getElementById('wFolder')?.value?.trim() || '',
+      image_url: a.image_url, mal_id: a.mal_id, total_episodes: a.episodes,
+      score: a.score, synopsis: a.synopsis, airing_status: a.airing_status,
+    };
+    const res = await api('/api/animes', { method: 'POST', body: data });
+    animeId = res.id;
+    steps[0] = { label: t('ws_added'), detail: '', status: 'done' };
+    steps[1] = { label: t('ws_check_done'), detail: t('ws_batch_found'), status: 'done' };
+    steps[2].status = 'active';
+    container.innerHTML = renderProgress(steps);
+  } catch (e) {
+    steps[0] = { label: t('ws_failed_add'), detail: e.message, status: 'error' };
+    container.innerHTML = renderProgress(steps);
+    addPostSaveFooter(container, false);
+    return;
+  }
+
+  // Step 2-3: Download the specific torrent directly
+  try {
+    await api(`/api/animes/${animeId}/download-torrent`, {
+      method: 'POST',
+      body: {
+        torrent_url: alt.link,
+        title: alt.title,
+        size: alt.size,
+        is_batch: alt.is_batch,
+        episode_range: alt.episode_range,
+      },
+    });
+    steps[2] = { label: t('ws_torrents_done'), detail: t('ws_torrent_files', { n: 1 }), status: 'done' };
+    steps[3] = { label: t('ws_videos_dl'), detail: alt.is_batch ? t('ws_batch_found') : t('ws_started', { n: 1 }), status: 'done' };
+  } catch (e) {
+    steps[2] = { label: t('ws_dl_error'), detail: e.message, status: 'error' };
+  }
+
+  container.innerHTML = renderProgress(steps);
+  loadAnimes();
+  addPostSaveFooter(container, true);
 }
 
 function addPostSaveFooter(container, showDone) {
@@ -1717,45 +1918,79 @@ function matchTorrentsToAnime(torrents, animeName) {
 function renderEpisodeProgress(torrents) {
   if (!torrents.length) return `<div style="color:var(--text2);font-size:0.85rem;padding:8px 0">${t('no_active_dl')}</div>`;
 
-  return torrents.map(t => {
-    const st = mapState(t.state);
-    const pct = Math.round(t.progress * 100);
-    const isComplete = t.progress >= 1;
+  return torrents.map(dl => {
+    const st = mapState(dl.state);
+    const pct = Math.round(dl.progress * 100);
+    const isComplete = dl.progress >= 1;
     const barClass = isComplete ? (st.css === 'seeding' ? 'seeding' : 'complete') : '';
+    const isPaused = dl.state === 'pausedDL';
 
     return `<div class="dl-ep">
-      <div class="circle-progress">${circleProgressSvg(t.progress)}</div>
+      <div class="circle-progress">${circleProgressSvg(dl.progress)}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(t.name)}">${esc(t.name)}</div>
+        <div style="font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(dl.name)}">${esc(dl.name)}</div>
         <div class="dl-bar-wrap" style="margin-top:4px">
           <div class="dl-bar ${barClass}" style="width:${pct}%"></div>
         </div>
       </div>
       <div class="dl-info">
         <span class="dl-state ${st.css}">${st.label}</span><br>
-        ${!isComplete && t.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(t.dlspeed)}/s</span>` : ''}
-        ${!isComplete && t.eta < 8640000 ? ` <span>${formatEta(t.eta)}</span>` : ''}
-        ${isComplete ? `<span>${formatBytes(t.size)}</span>` : `<span>${formatBytes(t.downloaded)} / ${formatBytes(t.size)}</span>`}
+        ${!isComplete && dl.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(dl.dlspeed)}/s</span>` : ''}
+        ${!isComplete && dl.eta < 8640000 ? ` <span>${formatEta(dl.eta)}</span>` : ''}
+        ${isComplete ? `<span>${formatBytes(dl.size)}</span>` : `<span>${formatBytes(dl.downloaded)} / ${formatBytes(dl.size)}</span>`}
       </div>
+      ${!isComplete ? `<div class="dl-controls">
+        ${isPaused
+          ? `<button onclick="toggleTorrentPause('${dl.hash}',true)" title="${t('dl_resume')}">&#9654;</button>`
+          : `<button onclick="toggleTorrentPause('${dl.hash}',false)" title="${t('dl_pause')}">&#9208;</button>`}
+        <button class="dl-stop" onclick="cancelTorrent('${dl.hash}')" title="${t('dl_cancel')}">&#9209;</button>
+      </div>` : ''}
     </div>`;
   }).join('');
 }
 
 function startProgressPoll(animeName, containerId, onAllComplete) {
   stopProgressPoll();
+  let seenTorrents = false;
+  let emptyChecks = 0;
 
   async function poll() {
     const torrents = await fetchDownloadProgress();
-    const matched = matchTorrentsToAnime(torrents, animeName);
+    // Try matching by name first, fall back to showing all active torrents
+    let matched = matchTorrentsToAnime(torrents, animeName);
+    if (matched.length === 0 && torrents.length > 0) {
+      matched = torrents.filter(t => t.progress < 1);
+    }
     const container = document.getElementById(containerId);
-    if (container) {
+    if (!container) return;
+
+    if (matched.length > 0) {
+      seenTorrents = true;
+      emptyChecks = 0;
       container.innerHTML = renderEpisodeProgress(matched);
     }
 
     // Check if all matched torrents are complete
     if (matched.length > 0 && matched.every(t => t.progress >= 1)) {
       stopProgressPoll();
+      container.innerHTML = `<div style="color:var(--green);font-size:0.85rem;padding:8px 0">&#10003; ${t('dl_completed')}</div>`;
       if (onAllComplete) onAllComplete(matched);
+      return;
+    }
+
+    // If we saw torrents before but now they're gone, they completed and got cleaned up
+    if (seenTorrents && matched.length === 0) {
+      stopProgressPoll();
+      container.innerHTML = `<div style="color:var(--green);font-size:0.85rem;padding:8px 0">&#10003; ${t('dl_completed')}</div>`;
+      if (onAllComplete) onAllComplete([]);
+      return;
+    }
+
+    // If we never saw any torrents after several checks, they likely completed instantly
+    if (!seenTorrents && ++emptyChecks >= 5) {
+      stopProgressPoll();
+      container.innerHTML = `<div style="color:var(--green);font-size:0.85rem;padding:8px 0">&#10003; ${t('dl_completed')}</div>`;
+      if (onAllComplete) onAllComplete([]);
     }
   }
 
@@ -1791,22 +2026,29 @@ function renderDownloadsForList(downloading) {
       &#9660; ${t('downloading_count', { n: downloading.length })}
     </button>
     <div class="dl-progress-list" style="display:block">
-      ${downloading.map(t => {
-        const st = mapState(t.state);
-        const pct = Math.round(t.progress * 100);
+      ${downloading.map(dl => {
+        const st = mapState(dl.state);
+        const pct = Math.round(dl.progress * 100);
+        const isPaused = dl.state === 'pausedDL';
         return `<div class="dl-ep">
-          <div class="circle-progress">${circleProgressSvg(t.progress)}</div>
+          <div class="circle-progress">${circleProgressSvg(dl.progress)}</div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(t.name)}">${esc(t.name)}</div>
+            <div style="font-size:0.78rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(dl.name)}">${esc(dl.name)}</div>
             <div class="dl-bar-wrap" style="margin-top:3px">
               <div class="dl-bar" style="width:${pct}%"></div>
             </div>
           </div>
           <div class="dl-info">
             <span class="dl-state ${st.css}">${st.label}</span><br>
-            ${t.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(t.dlspeed)}/s</span> ` : ''}
-            ${t.eta < 8640000 ? `<span>${formatEta(t.eta)}</span>` : ''}
-            <span>${formatBytes(t.downloaded)}/${formatBytes(t.size)}</span>
+            ${dl.dlspeed > 0 ? `<span class="dl-speed">${formatBytes(dl.dlspeed)}/s</span> ` : ''}
+            ${dl.eta < 8640000 ? `<span>${formatEta(dl.eta)}</span>` : ''}
+            <span>${formatBytes(dl.downloaded)}/${formatBytes(dl.size)}</span>
+          </div>
+          <div class="dl-controls">
+            ${isPaused
+              ? `<button onclick="toggleTorrentPause('${dl.hash}',true)" title="${t('dl_resume')}">&#9654;</button>`
+              : `<button onclick="toggleTorrentPause('${dl.hash}',false)" title="${t('dl_pause')}">&#9208;</button>`}
+            <button class="dl-stop" onclick="cancelTorrent('${dl.hash}')" title="${t('dl_cancel')}">&#9209;</button>
           </div>
         </div>`;
       }).join('')}
@@ -1842,7 +2084,6 @@ async function loadAnimes() {
 
       return `<div class="wl-grid-card" style="${hasActive ? 'border-color:var(--accent)' : ''}">
         <span class="grid-badge">
-          ${a.status === 'paused' ? `<span class="badge badge-paused">${t('badge_paused')}</span>` : ''}
           ${isAllDone ? `<span class="badge badge-completed">${t('badge_complete')}</span>` : `<span class="badge badge-${air.css}">${air.label}</span>`}
         </span>
         ${hasActive ? `<div class="grid-dl-indicator"><div class="circle-progress" style="width:28px;height:28px">${circleProgressSvg(avgProgress, 28, 2)}</div></div>` : ''}
@@ -1869,6 +2110,8 @@ async function loadAnimes() {
       const matched = matchTorrentsToAnime(torrents, a.name);
       const downloading = matched.filter(t => t.progress < 1);
       const hasActive = downloading.length > 0;
+      const air = airingInfo(a);
+      const isAllDone = a.total_episodes && a.last_downloaded_episode >= a.total_episodes;
 
       return `
       <div class="wl-card" style="${hasActive ? 'border-color:var(--accent)' : ''}">
@@ -1876,7 +2119,7 @@ async function loadAnimes() {
         <div class="wl-info">
           <h4>
             ${esc(a.name)}
-            <span class="badge badge-${a.status === 'active' ? 'active' : 'paused'}">${a.status === 'active' ? t('badge_active') : t('badge_paused')}</span>
+            ${isAllDone ? `<span class="badge badge-completed">${t('badge_complete')}</span>` : `<span class="badge badge-${air.css}">${air.label}</span>`}
           </h4>
           <div class="wl-meta">
             <span>${esc(a.fansub_group)} &middot; ${esc(a.quality)}</span>
@@ -1907,9 +2150,20 @@ async function toggleAnime(id) {
   loadAnimes();
 }
 
+async function toggleTorrentPause(hash, isPaused) {
+  const action = isPaused ? 'resume' : 'pause';
+  await api(`/api/torrents/${hash}/${action}`, { method: 'POST' });
+}
+
+async function cancelTorrent(hash) {
+  if (!confirm(t('confirm_cancel_dl'))) return;
+  await api(`/api/torrents/${hash}?deleteFiles=true`, { method: 'DELETE' });
+}
+
 async function deleteAnime(id, name) {
   if (!confirm(t('confirm_delete', { name }))) return;
-  await api(`/api/animes/${id}`, { method: 'DELETE' });
+  const deleteFiles = confirm(t('confirm_delete_files'));
+  await api(`/api/animes/${id}?deleteFiles=${deleteFiles}`, { method: 'DELETE' });
   loadAnimes();
   toast(t('deleted') + ' ' + name);
 }
@@ -1979,7 +2233,7 @@ async function viewEpisodes(animeId, name) {
 
   container.innerHTML = `<table><thead><tr><th>${t('th_ep')}</th><th>${t('th_title')}</th><th>${t('th_size')}</th><th>${t('th_downloaded')}</th></tr></thead><tbody>
     ${episodes.map(e => `<tr>
-      <td><strong>${e.episode_number}</strong></td>
+      <td><strong>${e.is_batch ? '<span style="background:#6c5ce7;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.8em">' + t('ep_batch') + '</span>' : e.episode_number}</strong></td>
       <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(e.title)}">${esc(e.title)}</td>
       <td>${esc(e.file_size)}</td>
       <td>${new Date(e.downloaded_at).toLocaleString()}</td>

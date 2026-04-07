@@ -212,6 +212,77 @@ function findNewEpisodes(items, anime, hasEpisodeFn) {
   return results;
 }
 
+// ── Batch release detection ──────────────────────────────
+
+const BATCH_KEYWORDS = /\b(?:batch|complete|bdremux|bdrip|blu-?ray|bd)\b/i;
+const EPISODE_RANGE = /(?:[\[\(]\s*)?(\d{1,4})\s*[-–~]\s*(\d{1,4})(?:\s*[\]\)])?/;
+
+/**
+ * Extract an episode range from a batch title.
+ * e.g. "[01-25]" → { start: 1, end: 25 }, "01~13" → { start: 1, end: 13 }
+ * Returns null if no range found.
+ */
+function extractEpisodeRange(title) {
+  // Remove fansub group tags before searching for range
+  const cleaned = title.replace(/^\[[^\]]*\]\s*/, '');
+  const match = cleaned.match(EPISODE_RANGE);
+  if (match) {
+    const start = parseInt(match[1], 10);
+    const end = parseInt(match[2], 10);
+    if (start < end && start > 0 && end < 2000) {
+      return { start, end };
+    }
+  }
+  return null;
+}
+
+/**
+ * Check if a torrent title looks like a batch/complete release.
+ * A batch has no individual episode number but has batch keywords or an episode range.
+ */
+function isBatchRelease(title) {
+  // If it has an individual episode number, it's not a batch
+  if (extractEpisodeNumber(title) !== null) return false;
+
+  // Has batch keywords (BD, BDRip, BluRay, Batch, Complete)
+  if (BATCH_KEYWORDS.test(title)) return true;
+
+  // Has an episode range like [01-25]
+  if (extractEpisodeRange(title) !== null) return true;
+
+  return false;
+}
+
+/**
+ * Find batch/complete releases from RSS items when no individual episodes exist.
+ * Returns the best batch candidates sorted by seeders.
+ */
+function findBatchReleases(items, anime) {
+  const candidates = [];
+
+  for (const item of items) {
+    const title = item.title || '';
+
+    if (!matchesFansub(title, anime.fansub_group)) continue;
+    if (!matchesQuality(title, anime.quality)) continue;
+    if (!matchesSeason(title, anime.season)) continue;
+    if (!matchesSearchQuery(title, anime.search_query)) continue;
+    if (!isBatchRelease(title)) continue;
+
+    const range = extractEpisodeRange(title);
+
+    candidates.push({
+      ...item,
+      is_batch: true,
+      episode_range: range,
+    });
+  }
+
+  // Sort by seeders descending (best source first)
+  candidates.sort((a, b) => (b.seeders || 0) - (a.seeders || 0));
+  return candidates;
+}
+
 module.exports = {
   extractEpisodeNumber,
   extractTitleSeason,
@@ -220,4 +291,7 @@ module.exports = {
   matchesSeason,
   matchesSearchQuery,
   findNewEpisodes,
+  isBatchRelease,
+  extractEpisodeRange,
+  findBatchReleases,
 };

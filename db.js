@@ -87,6 +87,13 @@ try {
   // Column already exists
 }
 
+// Migration: add is_batch column to episodes if missing
+try {
+  db.exec('ALTER TABLE episodes ADD COLUMN is_batch INTEGER DEFAULT 0');
+} catch {
+  // Column already exists
+}
+
 // Default settings
 const defaultSettings = {
   download_engine: 'builtin',
@@ -183,12 +190,12 @@ module.exports = {
     return !!row;
   },
 
-  addEpisode({ anime_id, episode_number, title, torrent_url, file_size }) {
+  addEpisode({ anime_id, episode_number, title, torrent_url, file_size, is_batch }) {
     const stmt = db.prepare(`
-      INSERT OR IGNORE INTO episodes (anime_id, episode_number, title, torrent_url, file_size)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT OR IGNORE INTO episodes (anime_id, episode_number, title, torrent_url, file_size, is_batch)
+      VALUES (?, ?, ?, ?, ?, ?)
     `);
-    return stmt.run(anime_id, episode_number, title || '', torrent_url || '', file_size || '');
+    return stmt.run(anime_id, episode_number, title || '', torrent_url || '', file_size || '', is_batch ? 1 : 0);
   },
 
   // Downloads (log)
