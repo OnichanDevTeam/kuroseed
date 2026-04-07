@@ -169,7 +169,13 @@ function findNewEpisodes(items, anime, hasEpisodeFn) {
     if (!matchesSeason(title, anime.season)) continue;
     if (!matchesSearchQuery(title, anime.search_query)) continue;
 
-    const episodeNum = extractEpisodeNumber(title);
+    let episodeNum = extractEpisodeNumber(title);
+
+    // Movies / single-episode releases: treat as episode 1
+    if (episodeNum === null && anime.total_episodes === 1) {
+      episodeNum = 1;
+    }
+
     if (episodeNum === null) continue;
     if (episodeNum <= anime.last_downloaded_episode) continue;
     if (hasEpisodeFn(anime.id, episodeNum)) continue;
