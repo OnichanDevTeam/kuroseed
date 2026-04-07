@@ -30,14 +30,14 @@
     <td align="center" width="50%">
       <h3>Windows</h3>
       <p>Portable — un solo <code>.exe</code>, sin instalacion</p>
-      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed.1.0.1.exe">
+      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed.1.0.2.exe">
         <img src="https://img.shields.io/badge/Descargar_Windows-6c5ce7?style=for-the-badge&logo=windows&logoColor=white" alt="Descargar Windows">
       </a>
     </td>
     <td align="center" width="50%">
       <h3>macOS</h3>
       <p>DMG — arrastra a Aplicaciones</p>
-      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed-1.0.1.dmg">
+      <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest/download/KuroSeed-1.0.2.dmg">
         <img src="https://img.shields.io/badge/Descargar_macOS-a29bfe?style=for-the-badge&logo=apple&logoColor=white" alt="Descargar macOS">
       </a>
     </td>
