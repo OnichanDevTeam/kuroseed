@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="https://github.com/OnichanDevTeam/kuroseed/stargazers">
-    <img src="https://img.shields.io/github/stars/OnichanDevTeam/kuroseed?style=for-the-badge&logo=github&color=6c5ce7&labelColor=0f0f13" alt="Stars">
+    <img src="https://img.shields.io/github/stars/OnichanDevTeam/kuroseed?style=for-the-badge&logo=github&color=6c5ce7&labelColor=0f0f13&cacheSeconds=3600" alt="Stars">
   </a>
   <a href="https://github.com/OnichanDevTeam/kuroseed/releases/latest">
-    <img src="https://img.shields.io/github/v/release/OnichanDevTeam/kuroseed?style=for-the-badge&color=a29bfe&labelColor=0f0f13" alt="Release">
+    <img src="https://img.shields.io/github/v/release/OnichanDevTeam/kuroseed?style=for-the-badge&color=a29bfe&labelColor=0f0f13&cacheSeconds=3600" alt="Release">
   </a>
   <a href="https://github.com/OnichanDevTeam/kuroseed/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/OnichanDevTeam/kuroseed?style=for-the-badge&color=00b894&labelColor=0f0f13" alt="License">
+    <img src="https://img.shields.io/github/license/OnichanDevTeam/kuroseed?style=for-the-badge&color=00b894&labelColor=0f0f13&cacheSeconds=3600" alt="License">
   </a>
 </p>
 
