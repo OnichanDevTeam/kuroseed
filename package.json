@@ -1,6 +1,6 @@
 {
   "name": "kuroseed",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Local anime auto-downloader with Nyaa.si RSS and built-in torrent engine",
   "author": "OnichanDevTeam",
   "main": "electron-main.js",
