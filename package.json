@@ -20,6 +20,12 @@
     "node-cron": "3.0.3",
     "webtorrent": "2.8.5"
   },
+  "build": {
+    "asarUnpack": [
+      "node_modules/webtorrent/**",
+      "node_modules/better-sqlite3/**"
+    ]
+  },
   "devDependencies": {
     "electron": "33.0.0",
     "electron-builder": "25.0.0",

@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { createRequire } = require('module');
 
 let client = null;
 let WebTorrent = null;
@@ -8,21 +9,32 @@ let WebTorrent = null;
 const activeDownloads = new Map();
 let onDoneCallback = null;
 
-async function loadWebTorrent() {
+function loadWebTorrent() {
   if (!WebTorrent) {
-    const mod = await import('webtorrent');
-    WebTorrent = mod.default || mod;
+    // Use createRequire to resolve from the unpacked asar path in packaged Electron builds.
+    // Electron redirects require() from .asar to .asar.unpacked automatically,
+    // but dynamic import() does not get this treatment.
+    const wtPath = require.resolve('webtorrent');
+    const unpackedPath = wtPath.replace('app.asar', 'app.asar.unpacked');
+    const esmPath = fs.existsSync(unpackedPath) ? unpackedPath : wtPath;
+    // Convert to file:// URL for import() on Windows
+    const fileUrl = 'file://' + esmPath.replace(/\\/g, '/');
+    return import(fileUrl).then(mod => {
+      WebTorrent = mod.default || mod;
+      console.log('[TorrentEngine] WebTorrent loaded from:', esmPath);
+    });
   }
-  return WebTorrent;
+  return Promise.resolve();
 }
 
 async function getClient() {
+  await loadWebTorrent();
   if (!client) {
-    const WT = await loadWebTorrent();
-    client = new WT();
+    client = new WebTorrent();
     client.on('error', (err) => {
       console.error('[TorrentEngine] Client error:', err.message);
     });
+    console.log('[TorrentEngine] Client created');
   }
   return client;
 }

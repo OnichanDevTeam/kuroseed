@@ -293,7 +293,9 @@ app.get('/api/qbt/torrents', async (req, res) => {
     const engine = require('./torrent-engine');
     const builtinTorrents = engine.getAllTorrents();
     allTorrents.push(...builtinTorrents);
-  } catch {}
+  } catch (err) {
+    console.error('[KuroSeed] WebTorrent getAllTorrents error:', err.message);
+  }
 
   // 2. qBittorrent (if configured)
   const qbtUrl = db.getSetting('qbittorrent_url');
