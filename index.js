@@ -181,11 +181,18 @@ async function runCheck() {
       }
 
       // Auto-pause if anime is finished airing and all episodes downloaded
+      // Only auto-pause if there are no active torrents still downloading for this anime
       const updated = db.getAnime(anime.id);
       if (updated && updated.airing_status && updated.airing_status.toLowerCase().includes('finished')
         && updated.total_episodes && updated.last_downloaded_episode >= updated.total_episodes) {
-        db.updateAnime(anime.id, { status: 'paused' });
-        console.log(`[KuroSeed] Auto-paused ${anime.name} — all ${updated.total_episodes} episodes downloaded`);
+        const torrentEngine = require('./torrent-engine');
+        const activeTorrents = torrentEngine.getAllTorrents().filter(
+          t => t.meta && t.meta.animeId === anime.id && t.progress < 1
+        );
+        if (activeTorrents.length === 0) {
+          db.updateAnime(anime.id, { status: 'paused' });
+          console.log(`[KuroSeed] Auto-paused ${anime.name} — all ${updated.total_episodes} episodes downloaded`);
+        }
       }
 
       results.push({ anime: anime.name, episodes: newEpisodes.length });
@@ -711,6 +718,27 @@ function startServer(port) {
       const actualPort = server.address()?.port || p;
       console.log(`[KuroSeed] Server running at http://localhost:${actualPort}`);
       startCron();
+
+      // Auto-pause anime when torrent finishes and all episodes are downloaded
+      const torrentEngine = require('./torrent-engine');
+      torrentEngine.onComplete((infoHash, meta) => {
+        if (!meta || !meta.animeId) return;
+        const anime = db.getAnime(meta.animeId);
+        if (!anime) return;
+        if (anime.status === 'paused') return;
+        if (anime.airing_status && anime.airing_status.toLowerCase().includes('finished')
+          && anime.total_episodes && anime.last_downloaded_episode >= anime.total_episodes) {
+          // Check no other torrents still downloading for this anime
+          const still = torrentEngine.getAllTorrents().filter(
+            t => t.meta && t.meta.animeId === meta.animeId && t.hash !== infoHash && t.progress < 1
+          );
+          if (still.length === 0) {
+            db.updateAnime(meta.animeId, { status: 'paused' });
+            console.log(`[KuroSeed] Auto-paused ${anime.name} — all episodes downloaded`);
+          }
+        }
+      });
+
       resolve({ server, port: actualPort });
     });
     server.on('error', (err) => reject(err));

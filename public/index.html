@@ -1561,12 +1561,12 @@ async function wizardSave() {
   let checkResults;
   try {
     checkResults = await api('/api/check', { method: 'POST' });
-    const found = Array.isArray(checkResults)
-      ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
-      : 0;
-    const batchFound = Array.isArray(checkResults)
-      ? checkResults.some(r => r.batch)
-      : false;
+    // Filter results to only the anime we just added
+    const thisResult = Array.isArray(checkResults)
+      ? checkResults.filter(r => r.anime === data.name)
+      : [];
+    const found = thisResult.reduce((s, r) => s + (r.episodes || 0), 0);
+    const batchFound = thisResult.some(r => r.batch);
 
     if (found === 0 && !batchFound) {
       // Nothing found — search for alternatives without fansub filter
@@ -1632,10 +1632,11 @@ async function wizardSave() {
 
   // Step 3: Check video download status
   const settings = await api('/api/settings');
-  const foundEps = Array.isArray(checkResults)
-    ? checkResults.reduce((s, r) => s + (r.episodes || 0), 0)
-    : 0;
-  const hasBatch = Array.isArray(checkResults) && checkResults.some(r => r.batch);
+  const thisAnimeResults = Array.isArray(checkResults)
+    ? checkResults.filter(r => r.anime === data.name)
+    : [];
+  const foundEps = thisAnimeResults.reduce((s, r) => s + (r.episodes || 0), 0);
+  const hasBatch = thisAnimeResults.some(r => r.batch);
   const hasDownloads = foundEps > 0 || hasBatch;
 
   if (hasDownloads) {
@@ -1676,10 +1677,7 @@ async function wizardSave() {
       try {
         const res = await fetch('/api/qbt/torrents');
         const torrents = await res.json();
-        let matched = matchTorrentsToAnime(torrents, _pollAnimeName);
-        if (matched.length === 0 && torrents.length > 0) {
-          matched = torrents.filter(dl => dl.progress < 1);
-        }
+        const matched = matchTorrentsToAnime(torrents, _pollAnimeName);
         const el = document.getElementById(dlContainerId);
         if (!el) { clearInterval(_pollInterval); _pollDone = true; return; }
 
@@ -1801,8 +1799,50 @@ async function wizardUseAlternative(index) {
   }
 
   container.innerHTML = renderProgress(steps);
-  loadAnimes();
   addPostSaveFooter(container, true);
+
+  // Add live download progress for the alternative
+  const allDone = steps.every(s => s.status === 'done');
+  if (allDone) {
+    const dlSection = document.createElement('div');
+    dlSection.className = 'card';
+    dlSection.style.marginTop = '20px';
+    const dlContainerId = 'wizardAltDlProgress';
+    dlSection.innerHTML = `<h3 style="margin-bottom:12px">${t('dl_progress')}</h3><div id="${dlContainerId}"><div class="spinner"></div> ${t('dl_waiting')}</div>`;
+    container.appendChild(dlSection);
+
+    const _altAnimeName = a.title;
+    let _altSeen = false, _altEmpty = 0, _altDone = false;
+    const _altInterval = setInterval(async () => {
+      if (_altDone) return;
+      try {
+        const res = await fetch('/api/qbt/torrents');
+        const torrents = await res.json();
+        const matched = matchTorrentsToAnime(torrents, _altAnimeName);
+        const el = document.getElementById(dlContainerId);
+        if (!el) { clearInterval(_altInterval); _altDone = true; return; }
+
+        if (matched.length > 0) {
+          _altSeen = true;
+          _altEmpty = 0;
+          el.innerHTML = renderEpisodeProgress(matched);
+          if (matched.every(dl => dl.progress >= 1)) {
+            clearInterval(_altInterval); _altDone = true;
+            el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+          }
+        } else if (_altSeen) {
+          clearInterval(_altInterval); _altDone = true;
+          el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+        } else if (++_altEmpty >= 8) {
+          clearInterval(_altInterval); _altDone = true;
+          el.innerHTML = '<div style="color:var(--green);font-size:0.9rem;padding:8px 0">&#10003; ' + t('dl_completed') + '</div>';
+        }
+      } catch (e) {}
+    }, 2000);
+  }
+
+  loadAnimes();
+  loadStatus();
 }
 
 function addPostSaveFooter(container, showDone) {
@@ -1963,10 +2003,7 @@ function startProgressPoll(animeName, containerId, onAllComplete) {
   async function poll() {
     const torrents = await fetchDownloadProgress();
     // Try matching by name first, fall back to showing all active torrents
-    let matched = matchTorrentsToAnime(torrents, animeName);
-    if (matched.length === 0 && torrents.length > 0) {
-      matched = torrents.filter(t => t.progress < 1);
-    }
+    const matched = matchTorrentsToAnime(torrents, animeName);
     const container = document.getElementById(containerId);
     if (!container) return;
 

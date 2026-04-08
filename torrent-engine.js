@@ -6,6 +6,7 @@ let WebTorrent = null;
 
 // Track active downloads: torrentId → { animeId, episodeNumber, ... }
 const activeDownloads = new Map();
+let onDoneCallback = null;
 
 async function loadWebTorrent() {
   if (!WebTorrent) {
@@ -64,6 +65,8 @@ async function addTorrent(torrentFileOrUrl, savePath, meta = {}) {
 
       torrent.on('done', () => {
         console.log(`[TorrentEngine] Complete: ${torrent.name}`);
+        // Notify completion listeners
+        if (onDoneCallback) onDoneCallback(torrent.infoHash, meta);
       });
 
       torrent.on('error', (err) => {
@@ -187,6 +190,13 @@ function destroy() {
   }
 }
 
+/**
+ * Register a callback for when a torrent finishes downloading.
+ */
+function onComplete(callback) {
+  onDoneCallback = callback;
+}
+
 module.exports = {
   addTorrent,
   getAllTorrents,
@@ -197,4 +207,5 @@ module.exports = {
   getStats,
   destroy,
   getClient,
+  onComplete,
 };
