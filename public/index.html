@@ -1706,8 +1706,8 @@ async function wizardSave() {
   const allDone = steps.every(s => s.status === 'done');
   sendNotification(
     allDone ? `${a.title} is ready!` : `${a.title} added`,
-    allDone && found > 0
-      ? `${found} episode(s) are downloading now`
+    allDone && foundEps > 0
+      ? `${foundEps} episode(s) are downloading now`
       : 'Added to watchlist. Will check for new episodes automatically.'
   );
 
