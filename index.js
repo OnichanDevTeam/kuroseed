@@ -285,6 +285,21 @@ app.post('/api/qbt/test', async (req, res) => {
 });
 
 // Download progress — merges built-in WebTorrent + qBittorrent
+app.get('/api/debug/webtorrent', async (req, res) => {
+  try {
+    const engine = require('./torrent-engine');
+    const client = await engine.getClient();
+    res.json({
+      clientExists: !!client,
+      torrentsCount: client ? client.torrents.length : 0,
+      torrents: client ? client.torrents.map(t => ({ name: t.name, hash: t.infoHash, progress: t.progress })) : [],
+      activeDownloads: engine.getAllTorrents().length,
+    });
+  } catch (err) {
+    res.json({ error: err.message, stack: err.stack });
+  }
+});
+
 app.get('/api/qbt/torrents', async (req, res) => {
   const allTorrents = [];
 

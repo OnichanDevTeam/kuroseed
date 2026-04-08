@@ -107,7 +107,13 @@ Sin telemetria. Sin analytics. Sin cuentas de usuario. Ningun dato sale de tu ma
 Windows Firewall mostrara un dialogo para permitir la app — marca **Redes privadas** y dale **Permitir acceso**.
 
 ### macOS
-macOS pedira permiso para permitir conexiones de red entrantes — dale **Allow**. Es necesario para que el motor de torrents reciba datos de los peers.
+Si macOS muestra **"KuroSeed is damaged and can't be opened"**, abre Terminal y ejecuta:
+```bash
+xattr -cr /Applications/KuroSeed.app
+```
+Esto es necesario porque la app no esta firmada con Apple Developer certificate. Luego abrela normalmente.
+
+macOS tambien pedira permiso para permitir conexiones de red entrantes — dale **Allow**. Es necesario para que el motor de torrents reciba datos de los peers.
 
 ## Configuracion
 

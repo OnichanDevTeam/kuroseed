@@ -23,9 +23,9 @@
   "build": {
     "appId": "com.onichandev.kuroseed",
     "productName": "KuroSeed",
+    "asar": true,
     "asarUnpack": [
-      "node_modules/webtorrent/**",
-      "node_modules/better-sqlite3/**"
+      "node_modules/**"
     ],
     "win": {
       "target": "portable",
