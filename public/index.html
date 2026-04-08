@@ -1214,7 +1214,13 @@ async function loadStatus() {
 let folderTargetInput = null;
 let folderCurrentPath = '';
 
-function openFolderPicker(inputId) {
+async function openFolderPicker(inputId) {
+  if (window.electronAPI) {
+    const currentVal = document.getElementById(inputId).value;
+    const selected = await window.electronAPI.selectFolder(currentVal || '');
+    if (selected) document.getElementById(inputId).value = selected;
+    return;
+  }
   folderTargetInput = inputId;
   const currentVal = document.getElementById(inputId).value;
   document.getElementById('folderModal').classList.add('open');
