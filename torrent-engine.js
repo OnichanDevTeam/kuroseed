@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { pathToFileURL } = require('url');
 const { createRequire } = require('module');
 
 let client = null;
@@ -17,8 +18,8 @@ function loadWebTorrent() {
     const wtPath = require.resolve('webtorrent');
     const unpackedPath = wtPath.replace('app.asar', 'app.asar.unpacked');
     const esmPath = fs.existsSync(unpackedPath) ? unpackedPath : wtPath;
-    // Convert to file:// URL for import() on Windows
-    const fileUrl = 'file://' + esmPath.replace(/\\/g, '/');
+    // Convert to file:// URL for import() on Windows (pathToFileURL handles drive letters correctly)
+    const fileUrl = pathToFileURL(esmPath).href;
     return import(fileUrl).then(mod => {
       WebTorrent = mod.default || mod;
       console.log('[TorrentEngine] WebTorrent loaded from:', esmPath);
