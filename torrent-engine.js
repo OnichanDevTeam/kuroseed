@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const { pathToFileURL } = require('url');
 
 let client = null;
 let WebTorrent = null;
@@ -11,18 +10,19 @@ let onDoneCallback = null;
 
 function loadWebTorrent() {
   if (!WebTorrent) {
-    // Use the pre-bundled ESM file to avoid Electron asar resolution issues.
-    // A single .mjs bundle eliminates the 40+ ESM dependency chain that
-    // Electron's import() cannot resolve from asar.unpacked on Windows.
-    const bundlePath = path.join(__dirname, 'webtorrent-bundle.mjs');
-    const fileUrl = pathToFileURL(bundlePath).href;
-    return import(fileUrl).then(mod => {
+    // Use the pre-bundled CJS file. A single bundle eliminates the 40+
+    // dependency chain. CJS format is used because require() goes through
+    // Electron's asar virtual filesystem, unlike ESM import().
+    try {
+      const bundlePath = path.join(__dirname, 'webtorrent-bundle.cjs');
+      console.log('[TorrentEngine] Loading WebTorrent from:', bundlePath);
+      const mod = require(bundlePath);
       WebTorrent = mod.default || mod;
-      console.log('[TorrentEngine] WebTorrent loaded from bundle');
-    }).catch(err => {
+      console.log('[TorrentEngine] WebTorrent loaded successfully');
+    } catch (err) {
       console.error('[TorrentEngine] Failed to load WebTorrent bundle:', err.message);
       throw err;
-    });
+    }
   }
   return Promise.resolve();
 }

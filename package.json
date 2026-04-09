@@ -1,6 +1,6 @@
 {
   "name": "kuroseed",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Local anime auto-downloader with Nyaa.si RSS and built-in torrent engine",
   "author": "OnichanDevTeam",
   "main": "electron-main.js",
@@ -12,7 +12,7 @@
     "electron:build:mac": "electron-builder install-app-deps && electron-builder --mac",
     "electron:icons": "node scripts/generate-icons.js",
     "postinstall": "electron-builder install-app-deps",
-    "bundle:webtorrent": "esbuild node_modules/webtorrent/index.js --bundle --platform=node --format=esm --outfile=webtorrent-bundle.mjs --external:utp-native --external:node-datachannel --external:electron"
+    "bundle:webtorrent": "node scripts/patch-bundle.js"
   },
   "dependencies": {
     "better-sqlite3": "11.7.0",
@@ -30,7 +30,8 @@
     ],
     "win": {
       "target": "portable",
-      "icon": "build/icon-256.png"
+      "icon": "build/icon-256.png",
+      "signAndEditExecutable": false
     },
     "portable": {
       "artifactName": "KuroSeed.${version}.exe"

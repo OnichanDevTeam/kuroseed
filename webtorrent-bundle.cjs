@@ -1,20 +1,13 @@
-import{createRequire as ___cr}from'module';var require=___cr(import.meta.url);
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __require = /* @__PURE__ */ ((x2) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x2, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x2)(function(x2) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Dynamic require of "' + x2 + '" is not supported');
-});
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
-var __commonJS = (cb, mod) => function __require2() {
+var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 var __export = (target, all) => {
@@ -37,6 +30,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // node_modules/uint8-util/util.js
 var alphabet, encodeLookup, decodeLookup, arr2hex, hex2arr, concat, equal;
@@ -101,10 +95,10 @@ var init_util = __esm({
 });
 
 // node_modules/uint8-util/_node.js
-import { createHash, randomBytes as rand } from "node:crypto";
-var decoder, arr2text, text2arr, arr2base, hex2bin, bin2hex, hash, randomBytes;
+var import_node_crypto, decoder, arr2text, text2arr, arr2base, hex2bin, bin2hex, hash, randomBytes;
 var init_node = __esm({
   "node_modules/uint8-util/_node.js"() {
+    import_node_crypto = require("node:crypto");
     init_util();
     decoder = new TextDecoder();
     arr2text = (data, enc) => {
@@ -121,11 +115,11 @@ var init_node = __esm({
     bin2hex = (bin) => Buffer.from(bin, "binary").toString("hex");
     hash = async (data, format, algo = "sha1") => {
       algo = algo.replace("sha-", "sha");
-      const out = createHash(algo).update(data);
+      const out = (0, import_node_crypto.createHash)(algo).update(data);
       return format ? out.digest(format) : new Uint8Array(out.digest().buffer);
     };
     randomBytes = (size) => {
-      return new Uint8Array(rand(size));
+      return new Uint8Array((0, import_node_crypto.randomBytes)(size));
     };
   }
 });
@@ -476,7 +470,7 @@ var init_bencode = __esm({
 
 // node_modules/block-iterator/index.js
 var require_block_iterator = __commonJS({
-  "node_modules/block-iterator/index.js"(exports, module) {
+  "node_modules/block-iterator/index.js"(exports2, module2) {
     function concat2(chunks, size) {
       if (typeof chunks[0] === "string") return chunks.join("");
       if (typeof chunks[0] === "number") return new Uint8Array(chunks);
@@ -489,7 +483,7 @@ var require_block_iterator = __commonJS({
       }
       return b;
     }
-    module.exports = async function* (iterator, size = 512, opts = {}) {
+    module2.exports = async function* (iterator, size = 512, opts = {}) {
       if (typeof size === "object") {
         opts = size;
         size = opts.size || 512;
@@ -519,8 +513,8 @@ var require_block_iterator = __commonJS({
 
 // node_modules/piece-length/index.js
 var require_piece_length = __commonJS({
-  "node_modules/piece-length/index.js"(exports, module) {
-    module.exports = length;
+  "node_modules/piece-length/index.js"(exports2, module2) {
+    module2.exports = length;
     function length(bytes) {
       return Math.max(16384, 1 << Math.log2(bytes < 1024 ? 1 : bytes / 1024) + 0.5 | 0);
     }
@@ -529,17 +523,17 @@ var require_piece_length = __commonJS({
 
 // node_modules/is-file/index.js
 var require_is_file = __commonJS({
-  "node_modules/is-file/index.js"(exports, module) {
+  "node_modules/is-file/index.js"(exports2, module2) {
     "use strict";
-    var fs6 = __require("fs");
-    module.exports = function isFile2(path6, cb) {
+    var fs6 = require("fs");
+    module2.exports = function isFile2(path6, cb) {
       if (!cb) return isFileSync(path6);
       fs6.stat(path6, function(err, stats) {
         if (err) return cb(err);
         return cb(null, stats.isFile());
       });
     };
-    module.exports.sync = isFileSync;
+    module2.exports.sync = isFileSync;
     function isFileSync(path6) {
       return fs6.existsSync(path6) && fs6.statSync(path6).isFile();
     }
@@ -548,8 +542,8 @@ var require_is_file = __commonJS({
 
 // node_modules/join-async-iterator/index.js
 var require_join_async_iterator = __commonJS({
-  "node_modules/join-async-iterator/index.js"(exports, module) {
-    module.exports = async function* (iterators) {
+  "node_modules/join-async-iterator/index.js"(exports2, module2) {
+    module2.exports = async function* (iterators) {
       for (let iterator of iterators) {
         if (typeof iterator === "function") iterator = iterator();
         yield* iterator;
@@ -560,9 +554,9 @@ var require_join_async_iterator = __commonJS({
 
 // node_modules/queue-microtask/index.js
 var require_queue_microtask = __commonJS({
-  "node_modules/queue-microtask/index.js"(exports, module) {
+  "node_modules/queue-microtask/index.js"(exports2, module2) {
     var promise2;
-    module.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : (cb) => (promise2 || (promise2 = Promise.resolve())).then(cb).catch((err) => setTimeout(() => {
+    module2.exports = typeof queueMicrotask === "function" ? queueMicrotask.bind(typeof window !== "undefined" ? window : global) : (cb) => (promise2 || (promise2 = Promise.resolve())).then(cb).catch((err) => setTimeout(() => {
       throw err;
     }, 0));
   }
@@ -570,8 +564,8 @@ var require_queue_microtask = __commonJS({
 
 // node_modules/run-parallel/index.js
 var require_run_parallel = __commonJS({
-  "node_modules/run-parallel/index.js"(exports, module) {
-    module.exports = runParallel;
+  "node_modules/run-parallel/index.js"(exports2, module2) {
+    module2.exports = runParallel;
     var queueMicrotask12 = require_queue_microtask();
     function runParallel(tasks, cb) {
       let results, pending, keys;
@@ -620,8 +614,8 @@ var require_run_parallel = __commonJS({
 
 // node_modules/wrappy/wrappy.js
 var require_wrappy = __commonJS({
-  "node_modules/wrappy/wrappy.js"(exports, module) {
-    module.exports = wrappy;
+  "node_modules/wrappy/wrappy.js"(exports2, module2) {
+    module2.exports = wrappy;
     function wrappy(fn, cb) {
       if (fn && cb) return wrappy(fn)(cb);
       if (typeof fn !== "function")
@@ -650,10 +644,10 @@ var require_wrappy = __commonJS({
 
 // node_modules/once/once.js
 var require_once = __commonJS({
-  "node_modules/once/once.js"(exports, module) {
+  "node_modules/once/once.js"(exports2, module2) {
     var wrappy = require_wrappy();
-    module.exports = wrappy(once6);
-    module.exports.strict = wrappy(onceStrict);
+    module2.exports = wrappy(once6);
+    module2.exports.strict = wrappy(onceStrict);
     once6.proto = once6(function() {
       Object.defineProperty(Function.prototype, "once", {
         value: function() {
@@ -694,14 +688,14 @@ var require_once = __commonJS({
 
 // node_modules/ms/index.js
 var require_ms = __commonJS({
-  "node_modules/ms/index.js"(exports, module) {
+  "node_modules/ms/index.js"(exports2, module2) {
     var s2 = 1e3;
     var m2 = s2 * 60;
     var h2 = m2 * 60;
     var d = h2 * 24;
     var w = d * 7;
     var y = d * 365.25;
-    module.exports = function(val, options) {
+    module2.exports = function(val, options) {
       options = options || {};
       var type2 = typeof val;
       if (type2 === "string" && val.length > 0) {
@@ -810,7 +804,7 @@ var require_ms = __commonJS({
 
 // node_modules/debug/src/common.js
 var require_common = __commonJS({
-  "node_modules/debug/src/common.js"(exports, module) {
+  "node_modules/debug/src/common.js"(exports2, module2) {
     function setup(env) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
@@ -981,19 +975,19 @@ var require_common = __commonJS({
       createDebug.enable(createDebug.load());
       return createDebug;
     }
-    module.exports = setup;
+    module2.exports = setup;
   }
 });
 
 // node_modules/debug/src/browser.js
 var require_browser = __commonJS({
-  "node_modules/debug/src/browser.js"(exports, module) {
-    exports.formatArgs = formatArgs;
-    exports.save = save;
-    exports.load = load;
-    exports.useColors = useColors;
-    exports.storage = localstorage();
-    exports.destroy = /* @__PURE__ */ (() => {
+  "node_modules/debug/src/browser.js"(exports2, module2) {
+    exports2.formatArgs = formatArgs;
+    exports2.save = save;
+    exports2.load = load;
+    exports2.useColors = useColors;
+    exports2.storage = localstorage();
+    exports2.destroy = /* @__PURE__ */ (() => {
       let warned = false;
       return () => {
         if (!warned) {
@@ -1002,7 +996,7 @@ var require_browser = __commonJS({
         }
       };
     })();
-    exports.colors = [
+    exports2.colors = [
       "#0000CC",
       "#0000FF",
       "#0033CC",
@@ -1095,7 +1089,7 @@ var require_browser = __commonJS({
       typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
     }
     function formatArgs(args) {
-      args[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + args[0] + (this.useColors ? "%c " : " ") + "+" + module.exports.humanize(this.diff);
+      args[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + args[0] + (this.useColors ? "%c " : " ") + "+" + module2.exports.humanize(this.diff);
       if (!this.useColors) {
         return;
       }
@@ -1114,14 +1108,14 @@ var require_browser = __commonJS({
       });
       args.splice(lastC, 0, c);
     }
-    exports.log = console.debug || console.log || (() => {
+    exports2.log = console.debug || console.log || (() => {
     });
     function save(namespaces) {
       try {
         if (namespaces) {
-          exports.storage.setItem("debug", namespaces);
+          exports2.storage.setItem("debug", namespaces);
         } else {
-          exports.storage.removeItem("debug");
+          exports2.storage.removeItem("debug");
         }
       } catch (error) {
       }
@@ -1129,7 +1123,7 @@ var require_browser = __commonJS({
     function load() {
       let r2;
       try {
-        r2 = exports.storage.getItem("debug") || exports.storage.getItem("DEBUG");
+        r2 = exports2.storage.getItem("debug") || exports2.storage.getItem("DEBUG");
       } catch (error) {
       }
       if (!r2 && typeof process !== "undefined" && "env" in process) {
@@ -1143,8 +1137,8 @@ var require_browser = __commonJS({
       } catch (error) {
       }
     }
-    module.exports = require_common()(exports);
-    var { formatters } = module.exports;
+    module2.exports = require_common()(exports2);
+    var { formatters } = module2.exports;
     formatters.j = function(v) {
       try {
         return JSON.stringify(v);
@@ -1157,9 +1151,9 @@ var require_browser = __commonJS({
 
 // node_modules/has-flag/index.js
 var require_has_flag = __commonJS({
-  "node_modules/has-flag/index.js"(exports, module) {
+  "node_modules/has-flag/index.js"(exports2, module2) {
     "use strict";
-    module.exports = (flag, argv = process.argv) => {
+    module2.exports = (flag, argv = process.argv) => {
       const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
       const position = argv.indexOf(prefix + flag);
       const terminatorPosition = argv.indexOf("--");
@@ -1170,10 +1164,10 @@ var require_has_flag = __commonJS({
 
 // node_modules/supports-color/index.js
 var require_supports_color = __commonJS({
-  "node_modules/supports-color/index.js"(exports, module) {
+  "node_modules/supports-color/index.js"(exports2, module2) {
     "use strict";
-    var os5 = __require("os");
-    var tty = __require("tty");
+    var os5 = require("os");
+    var tty = require("tty");
     var hasFlag = require_has_flag();
     var { env } = process;
     var forceColor;
@@ -1262,7 +1256,7 @@ var require_supports_color = __commonJS({
       const level = supportsColor(stream, stream && stream.isTTY);
       return translateLevel(level);
     }
-    module.exports = {
+    module2.exports = {
       supportsColor: getSupportLevel,
       stdout: translateLevel(supportsColor(true, tty.isatty(1))),
       stderr: translateLevel(supportsColor(true, tty.isatty(2)))
@@ -1272,25 +1266,25 @@ var require_supports_color = __commonJS({
 
 // node_modules/debug/src/node.js
 var require_node = __commonJS({
-  "node_modules/debug/src/node.js"(exports, module) {
-    var tty = __require("tty");
-    var util = __require("util");
-    exports.init = init;
-    exports.log = log;
-    exports.formatArgs = formatArgs;
-    exports.save = save;
-    exports.load = load;
-    exports.useColors = useColors;
-    exports.destroy = util.deprecate(
+  "node_modules/debug/src/node.js"(exports2, module2) {
+    var tty = require("tty");
+    var util = require("util");
+    exports2.init = init;
+    exports2.log = log;
+    exports2.formatArgs = formatArgs;
+    exports2.save = save;
+    exports2.load = load;
+    exports2.useColors = useColors;
+    exports2.destroy = util.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
     );
-    exports.colors = [6, 2, 3, 4, 5, 1];
+    exports2.colors = [6, 2, 3, 4, 5, 1];
     try {
       const supportsColor = require_supports_color();
       if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
-        exports.colors = [
+        exports2.colors = [
           20,
           21,
           26,
@@ -1371,7 +1365,7 @@ var require_node = __commonJS({
       }
     } catch (error) {
     }
-    exports.inspectOpts = Object.keys(process.env).filter((key) => {
+    exports2.inspectOpts = Object.keys(process.env).filter((key) => {
       return /^debug_/i.test(key);
     }).reduce((obj, key) => {
       const prop = key.substring(6).toLowerCase().replace(/_([a-z])/g, (_, k) => {
@@ -1391,7 +1385,7 @@ var require_node = __commonJS({
       return obj;
     }, {});
     function useColors() {
-      return "colors" in exports.inspectOpts ? Boolean(exports.inspectOpts.colors) : tty.isatty(process.stderr.fd);
+      return "colors" in exports2.inspectOpts ? Boolean(exports2.inspectOpts.colors) : tty.isatty(process.stderr.fd);
     }
     function formatArgs(args) {
       const { namespace: name, useColors: useColors2 } = this;
@@ -1400,19 +1394,19 @@ var require_node = __commonJS({
         const colorCode = "\x1B[3" + (c < 8 ? c : "8;5;" + c);
         const prefix = `  ${colorCode};1m${name} \x1B[0m`;
         args[0] = prefix + args[0].split("\n").join("\n" + prefix);
-        args.push(colorCode + "m+" + module.exports.humanize(this.diff) + "\x1B[0m");
+        args.push(colorCode + "m+" + module2.exports.humanize(this.diff) + "\x1B[0m");
       } else {
         args[0] = getDate() + name + " " + args[0];
       }
     }
     function getDate() {
-      if (exports.inspectOpts.hideDate) {
+      if (exports2.inspectOpts.hideDate) {
         return "";
       }
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util.formatWithOptions(exports.inspectOpts, ...args) + "\n");
+      return process.stderr.write(util.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -1426,13 +1420,13 @@ var require_node = __commonJS({
     }
     function init(debug23) {
       debug23.inspectOpts = {};
-      const keys = Object.keys(exports.inspectOpts);
+      const keys = Object.keys(exports2.inspectOpts);
       for (let i2 = 0; i2 < keys.length; i2++) {
-        debug23.inspectOpts[keys[i2]] = exports.inspectOpts[keys[i2]];
+        debug23.inspectOpts[keys[i2]] = exports2.inspectOpts[keys[i2]];
       }
     }
-    module.exports = require_common()(exports);
-    var { formatters } = module.exports;
+    module2.exports = require_common()(exports2);
+    var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
       return util.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
@@ -1446,28 +1440,28 @@ var require_node = __commonJS({
 
 // node_modules/debug/src/index.js
 var require_src = __commonJS({
-  "node_modules/debug/src/index.js"(exports, module) {
+  "node_modules/debug/src/index.js"(exports2, module2) {
     if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
-      module.exports = require_browser();
+      module2.exports = require_browser();
     } else {
-      module.exports = require_node();
+      module2.exports = require_node();
     }
   }
 });
 
 // node_modules/randombytes/index.js
 var require_randombytes = __commonJS({
-  "node_modules/randombytes/index.js"(exports, module) {
-    module.exports = __require("crypto").randomBytes;
+  "node_modules/randombytes/index.js"(exports2, module2) {
+    module2.exports = require("crypto").randomBytes;
   }
 });
 
 // node_modules/k-bucket/index.js
 var require_k_bucket = __commonJS({
-  "node_modules/k-bucket/index.js"(exports, module) {
+  "node_modules/k-bucket/index.js"(exports2, module2) {
     "use strict";
     var randomBytes2 = require_randombytes();
-    var { EventEmitter: EventEmitter17 } = __require("events");
+    var { EventEmitter: EventEmitter17 } = require("events");
     function arrayEquals(array1, array2) {
       if (array1 === array2) {
         return true;
@@ -1788,14 +1782,14 @@ var require_k_bucket = __commonJS({
         this.emit("updated", incumbent, selection);
       }
     };
-    module.exports = KBucket2;
+    module2.exports = KBucket2;
   }
 });
 
 // node_modules/k-rpc-socket/node_modules/bencode/lib/util.js
 var require_util = __commonJS({
-  "node_modules/k-rpc-socket/node_modules/bencode/lib/util.js"(exports, module) {
-    var util = module.exports;
+  "node_modules/k-rpc-socket/node_modules/bencode/lib/util.js"(exports2, module2) {
+    var util = module2.exports;
     util.digitCount = function digitCount2(value) {
       const sign = value < 0 ? 1 : 0;
       value = Math.abs(Number(value || 1));
@@ -1818,7 +1812,7 @@ var require_util = __commonJS({
 
 // node_modules/k-rpc-socket/node_modules/bencode/lib/encode.js
 var require_encode = __commonJS({
-  "node_modules/k-rpc-socket/node_modules/bencode/lib/encode.js"(exports, module) {
+  "node_modules/k-rpc-socket/node_modules/bencode/lib/encode.js"(exports2, module2) {
     var { getType: getType2 } = require_util();
     function encode2(data, buffer, offset) {
       const buffers = [];
@@ -1937,13 +1931,13 @@ var require_encode = __commonJS({
       }
       buffers.push(buffE2);
     };
-    module.exports = encode2;
+    module2.exports = encode2;
   }
 });
 
 // node_modules/k-rpc-socket/node_modules/bencode/lib/decode.js
 var require_decode = __commonJS({
-  "node_modules/k-rpc-socket/node_modules/bencode/lib/decode.js"(exports, module) {
+  "node_modules/k-rpc-socket/node_modules/bencode/lib/decode.js"(exports2, module2) {
     var INTEGER_START2 = 105;
     var STRING_DELIM2 = 58;
     var DICTIONARY_START2 = 100;
@@ -2049,13 +2043,13 @@ var require_decode = __commonJS({
       decode3.position = end;
       return decode3.encoding ? decode3.data.toString(decode3.encoding, sep, end) : decode3.data.slice(sep, end);
     };
-    module.exports = decode3;
+    module2.exports = decode3;
   }
 });
 
 // node_modules/k-rpc-socket/node_modules/bencode/lib/encoding-length.js
 var require_encoding_length = __commonJS({
-  "node_modules/k-rpc-socket/node_modules/bencode/lib/encoding-length.js"(exports, module) {
+  "node_modules/k-rpc-socket/node_modules/bencode/lib/encoding-length.js"(exports2, module2) {
     var { digitCount: digitCount2, getType: getType2 } = require_util();
     function listLength2(list) {
       let length = 1 + 1;
@@ -2117,14 +2111,14 @@ var require_encoding_length = __commonJS({
           throw new TypeError(`Unsupported value of type "${type2}"`);
       }
     }
-    module.exports = encodingLength3;
+    module2.exports = encodingLength3;
   }
 });
 
 // node_modules/k-rpc-socket/node_modules/bencode/lib/index.js
 var require_lib = __commonJS({
-  "node_modules/k-rpc-socket/node_modules/bencode/lib/index.js"(exports, module) {
-    var bencode = module.exports;
+  "node_modules/k-rpc-socket/node_modules/bencode/lib/index.js"(exports2, module2) {
+    var bencode = module2.exports;
     bencode.encode = require_encode();
     bencode.decode = require_decode();
     bencode.byteLength = bencode.encodingLength = require_encoding_length();
@@ -2133,18 +2127,18 @@ var require_lib = __commonJS({
 
 // node_modules/k-rpc-socket/index.js
 var require_k_rpc_socket = __commonJS({
-  "node_modules/k-rpc-socket/index.js"(exports, module) {
-    var dgram6 = __require("dgram");
+  "node_modules/k-rpc-socket/index.js"(exports2, module2) {
+    var dgram6 = require("dgram");
     var bencode = require_lib();
-    var isIP3 = __require("net").isIP;
-    var dns = __require("dns");
-    var util = __require("util");
-    var events = __require("events");
+    var isIP3 = require("net").isIP;
+    var dns = require("dns");
+    var util = require("util");
+    var events = require("events");
     var ETIMEDOUT = new Error("Query timed out");
     ETIMEDOUT.code = "ETIMEDOUT";
     var EUNEXPECTEDNODE = new Error("Unexpected node id");
     EUNEXPECTEDNODE.code = "EUNEXPECTEDNODE";
-    module.exports = RPC;
+    module2.exports = RPC;
     function RPC(opts) {
       if (!(this instanceof RPC)) return new RPC(opts);
       if (!opts) opts = {};
@@ -2319,12 +2313,12 @@ var require_k_rpc_socket = __commonJS({
 
 // node_modules/k-rpc/index.js
 var require_k_rpc = __commonJS({
-  "node_modules/k-rpc/index.js"(exports, module) {
+  "node_modules/k-rpc/index.js"(exports2, module2) {
     var socket = require_k_rpc_socket();
     var KBucket2 = require_k_bucket();
-    var events = __require("events");
+    var events = require("events");
     var randombytes2 = require_randombytes();
-    var util = __require("util");
+    var util = require("util");
     var K = 20;
     var MAX_CONCURRENCY = 16;
     var BOOTSTRAP_NODES = [
@@ -2332,7 +2326,7 @@ var require_k_rpc = __commonJS({
       { host: "router.utorrent.com", port: 6881 },
       { host: "dht.transmissionbt.com", port: 6881 }
     ];
-    module.exports = RPC;
+    module2.exports = RPC;
     function RPC(opts) {
       if (!(this instanceof RPC)) return new RPC(opts);
       if (!opts) opts = {};
@@ -2619,8 +2613,8 @@ var require_k_rpc = __commonJS({
 
 // node_modules/last-one-wins/index.js
 var require_last_one_wins = __commonJS({
-  "node_modules/last-one-wins/index.js"(exports, module) {
-    module.exports = function(work) {
+  "node_modules/last-one-wins/index.js"(exports2, module2) {
+    module2.exports = function(work) {
       var pending = null;
       var callback = null;
       var callbacks = null;
@@ -2663,9 +2657,9 @@ var require_last_one_wins = __commonJS({
 
 // node_modules/inherits/inherits_browser.js
 var require_inherits_browser = __commonJS({
-  "node_modules/inherits/inherits_browser.js"(exports, module) {
+  "node_modules/inherits/inherits_browser.js"(exports2, module2) {
     if (typeof Object.create === "function") {
-      module.exports = function inherits(ctor, superCtor) {
+      module2.exports = function inherits(ctor, superCtor) {
         if (superCtor) {
           ctor.super_ = superCtor;
           ctor.prototype = Object.create(superCtor.prototype, {
@@ -2679,7 +2673,7 @@ var require_inherits_browser = __commonJS({
         }
       };
     } else {
-      module.exports = function inherits(ctor, superCtor) {
+      module2.exports = function inherits(ctor, superCtor) {
         if (superCtor) {
           ctor.super_ = superCtor;
           var TempCtor = function() {
@@ -2695,13 +2689,13 @@ var require_inherits_browser = __commonJS({
 
 // node_modules/inherits/inherits.js
 var require_inherits = __commonJS({
-  "node_modules/inherits/inherits.js"(exports, module) {
+  "node_modules/inherits/inherits.js"(exports2, module2) {
     try {
-      util = __require("util");
+      util = require("util");
       if (typeof util.inherits !== "function") throw "";
-      module.exports = util.inherits;
+      module2.exports = util.inherits;
     } catch (e2) {
-      module.exports = require_inherits_browser();
+      module2.exports = require_inherits_browser();
     }
     var util;
   }
@@ -2709,10 +2703,10 @@ var require_inherits = __commonJS({
 
 // node_modules/lru/index.js
 var require_lru = __commonJS({
-  "node_modules/lru/index.js"(exports, module) {
-    var events = __require("events");
+  "node_modules/lru/index.js"(exports2, module2) {
+    var events = require("events");
     var inherits = require_inherits();
-    module.exports = LRU3;
+    module2.exports = LRU3;
     function LRU3(opts) {
       if (!(this instanceof LRU3)) return new LRU3(opts);
       if (typeof opts === "number") opts = { max: opts };
@@ -2828,7 +2822,7 @@ var require_lru = __commonJS({
 
 // node_modules/b4a/index.js
 var require_b4a = __commonJS({
-  "node_modules/b4a/index.js"(exports, module) {
+  "node_modules/b4a/index.js"(exports2, module2) {
     function isBuffer(value) {
       return Buffer.isBuffer(value) || value instanceof Uint8Array;
     }
@@ -2941,7 +2935,7 @@ var require_b4a = __commonJS({
     function writeUInt32LE(buffer, value, offset) {
       return toBuffer2(buffer).writeUInt32LE(value, offset);
     }
-    module.exports = {
+    module2.exports = {
       isBuffer,
       isEncoding,
       alloc,
@@ -2985,10 +2979,10 @@ var require_b4a = __commonJS({
 
 // node_modules/record-cache/index.js
 var require_record_cache = __commonJS({
-  "node_modules/record-cache/index.js"(exports, module) {
+  "node_modules/record-cache/index.js"(exports2, module2) {
     var b4a = require_b4a();
     var EMPTY = [];
-    module.exports = RecordCache;
+    module2.exports = RecordCache;
     function RecordSet() {
       this.list = [];
       this.map = /* @__PURE__ */ new Map();
@@ -3127,10 +3121,10 @@ var require_record_cache = __commonJS({
 
 // node_modules/web-streams-polyfill/dist/ponyfill.es2018.js
 var require_ponyfill_es2018 = __commonJS({
-  "node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports, module) {
+  "node_modules/web-streams-polyfill/dist/ponyfill.es2018.js"(exports2, module2) {
     (function(global2, factory) {
-      typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.WebStreamsPolyfill = {}));
-    })(exports, (function(exports2) {
+      typeof exports2 === "object" && typeof module2 !== "undefined" ? factory(exports2) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.WebStreamsPolyfill = {}));
+    })(exports2, (function(exports3) {
       "use strict";
       function noop9() {
         return void 0;
@@ -7383,19 +7377,19 @@ var require_ponyfill_es2018 = __commonJS({
       function streamBrandCheckException(name) {
         return new TypeError(`TransformStream.prototype.${name} can only be used on a TransformStream`);
       }
-      exports2.ByteLengthQueuingStrategy = ByteLengthQueuingStrategy;
-      exports2.CountQueuingStrategy = CountQueuingStrategy;
-      exports2.ReadableByteStreamController = ReadableByteStreamController;
-      exports2.ReadableStream = ReadableStream2;
-      exports2.ReadableStreamBYOBReader = ReadableStreamBYOBReader;
-      exports2.ReadableStreamBYOBRequest = ReadableStreamBYOBRequest;
-      exports2.ReadableStreamDefaultController = ReadableStreamDefaultController;
-      exports2.ReadableStreamDefaultReader = ReadableStreamDefaultReader;
-      exports2.TransformStream = TransformStream;
-      exports2.TransformStreamDefaultController = TransformStreamDefaultController;
-      exports2.WritableStream = WritableStream;
-      exports2.WritableStreamDefaultController = WritableStreamDefaultController;
-      exports2.WritableStreamDefaultWriter = WritableStreamDefaultWriter;
+      exports3.ByteLengthQueuingStrategy = ByteLengthQueuingStrategy;
+      exports3.CountQueuingStrategy = CountQueuingStrategy;
+      exports3.ReadableByteStreamController = ReadableByteStreamController;
+      exports3.ReadableStream = ReadableStream2;
+      exports3.ReadableStreamBYOBReader = ReadableStreamBYOBReader;
+      exports3.ReadableStreamBYOBRequest = ReadableStreamBYOBRequest;
+      exports3.ReadableStreamDefaultController = ReadableStreamDefaultController;
+      exports3.ReadableStreamDefaultReader = ReadableStreamDefaultReader;
+      exports3.TransformStream = TransformStream;
+      exports3.TransformStreamDefaultController = TransformStreamDefaultController;
+      exports3.WritableStream = WritableStream;
+      exports3.WritableStreamDefaultController = WritableStreamDefaultController;
+      exports3.WritableStreamDefaultWriter = WritableStreamDefaultWriter;
     }));
   }
 });
@@ -7406,12 +7400,12 @@ var require_streams = __commonJS({
     var POOL_SIZE2 = 65536;
     if (!globalThis.ReadableStream) {
       try {
-        const process6 = __require("node:process");
+        const process6 = require("node:process");
         const { emitWarning } = process6;
         try {
           process6.emitWarning = () => {
           };
-          Object.assign(globalThis, __require("node:stream/web"));
+          Object.assign(globalThis, require("node:stream/web"));
           process6.emitWarning = emitWarning;
         } catch (error) {
           process6.emitWarning = emitWarning;
@@ -7422,7 +7416,7 @@ var require_streams = __commonJS({
       }
     }
     try {
-      const { Blob: Blob5 } = __require("buffer");
+      const { Blob: Blob5 } = require("buffer");
       if (Blob5 && !Blob5.prototype.stream) {
         Blob5.prototype.stream = function name(params) {
           let position = 0;
@@ -7793,28 +7787,28 @@ var init_esm_min = __esm({
 
 // node_modules/node-domexception/index.js
 var require_node_domexception = __commonJS({
-  "node_modules/node-domexception/index.js"(exports, module) {
+  "node_modules/node-domexception/index.js"(exports2, module2) {
     if (!globalThis.DOMException) {
       try {
-        const { MessageChannel } = __require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
+        const { MessageChannel } = require("worker_threads"), port = new MessageChannel().port1, ab = new ArrayBuffer();
         port.postMessage(ab, [ab, ab]);
       } catch (err) {
         err.constructor.name === "DOMException" && (globalThis.DOMException = err.constructor);
       }
     }
-    module.exports = globalThis.DOMException;
+    module2.exports = globalThis.DOMException;
   }
 });
 
 // node_modules/fetch-blob/from.js
-import { statSync, createReadStream, promises as fs2 } from "node:fs";
-var import_node_domexception, stat;
+var import_node_fs, import_node_domexception, stat;
 var init_from = __esm({
   "node_modules/fetch-blob/from.js"() {
+    import_node_fs = require("node:fs");
     import_node_domexception = __toESM(require_node_domexception(), 1);
     init_file();
     init_fetch_blob();
-    ({ stat } = fs2);
+    ({ stat } = import_node_fs.promises);
   }
 });
 
@@ -8182,10 +8176,10 @@ var init_multipart_parser = __esm({
 
 // node_modules/ip/lib/ip.js
 var require_ip = __commonJS({
-  "node_modules/ip/lib/ip.js"(exports) {
-    var ip = exports;
-    var { Buffer: Buffer6 } = __require("buffer");
-    var os5 = __require("os");
+  "node_modules/ip/lib/ip.js"(exports2) {
+    var ip = exports2;
+    var { Buffer: Buffer6 } = require("buffer");
+    var os5 = require("os");
     ip.toBuffer = function(ip2, buff, offset) {
       offset = ~~offset;
       let result;
@@ -8527,7 +8521,7 @@ var require_ip = __commonJS({
 
 // node_modules/ip-set/index.js
 var require_ip_set = __commonJS({
-  "node_modules/ip-set/index.js"(exports, module) {
+  "node_modules/ip-set/index.js"(exports2, module2) {
     var ip = require_ip();
     var IPSetNode = class _IPSetNode {
       constructor(start, end) {
@@ -8659,13 +8653,13 @@ var require_ip_set = __commonJS({
         return this.tree.contains(addr);
       }
     };
-    module.exports = IPSet2;
+    module2.exports = IPSet2;
   }
 });
 
 // node_modules/netmask/lib/netmask.js
 var require_netmask = __commonJS({
-  "node_modules/netmask/lib/netmask.js"(exports) {
+  "node_modules/netmask/lib/netmask.js"(exports2) {
     (function() {
       var Netmask2, atob, chr, chr0, chrA, chra, ip2long, long2ip;
       long2ip = function(long) {
@@ -8851,18 +8845,18 @@ var require_netmask = __commonJS({
         };
         return Netmask3;
       })();
-      exports.ip2long = ip2long;
-      exports.long2ip = long2ip;
-      exports.Netmask = Netmask2;
-    }).call(exports);
+      exports2.ip2long = ip2long;
+      exports2.long2ip = long2ip;
+      exports2.Netmask = Netmask2;
+    }).call(exports2);
   }
 });
 
 // node_modules/through/index.js
 var require_through = __commonJS({
-  "node_modules/through/index.js"(exports, module) {
-    var Stream3 = __require("stream");
-    exports = module.exports = through;
+  "node_modules/through/index.js"(exports2, module2) {
+    var Stream3 = require("stream");
+    exports2 = module2.exports = through;
     through.through = through;
     function through(write, end, opts) {
       write = write || function(data) {
@@ -8947,10 +8941,10 @@ var require_through = __commonJS({
 
 // node_modules/split/index.js
 var require_split = __commonJS({
-  "node_modules/split/index.js"(exports, module) {
+  "node_modules/split/index.js"(exports2, module2) {
     var through = require_through();
-    var Decoder = __require("string_decoder").StringDecoder;
-    module.exports = split2;
+    var Decoder = require("string_decoder").StringDecoder;
+    module2.exports = split2;
     function split2(matcher, mapper, options) {
       var decoder2 = new Decoder();
       var soFar = "";
@@ -9000,15 +8994,15 @@ var require_split = __commonJS({
 
 // node_modules/events-universal/default.js
 var require_default = __commonJS({
-  "node_modules/events-universal/default.js"(exports, module) {
-    module.exports = __require("events");
+  "node_modules/events-universal/default.js"(exports2, module2) {
+    module2.exports = require("events");
   }
 });
 
 // node_modules/fast-fifo/fixed-size.js
 var require_fixed_size = __commonJS({
-  "node_modules/fast-fifo/fixed-size.js"(exports, module) {
-    module.exports = class FixedFIFO {
+  "node_modules/fast-fifo/fixed-size.js"(exports2, module2) {
+    module2.exports = class FixedFIFO {
       constructor(hwm) {
         if (!(hwm > 0) || (hwm - 1 & hwm) !== 0) throw new Error("Max size for a FixedFIFO should be a power of two");
         this.buffer = new Array(hwm);
@@ -9047,9 +9041,9 @@ var require_fixed_size = __commonJS({
 
 // node_modules/fast-fifo/index.js
 var require_fast_fifo = __commonJS({
-  "node_modules/fast-fifo/index.js"(exports, module) {
+  "node_modules/fast-fifo/index.js"(exports2, module2) {
     var FixedFIFO = require_fixed_size();
-    module.exports = class FastFIFO {
+    module2.exports = class FastFIFO {
       constructor(hwm) {
         this.hwm = hwm || 16;
         this.head = new FixedFIFO(this.hwm);
@@ -9094,9 +9088,9 @@ var require_fast_fifo = __commonJS({
 
 // node_modules/text-decoder/lib/pass-through-decoder.js
 var require_pass_through_decoder = __commonJS({
-  "node_modules/text-decoder/lib/pass-through-decoder.js"(exports, module) {
+  "node_modules/text-decoder/lib/pass-through-decoder.js"(exports2, module2) {
     var b4a = require_b4a();
-    module.exports = class PassThroughDecoder {
+    module2.exports = class PassThroughDecoder {
       constructor(encoding) {
         this.encoding = encoding;
       }
@@ -9115,9 +9109,9 @@ var require_pass_through_decoder = __commonJS({
 
 // node_modules/text-decoder/lib/utf8-decoder.js
 var require_utf8_decoder = __commonJS({
-  "node_modules/text-decoder/lib/utf8-decoder.js"(exports, module) {
+  "node_modules/text-decoder/lib/utf8-decoder.js"(exports2, module2) {
     var b4a = require_b4a();
-    module.exports = class UTF8Decoder {
+    module2.exports = class UTF8Decoder {
       constructor() {
         this._reset();
       }
@@ -9262,10 +9256,10 @@ var require_utf8_decoder = __commonJS({
 
 // node_modules/text-decoder/index.js
 var require_text_decoder = __commonJS({
-  "node_modules/text-decoder/index.js"(exports, module) {
+  "node_modules/text-decoder/index.js"(exports2, module2) {
     var PassThroughDecoder = require_pass_through_decoder();
     var UTF8Decoder = require_utf8_decoder();
-    module.exports = class TextDecoder {
+    module2.exports = class TextDecoder {
       constructor(encoding = "utf8") {
         this.encoding = normalizeEncoding(encoding);
         switch (this.encoding) {
@@ -9324,7 +9318,7 @@ var require_text_decoder = __commonJS({
 
 // node_modules/@thaunknown/simple-peer/node_modules/streamx/index.js
 var require_streamx = __commonJS({
-  "node_modules/@thaunknown/simple-peer/node_modules/streamx/index.js"(exports, module) {
+  "node_modules/@thaunknown/simple-peer/node_modules/streamx/index.js"(exports2, module2) {
     var { EventEmitter: EventEmitter17 } = require_default();
     var STREAM_DESTROYED = new Error("Stream was destroyed");
     var PREMATURE_CLOSE = new Error("Premature close");
@@ -10277,7 +10271,7 @@ var require_streamx = __commonJS({
     function isWritev(s2) {
       return s2._writev !== Writable.prototype._writev && s2._writev !== Duplex4.prototype._writev;
     }
-    module.exports = {
+    module2.exports = {
       pipeline: pipeline3,
       pipelinePromise,
       isStream: isStream2,
@@ -10301,7 +10295,7 @@ var require_streamx = __commonJS({
 
 // node_modules/@thaunknown/simple-peer/node_modules/err-code/index.js
 var require_err_code = __commonJS({
-  "node_modules/@thaunknown/simple-peer/node_modules/err-code/index.js"(exports, module) {
+  "node_modules/@thaunknown/simple-peer/node_modules/err-code/index.js"(exports2, module2) {
     "use strict";
     function assign(obj, props) {
       for (const key in props) {
@@ -10339,13 +10333,13 @@ var require_err_code = __commonJS({
         return output;
       }
     }
-    module.exports = createError;
+    module2.exports = createError;
   }
 });
 
 // node_modules/throughput/index.js
 var require_throughput = __commonJS({
-  "node_modules/throughput/index.js"(exports, module) {
+  "node_modules/throughput/index.js"(exports2, module2) {
     var hrtime = typeof process !== "undefined" && !!process.hrtime;
     var maxTick = 65535;
     var resolution = 10;
@@ -10357,7 +10351,7 @@ var require_throughput = __commonJS({
     function getTick(start) {
       return (now() - start) / timeDiff & maxTick;
     }
-    module.exports = function(seconds) {
+    module2.exports = function(seconds) {
       const start = now();
       const size = resolution * (seconds || 5);
       const buffer = [0];
@@ -10384,8 +10378,8 @@ var require_throughput = __commonJS({
 
 // node_modules/streamx/index.js
 var require_streamx2 = __commonJS({
-  "node_modules/streamx/index.js"(exports, module) {
-    var { EventEmitter: EventEmitter17 } = __require("events");
+  "node_modules/streamx/index.js"(exports2, module2) {
+    var { EventEmitter: EventEmitter17 } = require("events");
     var STREAM_DESTROYED = new Error("Stream was destroyed");
     var PREMATURE_CLOSE = new Error("Premature close");
     var FIFO = require_fast_fifo();
@@ -11321,7 +11315,7 @@ var require_streamx2 = __commonJS({
     function isWritev(s2) {
       return s2._writev !== Writable.prototype._writev && s2._writev !== Duplex4.prototype._writev;
     }
-    module.exports = {
+    module2.exports = {
       pipeline: pipeline3,
       pipelinePromise,
       isStream: isStream2,
@@ -11343,11 +11337,11 @@ var require_streamx2 = __commonJS({
 
 // node_modules/speed-limiter/lib/utils.js
 var require_utils = __commonJS({
-  "node_modules/speed-limiter/lib/utils.js"(exports, module) {
+  "node_modules/speed-limiter/lib/utils.js"(exports2, module2) {
     function wait(time) {
       return new Promise((resolve2) => setTimeout(resolve2, time));
     }
-    module.exports = {
+    module2.exports = {
       wait
     };
   }
@@ -11355,7 +11349,7 @@ var require_utils = __commonJS({
 
 // node_modules/limiter/lib/tokenBucket.js
 var require_tokenBucket = __commonJS({
-  "node_modules/limiter/lib/tokenBucket.js"(exports, module) {
+  "node_modules/limiter/lib/tokenBucket.js"(exports2, module2) {
     var TokenBucket = function(bucketSize, tokensPerInterval, interval, parentBucket) {
       this.bucketSize = bucketSize;
       this.tokensPerInterval = tokensPerInterval;
@@ -11476,13 +11470,13 @@ var require_tokenBucket = __commonJS({
         this.content = Math.min(this.content + dripAmount, this.bucketSize);
       }
     };
-    module.exports = TokenBucket;
+    module2.exports = TokenBucket;
   }
 });
 
 // node_modules/limiter/lib/clock.js
 var require_clock = __commonJS({
-  "node_modules/limiter/lib/clock.js"(exports, module) {
+  "node_modules/limiter/lib/clock.js"(exports2, module2) {
     var getMilliseconds = function() {
       if (typeof process !== "undefined" && process.hrtime) {
         var hrtime = process.hrtime();
@@ -11492,13 +11486,13 @@ var require_clock = __commonJS({
       }
       return (/* @__PURE__ */ new Date()).getTime();
     };
-    module.exports = getMilliseconds;
+    module2.exports = getMilliseconds;
   }
 });
 
 // node_modules/limiter/lib/rateLimiter.js
 var require_rateLimiter = __commonJS({
-  "node_modules/limiter/lib/rateLimiter.js"(exports, module) {
+  "node_modules/limiter/lib/rateLimiter.js"(exports2, module2) {
     var TokenBucket = require_tokenBucket();
     var getMilliseconds = require_clock();
     var RateLimiter = function(tokensPerInterval, interval, fireImmediately) {
@@ -11597,21 +11591,21 @@ var require_rateLimiter = __commonJS({
         return this.tokenBucket.content;
       }
     };
-    module.exports = RateLimiter;
+    module2.exports = RateLimiter;
   }
 });
 
 // node_modules/limiter/index.js
 var require_limiter = __commonJS({
-  "node_modules/limiter/index.js"(exports) {
-    exports.RateLimiter = require_rateLimiter();
-    exports.TokenBucket = require_tokenBucket();
+  "node_modules/limiter/index.js"(exports2) {
+    exports2.RateLimiter = require_rateLimiter();
+    exports2.TokenBucket = require_tokenBucket();
   }
 });
 
 // node_modules/speed-limiter/lib/throttle-group.js
 var require_throttle_group = __commonJS({
-  "node_modules/speed-limiter/lib/throttle-group.js"(exports, module) {
+  "node_modules/speed-limiter/lib/throttle-group.js"(exports2, module2) {
     var { TokenBucket } = require_limiter();
     var Throttle = require_throttle();
     var ThrottleGroup2 = class {
@@ -11679,14 +11673,14 @@ var require_throttle_group = __commonJS({
         if (index > -1) this.throttles.splice(index, 1);
       }
     };
-    module.exports = ThrottleGroup2;
+    module2.exports = ThrottleGroup2;
   }
 });
 
 // node_modules/speed-limiter/lib/throttle.js
 var require_throttle = __commonJS({
-  "node_modules/speed-limiter/lib/throttle.js"(exports, module) {
-    var { EventEmitter: EventEmitter17 } = __require("events");
+  "node_modules/speed-limiter/lib/throttle.js"(exports2, module2) {
+    var { EventEmitter: EventEmitter17 } = require("events");
     var { Transform: Transform2 } = require_streamx2();
     var { wait } = require_utils();
     var Throttle = class extends Transform2 {
@@ -11789,17 +11783,17 @@ var require_throttle = __commonJS({
         super.destroy(...args);
       }
     };
-    module.exports = Throttle;
+    module2.exports = Throttle;
     var ThrottleGroup2 = require_throttle_group();
   }
 });
 
 // node_modules/speed-limiter/index.js
 var require_speed_limiter = __commonJS({
-  "node_modules/speed-limiter/index.js"(exports, module) {
+  "node_modules/speed-limiter/index.js"(exports2, module2) {
     var Throttle = require_throttle();
     var ThrottleGroup2 = require_throttle_group();
-    module.exports = {
+    module2.exports = {
       Throttle,
       ThrottleGroup: ThrottleGroup2
     };
@@ -11808,8 +11802,8 @@ var require_speed_limiter = __commonJS({
 
 // node_modules/unordered-array-remove/index.js
 var require_unordered_array_remove = __commonJS({
-  "node_modules/unordered-array-remove/index.js"(exports, module) {
-    module.exports = remove;
+  "node_modules/unordered-array-remove/index.js"(exports2, module2) {
+    module2.exports = remove;
     function remove(arr, i2) {
       if (i2 >= arr.length || i2 < 0) return;
       var last = arr.pop();
@@ -11825,10 +11819,10 @@ var require_unordered_array_remove = __commonJS({
 
 // node_modules/isexe/windows.js
 var require_windows = __commonJS({
-  "node_modules/isexe/windows.js"(exports, module) {
-    module.exports = isexe;
+  "node_modules/isexe/windows.js"(exports2, module2) {
+    module2.exports = isexe;
     isexe.sync = sync2;
-    var fs6 = __require("fs");
+    var fs6 = require("fs");
     function checkPathExt(path6, options) {
       var pathext = options.pathExt !== void 0 ? options.pathExt : process.env.PATHEXT;
       if (!pathext) {
@@ -11865,10 +11859,10 @@ var require_windows = __commonJS({
 
 // node_modules/isexe/mode.js
 var require_mode = __commonJS({
-  "node_modules/isexe/mode.js"(exports, module) {
-    module.exports = isexe;
+  "node_modules/isexe/mode.js"(exports2, module2) {
+    module2.exports = isexe;
     isexe.sync = sync2;
-    var fs6 = __require("fs");
+    var fs6 = require("fs");
     function isexe(path6, options, cb) {
       fs6.stat(path6, function(er, stat2) {
         cb(er, er ? false : checkStat(stat2, options));
@@ -11898,15 +11892,15 @@ var require_mode = __commonJS({
 
 // node_modules/isexe/index.js
 var require_isexe = __commonJS({
-  "node_modules/isexe/index.js"(exports, module) {
-    var fs6 = __require("fs");
+  "node_modules/isexe/index.js"(exports2, module2) {
+    var fs6 = require("fs");
     var core;
     if (process.platform === "win32" || global.TESTING_WINDOWS) {
       core = require_windows();
     } else {
       core = require_mode();
     }
-    module.exports = isexe;
+    module2.exports = isexe;
     isexe.sync = sync2;
     function isexe(path6, options, cb) {
       if (typeof options === "function") {
@@ -11953,9 +11947,9 @@ var require_isexe = __commonJS({
 
 // node_modules/which/which.js
 var require_which = __commonJS({
-  "node_modules/which/which.js"(exports, module) {
+  "node_modules/which/which.js"(exports2, module2) {
     var isWindows = process.platform === "win32" || process.env.OSTYPE === "cygwin" || process.env.OSTYPE === "msys";
-    var path6 = __require("path");
+    var path6 = require("path");
     var COLON2 = isWindows ? ";" : ":";
     var isexe = require_isexe();
     var getNotFoundError = (cmd) => Object.assign(new Error(`not found: ${cmd}`), { code: "ENOENT" });
@@ -12042,14 +12036,14 @@ var require_which = __commonJS({
         return null;
       throw getNotFoundError(cmd);
     };
-    module.exports = which;
+    module2.exports = which;
     which.sync = whichSync;
   }
 });
 
 // node_modules/path-key/index.js
 var require_path_key = __commonJS({
-  "node_modules/path-key/index.js"(exports, module) {
+  "node_modules/path-key/index.js"(exports2, module2) {
     "use strict";
     var pathKey2 = (options = {}) => {
       const environment = options.env || process.env;
@@ -12059,16 +12053,16 @@ var require_path_key = __commonJS({
       }
       return Object.keys(environment).reverse().find((key) => key.toUpperCase() === "PATH") || "Path";
     };
-    module.exports = pathKey2;
-    module.exports.default = pathKey2;
+    module2.exports = pathKey2;
+    module2.exports.default = pathKey2;
   }
 });
 
 // node_modules/cross-spawn/lib/util/resolveCommand.js
 var require_resolveCommand = __commonJS({
-  "node_modules/cross-spawn/lib/util/resolveCommand.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/resolveCommand.js"(exports2, module2) {
     "use strict";
-    var path6 = __require("path");
+    var path6 = require("path");
     var which = require_which();
     var getPathKey = require_path_key();
     function resolveCommandAttempt(parsed, withoutPathExt) {
@@ -12102,13 +12096,13 @@ var require_resolveCommand = __commonJS({
     function resolveCommand(parsed) {
       return resolveCommandAttempt(parsed) || resolveCommandAttempt(parsed, true);
     }
-    module.exports = resolveCommand;
+    module2.exports = resolveCommand;
   }
 });
 
 // node_modules/cross-spawn/lib/util/escape.js
 var require_escape = __commonJS({
-  "node_modules/cross-spawn/lib/util/escape.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/escape.js"(exports2, module2) {
     "use strict";
     var metaCharsRegExp = /([()\][%!^"`<>&|;, *?])/g;
     function escapeCommand(arg) {
@@ -12126,25 +12120,25 @@ var require_escape = __commonJS({
       }
       return arg;
     }
-    module.exports.command = escapeCommand;
-    module.exports.argument = escapeArgument;
+    module2.exports.command = escapeCommand;
+    module2.exports.argument = escapeArgument;
   }
 });
 
 // node_modules/shebang-regex/index.js
 var require_shebang_regex = __commonJS({
-  "node_modules/shebang-regex/index.js"(exports, module) {
+  "node_modules/shebang-regex/index.js"(exports2, module2) {
     "use strict";
-    module.exports = /^#!(.*)/;
+    module2.exports = /^#!(.*)/;
   }
 });
 
 // node_modules/shebang-command/index.js
 var require_shebang_command = __commonJS({
-  "node_modules/shebang-command/index.js"(exports, module) {
+  "node_modules/shebang-command/index.js"(exports2, module2) {
     "use strict";
     var shebangRegex = require_shebang_regex();
-    module.exports = (string = "") => {
+    module2.exports = (string = "") => {
       const match = string.match(shebangRegex);
       if (!match) {
         return null;
@@ -12161,9 +12155,9 @@ var require_shebang_command = __commonJS({
 
 // node_modules/cross-spawn/lib/util/readShebang.js
 var require_readShebang = __commonJS({
-  "node_modules/cross-spawn/lib/util/readShebang.js"(exports, module) {
+  "node_modules/cross-spawn/lib/util/readShebang.js"(exports2, module2) {
     "use strict";
-    var fs6 = __require("fs");
+    var fs6 = require("fs");
     var shebangCommand = require_shebang_command();
     function readShebang(command) {
       const size = 150;
@@ -12177,15 +12171,15 @@ var require_readShebang = __commonJS({
       }
       return shebangCommand(buffer.toString());
     }
-    module.exports = readShebang;
+    module2.exports = readShebang;
   }
 });
 
 // node_modules/cross-spawn/lib/parse.js
 var require_parse = __commonJS({
-  "node_modules/cross-spawn/lib/parse.js"(exports, module) {
+  "node_modules/cross-spawn/lib/parse.js"(exports2, module2) {
     "use strict";
-    var path6 = __require("path");
+    var path6 = require("path");
     var resolveCommand = require_resolveCommand();
     var escape2 = require_escape();
     var readShebang = require_readShebang();
@@ -12239,13 +12233,13 @@ var require_parse = __commonJS({
       };
       return options.shell ? parsed : parseNonShell(parsed);
     }
-    module.exports = parse;
+    module2.exports = parse;
   }
 });
 
 // node_modules/cross-spawn/lib/enoent.js
 var require_enoent = __commonJS({
-  "node_modules/cross-spawn/lib/enoent.js"(exports, module) {
+  "node_modules/cross-spawn/lib/enoent.js"(exports2, module2) {
     "use strict";
     var isWin = process.platform === "win32";
     function notFoundError(original, syscall) {
@@ -12284,7 +12278,7 @@ var require_enoent = __commonJS({
       }
       return null;
     }
-    module.exports = {
+    module2.exports = {
       hookChildProcess,
       verifyENOENT,
       verifyENOENTSync,
@@ -12295,9 +12289,9 @@ var require_enoent = __commonJS({
 
 // node_modules/cross-spawn/index.js
 var require_cross_spawn = __commonJS({
-  "node_modules/cross-spawn/index.js"(exports, module) {
+  "node_modules/cross-spawn/index.js"(exports2, module2) {
     "use strict";
-    var cp = __require("child_process");
+    var cp = require("child_process");
     var parse = require_parse();
     var enoent = require_enoent();
     function spawn(command, args, options) {
@@ -12312,18 +12306,18 @@ var require_cross_spawn = __commonJS({
       result.error = result.error || enoent.verifyENOENTSync(result.status, parsed);
       return result;
     }
-    module.exports = spawn;
-    module.exports.spawn = spawn;
-    module.exports.sync = spawnSync;
-    module.exports._parse = parse;
-    module.exports._enoent = enoent;
+    module2.exports = spawn;
+    module2.exports.spawn = spawn;
+    module2.exports.sync = spawnSync;
+    module2.exports._parse = parse;
+    module2.exports._enoent = enoent;
   }
 });
 
 // node_modules/signal-exit/signals.js
 var require_signals = __commonJS({
-  "node_modules/signal-exit/signals.js"(exports, module) {
-    module.exports = [
+  "node_modules/signal-exit/signals.js"(exports2, module2) {
+    module2.exports = [
       "SIGABRT",
       "SIGALRM",
       "SIGHUP",
@@ -12331,7 +12325,7 @@ var require_signals = __commonJS({
       "SIGTERM"
     ];
     if (process.platform !== "win32") {
-      module.exports.push(
+      module2.exports.push(
         "SIGVTALRM",
         "SIGXCPU",
         "SIGXFSZ",
@@ -12346,7 +12340,7 @@ var require_signals = __commonJS({
       );
     }
     if (process.platform === "linux") {
-      module.exports.push(
+      module2.exports.push(
         "SIGIO",
         "SIGPOLL",
         "SIGPWR",
@@ -12359,21 +12353,21 @@ var require_signals = __commonJS({
 
 // node_modules/signal-exit/index.js
 var require_signal_exit = __commonJS({
-  "node_modules/signal-exit/index.js"(exports, module) {
+  "node_modules/signal-exit/index.js"(exports2, module2) {
     var process6 = global.process;
     var processOk = function(process7) {
       return process7 && typeof process7 === "object" && typeof process7.removeListener === "function" && typeof process7.emit === "function" && typeof process7.reallyExit === "function" && typeof process7.listeners === "function" && typeof process7.kill === "function" && typeof process7.pid === "number" && typeof process7.on === "function";
     };
     if (!processOk(process6)) {
-      module.exports = function() {
+      module2.exports = function() {
         return function() {
         };
       };
     } else {
-      assert = __require("assert");
+      assert = require("assert");
       signals = require_signals();
       isWin = /^win/i.test(process6.platform);
-      EE = __require("events");
+      EE = require("events");
       if (typeof EE !== "function") {
         EE = EE.EventEmitter;
       }
@@ -12388,7 +12382,7 @@ var require_signal_exit = __commonJS({
         emitter.setMaxListeners(Infinity);
         emitter.infinite = true;
       }
-      module.exports = function(cb, opts) {
+      module2.exports = function(cb, opts) {
         if (!processOk(global.process)) {
           return function() {
           };
@@ -12425,7 +12419,7 @@ var require_signal_exit = __commonJS({
         process6.reallyExit = originalProcessReallyExit;
         emitter.count -= 1;
       };
-      module.exports.unload = unload;
+      module2.exports.unload = unload;
       emit = function emit2(event, code, signal) {
         if (emitter.emitted[event]) {
           return;
@@ -12451,7 +12445,7 @@ var require_signal_exit = __commonJS({
           }
         };
       });
-      module.exports.signals = function() {
+      module2.exports.signals = function() {
         return signals;
       };
       loaded = false;
@@ -12472,7 +12466,7 @@ var require_signal_exit = __commonJS({
         process6.emit = processEmit;
         process6.reallyExit = processReallyExit;
       };
-      module.exports.load = load;
+      module2.exports.load = load;
       originalProcessReallyExit = process6.reallyExit;
       processReallyExit = function processReallyExit2(code) {
         if (!processOk(global.process)) {
@@ -12518,10 +12512,10 @@ var require_signal_exit = __commonJS({
 
 // node_modules/execa/node_modules/get-stream/buffer-stream.js
 var require_buffer_stream = __commonJS({
-  "node_modules/execa/node_modules/get-stream/buffer-stream.js"(exports, module) {
+  "node_modules/execa/node_modules/get-stream/buffer-stream.js"(exports2, module2) {
     "use strict";
-    var { PassThrough: PassThroughStream } = __require("stream");
-    module.exports = (options) => {
+    var { PassThrough: PassThroughStream } = require("stream");
+    module2.exports = (options) => {
       options = { ...options };
       const { array } = options;
       let { encoding } = options;
@@ -12563,11 +12557,11 @@ var require_buffer_stream = __commonJS({
 
 // node_modules/execa/node_modules/get-stream/index.js
 var require_get_stream = __commonJS({
-  "node_modules/execa/node_modules/get-stream/index.js"(exports, module) {
+  "node_modules/execa/node_modules/get-stream/index.js"(exports2, module2) {
     "use strict";
-    var { constants: BufferConstants } = __require("buffer");
-    var stream = __require("stream");
-    var { promisify: promisify2 } = __require("util");
+    var { constants: BufferConstants } = require("buffer");
+    var stream = require("stream");
+    var { promisify: promisify2 } = require("util");
     var bufferStream = require_buffer_stream();
     var streamPipelinePromisified = promisify2(stream.pipeline);
     var MaxBufferError = class extends Error {
@@ -12609,19 +12603,19 @@ var require_get_stream = __commonJS({
       });
       return stream2.getBufferedValue();
     }
-    module.exports = getStream2;
-    module.exports.buffer = (stream2, options) => getStream2(stream2, { ...options, encoding: "buffer" });
-    module.exports.array = (stream2, options) => getStream2(stream2, { ...options, array: true });
-    module.exports.MaxBufferError = MaxBufferError;
+    module2.exports = getStream2;
+    module2.exports.buffer = (stream2, options) => getStream2(stream2, { ...options, encoding: "buffer" });
+    module2.exports.array = (stream2, options) => getStream2(stream2, { ...options, array: true });
+    module2.exports.MaxBufferError = MaxBufferError;
   }
 });
 
 // node_modules/merge-stream/index.js
 var require_merge_stream = __commonJS({
-  "node_modules/merge-stream/index.js"(exports, module) {
+  "node_modules/merge-stream/index.js"(exports2, module2) {
     "use strict";
-    var { PassThrough: PassThrough3 } = __require("stream");
-    module.exports = function() {
+    var { PassThrough: PassThrough3 } = require("stream");
+    module2.exports = function() {
       var sources = [];
       var output = new PassThrough3({ objectMode: true });
       output.setMaxListeners(0);
@@ -12658,9 +12652,9 @@ var require_merge_stream = __commonJS({
 
 // node_modules/xml2js/lib/defaults.js
 var require_defaults = __commonJS({
-  "node_modules/xml2js/lib/defaults.js"(exports) {
+  "node_modules/xml2js/lib/defaults.js"(exports2) {
     (function() {
-      exports.defaults = {
+      exports2.defaults = {
         "0.1": {
           explicitCharkey: false,
           trim: true,
@@ -12728,13 +12722,13 @@ var require_defaults = __commonJS({
           cdata: false
         }
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/Utility.js
 var require_Utility = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/Utility.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/Utility.js"(exports2, module2) {
     (function() {
       var assign, getValue, isArray, isEmpty, isFunction, isObject2, isPlainObject, slice = [].slice, hasProp = {}.hasOwnProperty;
       assign = function() {
@@ -12792,23 +12786,23 @@ var require_Utility = __commonJS({
           return obj;
         }
       };
-      module.exports.assign = assign;
-      module.exports.isFunction = isFunction;
-      module.exports.isObject = isObject2;
-      module.exports.isArray = isArray;
-      module.exports.isEmpty = isEmpty;
-      module.exports.isPlainObject = isPlainObject;
-      module.exports.getValue = getValue;
-    }).call(exports);
+      module2.exports.assign = assign;
+      module2.exports.isFunction = isFunction;
+      module2.exports.isObject = isObject2;
+      module2.exports.isArray = isArray;
+      module2.exports.isEmpty = isEmpty;
+      module2.exports.isPlainObject = isPlainObject;
+      module2.exports.getValue = getValue;
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMImplementation.js
 var require_XMLDOMImplementation = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMImplementation.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMImplementation.js"(exports2, module2) {
     (function() {
       var XMLDOMImplementation;
-      module.exports = XMLDOMImplementation = (function() {
+      module2.exports = XMLDOMImplementation = (function() {
         function XMLDOMImplementation2() {
         }
         XMLDOMImplementation2.prototype.hasFeature = function(feature, version) {
@@ -12828,16 +12822,16 @@ var require_XMLDOMImplementation = __commonJS({
         };
         return XMLDOMImplementation2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js
 var require_XMLDOMErrorHandler = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMErrorHandler.js"(exports2, module2) {
     (function() {
       var XMLDOMErrorHandler;
-      module.exports = XMLDOMErrorHandler = (function() {
+      module2.exports = XMLDOMErrorHandler = (function() {
         function XMLDOMErrorHandler2() {
         }
         XMLDOMErrorHandler2.prototype.handleError = function(error) {
@@ -12845,16 +12839,16 @@ var require_XMLDOMErrorHandler = __commonJS({
         };
         return XMLDOMErrorHandler2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMStringList.js
 var require_XMLDOMStringList = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMStringList.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMStringList.js"(exports2, module2) {
     (function() {
       var XMLDOMStringList;
-      module.exports = XMLDOMStringList = (function() {
+      module2.exports = XMLDOMStringList = (function() {
         function XMLDOMStringList2(arr) {
           this.arr = arr || [];
         }
@@ -12871,18 +12865,18 @@ var require_XMLDOMStringList = __commonJS({
         };
         return XMLDOMStringList2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js
 var require_XMLDOMConfiguration = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDOMConfiguration.js"(exports2, module2) {
     (function() {
       var XMLDOMConfiguration, XMLDOMErrorHandler, XMLDOMStringList;
       XMLDOMErrorHandler = require_XMLDOMErrorHandler();
       XMLDOMStringList = require_XMLDOMStringList();
-      module.exports = XMLDOMConfiguration = (function() {
+      module2.exports = XMLDOMConfiguration = (function() {
         function XMLDOMConfiguration2() {
           var clonedSelf;
           this.defaultParams = {
@@ -12930,15 +12924,15 @@ var require_XMLDOMConfiguration = __commonJS({
         };
         return XMLDOMConfiguration2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/NodeType.js
 var require_NodeType = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/NodeType.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/NodeType.js"(exports2, module2) {
     (function() {
-      module.exports = {
+      module2.exports = {
         Element: 1,
         Attribute: 2,
         Text: 3,
@@ -12957,18 +12951,18 @@ var require_NodeType = __commonJS({
         ElementDeclaration: 204,
         Dummy: 205
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLAttribute.js
 var require_XMLAttribute = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLAttribute.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLAttribute.js"(exports2, module2) {
     (function() {
       var NodeType, XMLAttribute, XMLNode;
       NodeType = require_NodeType();
       XMLNode = require_XMLNode();
-      module.exports = XMLAttribute = (function() {
+      module2.exports = XMLAttribute = (function() {
         function XMLAttribute2(parent, name, value) {
           this.parent = parent;
           if (this.parent) {
@@ -13053,16 +13047,16 @@ var require_XMLAttribute = __commonJS({
         };
         return XMLAttribute2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js
 var require_XMLNamedNodeMap = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNamedNodeMap.js"(exports2, module2) {
     (function() {
       var XMLNamedNodeMap;
-      module.exports = XMLNamedNodeMap = (function() {
+      module2.exports = XMLNamedNodeMap = (function() {
         function XMLNamedNodeMap2(nodes) {
           this.nodes = nodes;
         }
@@ -13103,13 +13097,13 @@ var require_XMLNamedNodeMap = __commonJS({
         };
         return XMLNamedNodeMap2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLElement.js
 var require_XMLElement = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLElement.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLElement.js"(exports2, module2) {
     (function() {
       var NodeType, XMLAttribute, XMLElement, XMLNamedNodeMap, XMLNode, getValue, isFunction, isObject2, ref, extend = function(child, parent) {
         for (var key in parent) {
@@ -13128,7 +13122,7 @@ var require_XMLElement = __commonJS({
       NodeType = require_NodeType();
       XMLAttribute = require_XMLAttribute();
       XMLNamedNodeMap = require_XMLNamedNodeMap();
-      module.exports = XMLElement = (function(superClass) {
+      module2.exports = XMLElement = (function(superClass) {
         extend(XMLElement2, superClass);
         function XMLElement2(parent, name, attributes) {
           var child, j, len, ref1;
@@ -13370,13 +13364,13 @@ var require_XMLElement = __commonJS({
         };
         return XMLElement2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCharacterData.js
 var require_XMLCharacterData = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCharacterData.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCharacterData.js"(exports2, module2) {
     (function() {
       var XMLCharacterData, XMLNode, extend = function(child, parent) {
         for (var key in parent) {
@@ -13391,7 +13385,7 @@ var require_XMLCharacterData = __commonJS({
         return child;
       }, hasProp = {}.hasOwnProperty;
       XMLNode = require_XMLNode();
-      module.exports = XMLCharacterData = (function(superClass) {
+      module2.exports = XMLCharacterData = (function(superClass) {
         extend(XMLCharacterData2, superClass);
         function XMLCharacterData2(parent) {
           XMLCharacterData2.__super__.constructor.call(this, parent);
@@ -13447,13 +13441,13 @@ var require_XMLCharacterData = __commonJS({
         };
         return XMLCharacterData2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCData.js
 var require_XMLCData = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCData.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLCData.js"(exports2, module2) {
     (function() {
       var NodeType, XMLCData, XMLCharacterData, extend = function(child, parent) {
         for (var key in parent) {
@@ -13469,7 +13463,7 @@ var require_XMLCData = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       NodeType = require_NodeType();
       XMLCharacterData = require_XMLCharacterData();
-      module.exports = XMLCData = (function(superClass) {
+      module2.exports = XMLCData = (function(superClass) {
         extend(XMLCData2, superClass);
         function XMLCData2(parent, text) {
           XMLCData2.__super__.constructor.call(this, parent);
@@ -13488,13 +13482,13 @@ var require_XMLCData = __commonJS({
         };
         return XMLCData2;
       })(XMLCharacterData);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLComment.js
 var require_XMLComment = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLComment.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLComment.js"(exports2, module2) {
     (function() {
       var NodeType, XMLCharacterData, XMLComment, extend = function(child, parent) {
         for (var key in parent) {
@@ -13510,7 +13504,7 @@ var require_XMLComment = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       NodeType = require_NodeType();
       XMLCharacterData = require_XMLCharacterData();
-      module.exports = XMLComment = (function(superClass) {
+      module2.exports = XMLComment = (function(superClass) {
         extend(XMLComment2, superClass);
         function XMLComment2(parent, text) {
           XMLComment2.__super__.constructor.call(this, parent);
@@ -13529,13 +13523,13 @@ var require_XMLComment = __commonJS({
         };
         return XMLComment2;
       })(XMLCharacterData);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDeclaration.js
 var require_XMLDeclaration = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDeclaration, XMLNode, isObject2, extend = function(child, parent) {
         for (var key in parent) {
@@ -13552,7 +13546,7 @@ var require_XMLDeclaration = __commonJS({
       isObject2 = require_Utility().isObject;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDeclaration = (function(superClass) {
+      module2.exports = XMLDeclaration = (function(superClass) {
         extend(XMLDeclaration2, superClass);
         function XMLDeclaration2(parent, version, encoding, standalone) {
           var ref;
@@ -13577,13 +13571,13 @@ var require_XMLDeclaration = __commonJS({
         };
         return XMLDeclaration2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDAttList.js
 var require_XMLDTDAttList = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDTDAttList, XMLNode, extend = function(child, parent) {
         for (var key in parent) {
@@ -13599,7 +13593,7 @@ var require_XMLDTDAttList = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDTDAttList = (function(superClass) {
+      module2.exports = XMLDTDAttList = (function(superClass) {
         extend(XMLDTDAttList2, superClass);
         function XMLDTDAttList2(parent, elementName, attributeName, attributeType, defaultValueType, defaultValue) {
           XMLDTDAttList2.__super__.constructor.call(this, parent);
@@ -13638,13 +13632,13 @@ var require_XMLDTDAttList = __commonJS({
         };
         return XMLDTDAttList2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDEntity.js
 var require_XMLDTDEntity = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDTDEntity, XMLNode, isObject2, extend = function(child, parent) {
         for (var key in parent) {
@@ -13661,7 +13655,7 @@ var require_XMLDTDEntity = __commonJS({
       isObject2 = require_Utility().isObject;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDTDEntity = (function(superClass) {
+      module2.exports = XMLDTDEntity = (function(superClass) {
         extend(XMLDTDEntity2, superClass);
         function XMLDTDEntity2(parent, pe, name, value) {
           XMLDTDEntity2.__super__.constructor.call(this, parent);
@@ -13734,13 +13728,13 @@ var require_XMLDTDEntity = __commonJS({
         };
         return XMLDTDEntity2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDElement.js
 var require_XMLDTDElement = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDTDElement, XMLNode, extend = function(child, parent) {
         for (var key in parent) {
@@ -13756,7 +13750,7 @@ var require_XMLDTDElement = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDTDElement = (function(superClass) {
+      module2.exports = XMLDTDElement = (function(superClass) {
         extend(XMLDTDElement2, superClass);
         function XMLDTDElement2(parent, name, value) {
           XMLDTDElement2.__super__.constructor.call(this, parent);
@@ -13778,13 +13772,13 @@ var require_XMLDTDElement = __commonJS({
         };
         return XMLDTDElement2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDNotation.js
 var require_XMLDTDNotation = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDTDNotation, XMLNode, extend = function(child, parent) {
         for (var key in parent) {
@@ -13800,7 +13794,7 @@ var require_XMLDTDNotation = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDTDNotation = (function(superClass) {
+      module2.exports = XMLDTDNotation = (function(superClass) {
         extend(XMLDTDNotation2, superClass);
         function XMLDTDNotation2(parent, name, value) {
           XMLDTDNotation2.__super__.constructor.call(this, parent);
@@ -13834,13 +13828,13 @@ var require_XMLDTDNotation = __commonJS({
         };
         return XMLDTDNotation2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocType.js
 var require_XMLDocType = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocType.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocType.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDocType, XMLNamedNodeMap, XMLNode, isObject2, extend = function(child, parent) {
         for (var key in parent) {
@@ -13862,7 +13856,7 @@ var require_XMLDocType = __commonJS({
       XMLDTDElement = require_XMLDTDElement();
       XMLDTDNotation = require_XMLDTDNotation();
       XMLNamedNodeMap = require_XMLNamedNodeMap();
-      module.exports = XMLDocType = (function(superClass) {
+      module2.exports = XMLDocType = (function(superClass) {
         extend(XMLDocType2, superClass);
         function XMLDocType2(parent, pubID, sysID) {
           var child, i2, len, ref, ref1, ref2;
@@ -14003,13 +13997,13 @@ var require_XMLDocType = __commonJS({
         };
         return XMLDocType2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLRaw.js
 var require_XMLRaw = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLRaw.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLRaw.js"(exports2, module2) {
     (function() {
       var NodeType, XMLNode, XMLRaw, extend = function(child, parent) {
         for (var key in parent) {
@@ -14025,7 +14019,7 @@ var require_XMLRaw = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       NodeType = require_NodeType();
       XMLNode = require_XMLNode();
-      module.exports = XMLRaw = (function(superClass) {
+      module2.exports = XMLRaw = (function(superClass) {
         extend(XMLRaw2, superClass);
         function XMLRaw2(parent, text) {
           XMLRaw2.__super__.constructor.call(this, parent);
@@ -14043,13 +14037,13 @@ var require_XMLRaw = __commonJS({
         };
         return XMLRaw2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLText.js
 var require_XMLText = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLText.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLText.js"(exports2, module2) {
     (function() {
       var NodeType, XMLCharacterData, XMLText, extend = function(child, parent) {
         for (var key in parent) {
@@ -14065,7 +14059,7 @@ var require_XMLText = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       NodeType = require_NodeType();
       XMLCharacterData = require_XMLCharacterData();
-      module.exports = XMLText = (function(superClass) {
+      module2.exports = XMLText = (function(superClass) {
         extend(XMLText2, superClass);
         function XMLText2(parent, text) {
           XMLText2.__super__.constructor.call(this, parent);
@@ -14113,13 +14107,13 @@ var require_XMLText = __commonJS({
         };
         return XMLText2;
       })(XMLCharacterData);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js
 var require_XMLProcessingInstruction = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports2, module2) {
     (function() {
       var NodeType, XMLCharacterData, XMLProcessingInstruction, extend = function(child, parent) {
         for (var key in parent) {
@@ -14135,7 +14129,7 @@ var require_XMLProcessingInstruction = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       NodeType = require_NodeType();
       XMLCharacterData = require_XMLCharacterData();
-      module.exports = XMLProcessingInstruction = (function(superClass) {
+      module2.exports = XMLProcessingInstruction = (function(superClass) {
         extend(XMLProcessingInstruction2, superClass);
         function XMLProcessingInstruction2(parent, target, value) {
           XMLProcessingInstruction2.__super__.constructor.call(this, parent);
@@ -14166,13 +14160,13 @@ var require_XMLProcessingInstruction = __commonJS({
         };
         return XMLProcessingInstruction2;
       })(XMLCharacterData);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDummy.js
 var require_XMLDummy = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDummy.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDummy.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDummy, XMLNode, extend = function(child, parent) {
         for (var key in parent) {
@@ -14188,7 +14182,7 @@ var require_XMLDummy = __commonJS({
       }, hasProp = {}.hasOwnProperty;
       XMLNode = require_XMLNode();
       NodeType = require_NodeType();
-      module.exports = XMLDummy = (function(superClass) {
+      module2.exports = XMLDummy = (function(superClass) {
         extend(XMLDummy2, superClass);
         function XMLDummy2(parent) {
           XMLDummy2.__super__.constructor.call(this, parent);
@@ -14202,16 +14196,16 @@ var require_XMLDummy = __commonJS({
         };
         return XMLDummy2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNodeList.js
 var require_XMLNodeList = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNodeList.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNodeList.js"(exports2, module2) {
     (function() {
       var XMLNodeList;
-      module.exports = XMLNodeList = (function() {
+      module2.exports = XMLNodeList = (function() {
         function XMLNodeList2(nodes) {
           this.nodes = nodes;
         }
@@ -14228,15 +14222,15 @@ var require_XMLNodeList = __commonJS({
         };
         return XMLNodeList2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/DocumentPosition.js
 var require_DocumentPosition = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/DocumentPosition.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/DocumentPosition.js"(exports2, module2) {
     (function() {
-      module.exports = {
+      module2.exports = {
         Disconnected: 1,
         Preceding: 2,
         Following: 4,
@@ -14244,13 +14238,13 @@ var require_DocumentPosition = __commonJS({
         ContainedBy: 16,
         ImplementationSpecific: 32
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNode.js
 var require_XMLNode = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNode.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLNode.js"(exports2, module2) {
     (function() {
       var DocumentPosition, NodeType, XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLNamedNodeMap, XMLNode, XMLNodeList, XMLProcessingInstruction, XMLRaw, XMLText, getValue, isEmpty, isFunction, isObject2, ref1, hasProp = {}.hasOwnProperty;
       ref1 = require_Utility(), isObject2 = ref1.isObject, isFunction = ref1.isFunction, isEmpty = ref1.isEmpty, getValue = ref1.getValue;
@@ -14267,7 +14261,7 @@ var require_XMLNode = __commonJS({
       XMLNodeList = null;
       XMLNamedNodeMap = null;
       DocumentPosition = null;
-      module.exports = XMLNode = (function() {
+      module2.exports = XMLNode = (function() {
         function XMLNode2(parent1) {
           this.parent = parent1;
           if (this.parent) {
@@ -14937,20 +14931,20 @@ var require_XMLNode = __commonJS({
         };
         return XMLNode2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringifier.js
 var require_XMLStringifier = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringifier.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringifier.js"(exports2, module2) {
     (function() {
       var XMLStringifier, bind = function(fn, me) {
         return function() {
           return fn.apply(me, arguments);
         };
       }, hasProp = {}.hasOwnProperty;
-      module.exports = XMLStringifier = (function() {
+      module2.exports = XMLStringifier = (function() {
         function XMLStringifier2(options) {
           this.assertLegalName = bind(this.assertLegalName, this);
           this.assertLegalChar = bind(this.assertLegalChar, this);
@@ -15152,27 +15146,27 @@ var require_XMLStringifier = __commonJS({
         };
         return XMLStringifier2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/WriterState.js
 var require_WriterState = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/WriterState.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/WriterState.js"(exports2, module2) {
     (function() {
-      module.exports = {
+      module2.exports = {
         None: 0,
         OpenTag: 1,
         InsideTag: 2,
         CloseTag: 3
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLWriterBase.js
 var require_XMLWriterBase = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports2, module2) {
     (function() {
       var NodeType, WriterState, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLText, XMLWriterBase, assign, hasProp = {}.hasOwnProperty;
       assign = require_Utility().assign;
@@ -15191,7 +15185,7 @@ var require_XMLWriterBase = __commonJS({
       XMLDTDEntity = require_XMLDTDEntity();
       XMLDTDNotation = require_XMLDTDNotation();
       WriterState = require_WriterState();
-      module.exports = XMLWriterBase = (function() {
+      module2.exports = XMLWriterBase = (function() {
         function XMLWriterBase2(options) {
           var key, ref, value;
           options || (options = {});
@@ -15561,13 +15555,13 @@ var require_XMLWriterBase = __commonJS({
         };
         return XMLWriterBase2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringWriter.js
 var require_XMLStringWriter = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports2, module2) {
     (function() {
       var XMLStringWriter, XMLWriterBase, extend = function(child, parent) {
         for (var key in parent) {
@@ -15582,7 +15576,7 @@ var require_XMLStringWriter = __commonJS({
         return child;
       }, hasProp = {}.hasOwnProperty;
       XMLWriterBase = require_XMLWriterBase();
-      module.exports = XMLStringWriter = (function(superClass) {
+      module2.exports = XMLStringWriter = (function(superClass) {
         extend(XMLStringWriter2, superClass);
         function XMLStringWriter2(options) {
           XMLStringWriter2.__super__.constructor.call(this, options);
@@ -15603,13 +15597,13 @@ var require_XMLStringWriter = __commonJS({
         };
         return XMLStringWriter2;
       })(XMLWriterBase);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocument.js
 var require_XMLDocument = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocument.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocument.js"(exports2, module2) {
     (function() {
       var NodeType, XMLDOMConfiguration, XMLDOMImplementation, XMLDocument, XMLNode, XMLStringWriter, XMLStringifier, isPlainObject, extend = function(child, parent) {
         for (var key in parent) {
@@ -15630,7 +15624,7 @@ var require_XMLDocument = __commonJS({
       NodeType = require_NodeType();
       XMLStringifier = require_XMLStringifier();
       XMLStringWriter = require_XMLStringWriter();
-      module.exports = XMLDocument = (function(superClass) {
+      module2.exports = XMLDocument = (function(superClass) {
         extend(XMLDocument2, superClass);
         function XMLDocument2(options) {
           XMLDocument2.__super__.constructor.call(this, null);
@@ -15810,13 +15804,13 @@ var require_XMLDocument = __commonJS({
         };
         return XMLDocument2;
       })(XMLNode);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocumentCB.js
 var require_XMLDocumentCB = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports2, module2) {
     (function() {
       var NodeType, WriterState, XMLAttribute, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDocument, XMLDocumentCB, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLStringifier, XMLText, getValue, isFunction, isObject2, isPlainObject, ref, hasProp = {}.hasOwnProperty;
       ref = require_Utility(), isObject2 = ref.isObject, isFunction = ref.isFunction, isPlainObject = ref.isPlainObject, getValue = ref.getValue;
@@ -15838,7 +15832,7 @@ var require_XMLDocumentCB = __commonJS({
       XMLStringifier = require_XMLStringifier();
       XMLStringWriter = require_XMLStringWriter();
       WriterState = require_WriterState();
-      module.exports = XMLDocumentCB = (function() {
+      module2.exports = XMLDocumentCB = (function() {
         function XMLDocumentCB2(options, onData, onEnd) {
           var writerOptions;
           this.name = "?xml";
@@ -16276,13 +16270,13 @@ var require_XMLDocumentCB = __commonJS({
         };
         return XMLDocumentCB2;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStreamWriter.js
 var require_XMLStreamWriter = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports2, module2) {
     (function() {
       var NodeType, WriterState, XMLStreamWriter, XMLWriterBase, extend = function(child, parent) {
         for (var key in parent) {
@@ -16299,7 +16293,7 @@ var require_XMLStreamWriter = __commonJS({
       NodeType = require_NodeType();
       XMLWriterBase = require_XMLWriterBase();
       WriterState = require_WriterState();
-      module.exports = XMLStreamWriter = (function(superClass) {
+      module2.exports = XMLStreamWriter = (function(superClass) {
         extend(XMLStreamWriter2, superClass);
         function XMLStreamWriter2(stream, options) {
           this.stream = stream;
@@ -16443,13 +16437,13 @@ var require_XMLStreamWriter = __commonJS({
         };
         return XMLStreamWriter2;
       })(XMLWriterBase);
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/node_modules/xmlbuilder/lib/index.js
 var require_lib2 = __commonJS({
-  "node_modules/xml2js/node_modules/xmlbuilder/lib/index.js"(exports, module) {
+  "node_modules/xml2js/node_modules/xmlbuilder/lib/index.js"(exports2, module2) {
     (function() {
       var NodeType, WriterState, XMLDOMImplementation, XMLDocument, XMLDocumentCB, XMLStreamWriter, XMLStringWriter, assign, isFunction, ref;
       ref = require_Utility(), assign = ref.assign, isFunction = ref.isFunction;
@@ -16460,7 +16454,7 @@ var require_lib2 = __commonJS({
       XMLStreamWriter = require_XMLStreamWriter();
       NodeType = require_NodeType();
       WriterState = require_WriterState();
-      module.exports.create = function(name, xmldec, doctype, options) {
+      module2.exports.create = function(name, xmldec, doctype, options) {
         var doc, root;
         if (name == null) {
           throw new Error("Root element needs a name.");
@@ -16476,7 +16470,7 @@ var require_lib2 = __commonJS({
         }
         return root;
       };
-      module.exports.begin = function(options, onData, onEnd) {
+      module2.exports.begin = function(options, onData, onEnd) {
         var ref1;
         if (isFunction(options)) {
           ref1 = [options, onData], onData = ref1[0], onEnd = ref1[1];
@@ -16488,22 +16482,22 @@ var require_lib2 = __commonJS({
           return new XMLDocument(options);
         }
       };
-      module.exports.stringWriter = function(options) {
+      module2.exports.stringWriter = function(options) {
         return new XMLStringWriter(options);
       };
-      module.exports.streamWriter = function(stream, options) {
+      module2.exports.streamWriter = function(stream, options) {
         return new XMLStreamWriter(stream, options);
       };
-      module.exports.implementation = new XMLDOMImplementation();
-      module.exports.nodeType = NodeType;
-      module.exports.writerState = WriterState;
-    }).call(exports);
+      module2.exports.implementation = new XMLDOMImplementation();
+      module2.exports.nodeType = NodeType;
+      module2.exports.writerState = WriterState;
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/lib/builder.js
 var require_builder = __commonJS({
-  "node_modules/xml2js/lib/builder.js"(exports) {
+  "node_modules/xml2js/lib/builder.js"(exports2) {
     (function() {
       "use strict";
       var builder, defaults, escapeCDATA, requiresCDATA, wrapCDATA, hasProp = {}.hasOwnProperty;
@@ -16518,7 +16512,7 @@ var require_builder = __commonJS({
       escapeCDATA = function(entry) {
         return entry.replace("]]>", "]]]]><![CDATA[>");
       };
-      exports.Builder = (function() {
+      exports2.Builder = (function() {
         function Builder(opts) {
           var key, ref, value;
           this.options = {};
@@ -16618,13 +16612,13 @@ var require_builder = __commonJS({
         };
         return Builder;
       })();
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/sax/lib/sax.js
 var require_sax = __commonJS({
-  "node_modules/sax/lib/sax.js"(exports) {
+  "node_modules/sax/lib/sax.js"(exports2) {
     (function(sax) {
       sax.parser = function(strict, opt) {
         return new SAXParser(strict, opt);
@@ -16780,7 +16774,7 @@ var require_sax = __commonJS({
       };
       var Stream3;
       try {
-        Stream3 = __require("stream").Stream;
+        Stream3 = require("stream").Stream;
       } catch (ex) {
         Stream3 = function() {
         };
@@ -18209,61 +18203,61 @@ var require_sax = __commonJS({
           }
         })();
       }
-    })(typeof exports === "undefined" ? exports.sax = {} : exports);
+    })(typeof exports2 === "undefined" ? exports2.sax = {} : exports2);
   }
 });
 
 // node_modules/xml2js/lib/bom.js
 var require_bom = __commonJS({
-  "node_modules/xml2js/lib/bom.js"(exports) {
+  "node_modules/xml2js/lib/bom.js"(exports2) {
     (function() {
       "use strict";
-      exports.stripBOM = function(str) {
+      exports2.stripBOM = function(str) {
         if (str[0] === "\uFEFF") {
           return str.substring(1);
         } else {
           return str;
         }
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/lib/processors.js
 var require_processors = __commonJS({
-  "node_modules/xml2js/lib/processors.js"(exports) {
+  "node_modules/xml2js/lib/processors.js"(exports2) {
     (function() {
       "use strict";
       var prefixMatch;
       prefixMatch = new RegExp(/(?!xmlns)^.*:/);
-      exports.normalize = function(str) {
+      exports2.normalize = function(str) {
         return str.toLowerCase();
       };
-      exports.firstCharLowerCase = function(str) {
+      exports2.firstCharLowerCase = function(str) {
         return str.charAt(0).toLowerCase() + str.slice(1);
       };
-      exports.stripPrefix = function(str) {
+      exports2.stripPrefix = function(str) {
         return str.replace(prefixMatch, "");
       };
-      exports.parseNumbers = function(str) {
+      exports2.parseNumbers = function(str) {
         if (!isNaN(str)) {
           str = str % 1 === 0 ? parseInt(str, 10) : parseFloat(str);
         }
         return str;
       };
-      exports.parseBooleans = function(str) {
+      exports2.parseBooleans = function(str) {
         if (/^(?:true|false)$/i.test(str)) {
           str = str.toLowerCase() === "true";
         }
         return str;
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/lib/parser.js
 var require_parser = __commonJS({
-  "node_modules/xml2js/lib/parser.js"(exports) {
+  "node_modules/xml2js/lib/parser.js"(exports2) {
     (function() {
       "use strict";
       var bom, defaults, defineProperty, events, isEmpty, processItem, processors, sax, setImmediate2, bind = function(fn, me) {
@@ -18283,10 +18277,10 @@ var require_parser = __commonJS({
         return child;
       }, hasProp = {}.hasOwnProperty;
       sax = require_sax();
-      events = __require("events");
+      events = require("events");
       bom = require_bom();
       processors = require_processors();
-      setImmediate2 = __require("timers").setImmediate;
+      setImmediate2 = require("timers").setImmediate;
       defaults = require_defaults().defaults;
       isEmpty = function(thing) {
         return typeof thing === "object" && thing != null && Object.keys(thing).length === 0;
@@ -18308,7 +18302,7 @@ var require_parser = __commonJS({
         descriptor.configurable = true;
         return Object.defineProperty(obj, key, descriptor);
       };
-      exports.Parser = (function(superClass) {
+      exports2.Parser = (function(superClass) {
         extend(Parser, superClass);
         function Parser(opts) {
           this.parseStringPromise = bind(this.parseStringPromise, this);
@@ -18317,8 +18311,8 @@ var require_parser = __commonJS({
           this.assignOrPush = bind(this.assignOrPush, this);
           this.processAsync = bind(this.processAsync, this);
           var key, ref, value;
-          if (!(this instanceof exports.Parser)) {
-            return new exports.Parser(opts);
+          if (!(this instanceof exports2.Parser)) {
+            return new exports2.Parser(opts);
           }
           this.options = {};
           ref = defaults["0.2"];
@@ -18622,7 +18616,7 @@ var require_parser = __commonJS({
         };
         return Parser;
       })(events);
-      exports.parseString = function(str, a, b) {
+      exports2.parseString = function(str, a, b) {
         var cb, options, parser;
         if (b != null) {
           if (typeof b === "function") {
@@ -18637,24 +18631,24 @@ var require_parser = __commonJS({
           }
           options = {};
         }
-        parser = new exports.Parser(options);
+        parser = new exports2.Parser(options);
         return parser.parseString(str, cb);
       };
-      exports.parseStringPromise = function(str, a) {
+      exports2.parseStringPromise = function(str, a) {
         var options, parser;
         if (typeof a === "object") {
           options = a;
         }
-        parser = new exports.Parser(options);
+        parser = new exports2.Parser(options);
         return parser.parseStringPromise(str);
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/xml2js/lib/xml2js.js
 var require_xml2js = __commonJS({
-  "node_modules/xml2js/lib/xml2js.js"(exports) {
+  "node_modules/xml2js/lib/xml2js.js"(exports2) {
     (function() {
       "use strict";
       var builder, defaults, parser, processors, extend = function(child, parent) {
@@ -18673,20 +18667,20 @@ var require_xml2js = __commonJS({
       builder = require_builder();
       parser = require_parser();
       processors = require_processors();
-      exports.defaults = defaults.defaults;
-      exports.processors = processors;
-      exports.ValidationError = (function(superClass) {
+      exports2.defaults = defaults.defaults;
+      exports2.processors = processors;
+      exports2.ValidationError = (function(superClass) {
         extend(ValidationError, superClass);
         function ValidationError(message) {
           this.message = message;
         }
         return ValidationError;
       })(Error);
-      exports.Builder = builder.Builder;
-      exports.Parser = parser.Parser;
-      exports.parseString = parser.parseString;
-      exports.parseStringPromise = parser.parseStringPromise;
-    }).call(exports);
+      exports2.Builder = builder.Builder;
+      exports2.Parser = parser.Parser;
+      exports2.parseString = parser.parseString;
+      exports2.parseStringPromise = parser.parseStringPromise;
+    }).call(exports2);
   }
 });
 
@@ -18818,7 +18812,7 @@ var init_esm = __esm({
 
 // node_modules/rc4/rc4.js
 var require_rc4 = __commonJS({
-  "node_modules/rc4/rc4.js"(exports, module) {
+  "node_modules/rc4/rc4.js"(exports2, module2) {
     "use strict";
     function isInteger(n) {
       return parseInt(n, 10) === n;
@@ -18972,12 +18966,11 @@ var require_rc4 = __commonJS({
       });
     };
     RC42.RC4small = RC4small;
-    module.exports = RC42;
+    module2.exports = RC42;
   }
 });
 
 // node_modules/bittorrent-protocol/index.js
-import crypto3 from "crypto";
 function xor(a, b) {
   for (let len = a.length; len--; ) a[len] ^= b[len];
   return a;
@@ -18991,11 +18984,12 @@ function setUint32(buffer, at, value) {
   buffer[at + 2] = value >>> 8 & 255;
   buffer[at + 3] = value & 255;
 }
-var import_debug5, import_rc4, import_streamx2, import_throughput, import_unordered_array_remove2, debug5, BITFIELD_GROW, KEEP_ALIVE_TIMEOUT, ALLOWED_FAST_SET_MAX_LENGTH, MESSAGE_PROTOCOL, MESSAGE_KEEP_ALIVE, MESSAGE_CHOKE, MESSAGE_UNCHOKE, MESSAGE_INTERESTED, MESSAGE_UNINTERESTED, MESSAGE_RESERVED, MESSAGE_PORT, MESSAGE_HAVE_ALL, MESSAGE_HAVE_NONE, DH_PRIME, DH_GENERATOR, VC, CRYPTO_PROVIDE, CRYPTO_SELECT, Request3, HaveAllBitField, Wire, bittorrent_protocol_default;
+var import_crypto2, import_debug5, import_rc4, import_streamx2, import_throughput, import_unordered_array_remove2, debug5, BITFIELD_GROW, KEEP_ALIVE_TIMEOUT, ALLOWED_FAST_SET_MAX_LENGTH, MESSAGE_PROTOCOL, MESSAGE_KEEP_ALIVE, MESSAGE_CHOKE, MESSAGE_UNCHOKE, MESSAGE_INTERESTED, MESSAGE_UNINTERESTED, MESSAGE_RESERVED, MESSAGE_PORT, MESSAGE_HAVE_ALL, MESSAGE_HAVE_NONE, DH_PRIME, DH_GENERATOR, VC, CRYPTO_PROVIDE, CRYPTO_SELECT, Request3, HaveAllBitField, Wire, bittorrent_protocol_default;
 var init_bittorrent_protocol = __esm({
   "node_modules/bittorrent-protocol/index.js"() {
     init_bencode();
     init_esm();
+    import_crypto2 = __toESM(require("crypto"), 1);
     import_debug5 = __toESM(require_src(), 1);
     import_rc4 = __toESM(require_rc4(), 1);
     import_streamx2 = __toESM(require_streamx2(), 1);
@@ -19080,7 +19074,7 @@ var init_bittorrent_protocol = __esm({
         this._bufferSize = 0;
         this._peEnabled = peEnabled;
         if (peEnabled) {
-          this._dh = crypto3.createDiffieHellman(DH_PRIME, "hex", DH_GENERATOR);
+          this._dh = import_crypto2.default.createDiffieHellman(DH_PRIME, "hex", DH_GENERATOR);
           this._myPubKey = this._dh.generateKeys("hex");
         } else {
           this._myPubKey = null;
@@ -20105,10 +20099,10 @@ __export(peer_exports, {
   default: () => Peer2,
   enableSecure: () => enableSecure
 });
-import EventEmitter4 from "events";
-var import_streamx3, import_unordered_array_remove3, import_debug6, CONNECT_TIMEOUT_TCP, CONNECT_TIMEOUT_UTP, CONNECT_TIMEOUT_WEBRTC, HANDSHAKE_TIMEOUT, TYPE_TCP_INCOMING, TYPE_TCP_OUTGOING, TYPE_UTP_INCOMING, TYPE_UTP_OUTGOING, TYPE_WEBRTC, TYPE_WEBSEED, SOURCE_MANUAL, SOURCE_TRACKER, SOURCE_DHT, SOURCE_LSD, SOURCE_UT_PEX, debug6, secure, enableSecure, Peer2;
+var import_events4, import_streamx3, import_unordered_array_remove3, import_debug6, CONNECT_TIMEOUT_TCP, CONNECT_TIMEOUT_UTP, CONNECT_TIMEOUT_WEBRTC, HANDSHAKE_TIMEOUT, TYPE_TCP_INCOMING, TYPE_TCP_OUTGOING, TYPE_UTP_INCOMING, TYPE_UTP_OUTGOING, TYPE_WEBRTC, TYPE_WEBSEED, SOURCE_MANUAL, SOURCE_TRACKER, SOURCE_DHT, SOURCE_LSD, SOURCE_UT_PEX, debug6, secure, enableSecure, Peer2;
 var init_peer = __esm({
   "node_modules/webtorrent/lib/peer.js"() {
+    import_events4 = __toESM(require("events"), 1);
     import_streamx3 = __toESM(require_streamx2(), 1);
     import_unordered_array_remove3 = __toESM(require_unordered_array_remove(), 1);
     import_debug6 = __toESM(require_src(), 1);
@@ -20133,7 +20127,7 @@ var init_peer = __esm({
     enableSecure = () => {
       secure = true;
     };
-    Peer2 = class extends EventEmitter4 {
+    Peer2 = class extends import_events4.default {
       constructor(id, type2) {
         super();
         this.id = id;
@@ -20436,11 +20430,11 @@ var init_peer = __esm({
 
 // node_modules/node-gyp-build/node-gyp-build.js
 var require_node_gyp_build = __commonJS({
-  "node_modules/node-gyp-build/node-gyp-build.js"(exports, module) {
-    var fs6 = __require("fs");
-    var path6 = __require("path");
-    var os5 = __require("os");
-    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : __require;
+  "node_modules/node-gyp-build/node-gyp-build.js"(exports2, module2) {
+    var fs6 = require("fs");
+    var path6 = require("path");
+    var os5 = require("os");
+    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
     var vars = process.config && process.config.variables || {};
     var prebuildsOnly = !!process.env.PREBUILDS_ONLY;
     var abi = process.versions.modules;
@@ -20450,7 +20444,7 @@ var require_node_gyp_build = __commonJS({
     var libc = process.env.LIBC || (isAlpine(platform2) ? "musl" : "glibc");
     var armv = process.env.ARM_VERSION || (arch === "arm64" ? "8" : vars.arm_version) || "";
     var uv = (process.versions.uv || "").split(".")[0];
-    module.exports = load;
+    module2.exports = load;
     function load(dir) {
       return runtimeRequire(load.resolve(dir));
     }
@@ -20605,34 +20599,34 @@ var require_node_gyp_build = __commonJS({
 
 // node_modules/node-gyp-build/index.js
 var require_node_gyp_build2 = __commonJS({
-  "node_modules/node-gyp-build/index.js"(exports, module) {
-    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : __require;
+  "node_modules/node-gyp-build/index.js"(exports2, module2) {
+    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : require;
     if (typeof runtimeRequire.addon === "function") {
-      module.exports = runtimeRequire.addon.bind(runtimeRequire);
+      module2.exports = runtimeRequire.addon.bind(runtimeRequire);
     } else {
-      module.exports = require_node_gyp_build();
+      module2.exports = require_node_gyp_build();
     }
   }
 });
 
 // node_modules/utp-native/lib/binding.js
 var require_binding = __commonJS({
-  "node_modules/utp-native/lib/binding.js"(exports, module) {
-    var path6 = __require("path");
-    module.exports = require_node_gyp_build2()(path6.join(__dirname, ".."));
+  "node_modules/utp-native/lib/binding.js"(exports2, module2) {
+    var path6 = require("path");
+    module2.exports = require_node_gyp_build2()(path6.join(__dirname, ".."));
   }
 });
 
 // node_modules/readable-stream/lib/internal/streams/stream.js
 var require_stream = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/stream.js"(exports, module) {
-    module.exports = __require("stream");
+  "node_modules/readable-stream/lib/internal/streams/stream.js"(exports2, module2) {
+    module2.exports = require("stream");
   }
 });
 
 // node_modules/readable-stream/lib/internal/streams/buffer_list.js
 var require_buffer_list = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/buffer_list.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/buffer_list.js"(exports2, module2) {
     "use strict";
     function ownKeys(object, enumerableOnly) {
       var keys = Object.keys(object);
@@ -20698,15 +20692,15 @@ var require_buffer_list = __commonJS({
       }
       return (hint === "string" ? String : Number)(input);
     }
-    var _require = __require("buffer");
+    var _require = require("buffer");
     var Buffer6 = _require.Buffer;
-    var _require2 = __require("util");
+    var _require2 = require("util");
     var inspect = _require2.inspect;
     var custom = inspect && inspect.custom || "inspect";
     function copyBuffer(src, target, offset) {
       Buffer6.prototype.copy.call(src, target, offset);
     }
-    module.exports = /* @__PURE__ */ (function() {
+    module2.exports = /* @__PURE__ */ (function() {
       function BufferList() {
         _classCallCheck(this, BufferList);
         this.head = null;
@@ -20874,7 +20868,7 @@ var require_buffer_list = __commonJS({
 
 // node_modules/readable-stream/lib/internal/streams/destroy.js
 var require_destroy = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/destroy.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/destroy.js"(exports2, module2) {
     "use strict";
     function destroy(err, cb) {
       var _this = this;
@@ -20953,7 +20947,7 @@ var require_destroy = __commonJS({
       if (rState && rState.autoDestroy || wState && wState.autoDestroy) stream.destroy(err);
       else stream.emit("error", err);
     }
-    module.exports = {
+    module2.exports = {
       destroy,
       undestroy,
       errorOrDestroy
@@ -20963,7 +20957,7 @@ var require_destroy = __commonJS({
 
 // node_modules/readable-stream/errors.js
 var require_errors = __commonJS({
-  "node_modules/readable-stream/errors.js"(exports, module) {
+  "node_modules/readable-stream/errors.js"(exports2, module2) {
     "use strict";
     var codes = {};
     function createErrorType(code, message, Base) {
@@ -21057,13 +21051,13 @@ var require_errors = __commonJS({
       return "Unknown encoding: " + arg;
     }, TypeError);
     createErrorType("ERR_STREAM_UNSHIFT_AFTER_END_EVENT", "stream.unshift() after end event");
-    module.exports.codes = codes;
+    module2.exports.codes = codes;
   }
 });
 
 // node_modules/readable-stream/lib/internal/streams/state.js
 var require_state = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/state.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/state.js"(exports2, module2) {
     "use strict";
     var ERR_INVALID_OPT_VALUE = require_errors().codes.ERR_INVALID_OPT_VALUE;
     function highWaterMarkFrom(options, isDuplex, duplexKey) {
@@ -21080,7 +21074,7 @@ var require_state = __commonJS({
       }
       return state.objectMode ? 16 : 16 * 1024;
     }
-    module.exports = {
+    module2.exports = {
       getHighWaterMark
     };
   }
@@ -21088,16 +21082,16 @@ var require_state = __commonJS({
 
 // node_modules/util-deprecate/node.js
 var require_node2 = __commonJS({
-  "node_modules/util-deprecate/node.js"(exports, module) {
-    module.exports = __require("util").deprecate;
+  "node_modules/util-deprecate/node.js"(exports2, module2) {
+    module2.exports = require("util").deprecate;
   }
 });
 
 // node_modules/readable-stream/lib/_stream_writable.js
 var require_stream_writable = __commonJS({
-  "node_modules/readable-stream/lib/_stream_writable.js"(exports, module) {
+  "node_modules/readable-stream/lib/_stream_writable.js"(exports2, module2) {
     "use strict";
-    module.exports = Writable;
+    module2.exports = Writable;
     function CorkedRequest(state) {
       var _this = this;
       this.next = null;
@@ -21112,7 +21106,7 @@ var require_stream_writable = __commonJS({
       deprecate: require_node2()
     };
     var Stream3 = require_stream();
-    var Buffer6 = __require("buffer").Buffer;
+    var Buffer6 = require("buffer").Buffer;
     var OurUint8Array = (typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : {}).Uint8Array || function() {
     };
     function _uint8ArrayToBuffer(chunk) {
@@ -21566,14 +21560,14 @@ var require_stream_writable = __commonJS({
 
 // node_modules/readable-stream/lib/_stream_duplex.js
 var require_stream_duplex = __commonJS({
-  "node_modules/readable-stream/lib/_stream_duplex.js"(exports, module) {
+  "node_modules/readable-stream/lib/_stream_duplex.js"(exports2, module2) {
     "use strict";
     var objectKeys = Object.keys || function(obj) {
       var keys2 = [];
       for (var key in obj) keys2.push(key);
       return keys2;
     };
-    module.exports = Duplex4;
+    module2.exports = Duplex4;
     var Readable4 = require_stream_readable();
     var Writable = require_stream_writable();
     require_inherits()(Duplex4, Readable4);
@@ -21659,8 +21653,8 @@ var require_stream_duplex = __commonJS({
 
 // node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
-  "node_modules/safe-buffer/index.js"(exports, module) {
-    var buffer = __require("buffer");
+  "node_modules/safe-buffer/index.js"(exports2, module2) {
+    var buffer = require("buffer");
     var Buffer6 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
@@ -21668,10 +21662,10 @@ var require_safe_buffer = __commonJS({
       }
     }
     if (Buffer6.from && Buffer6.alloc && Buffer6.allocUnsafe && Buffer6.allocUnsafeSlow) {
-      module.exports = buffer;
+      module2.exports = buffer;
     } else {
-      copyProps(buffer, exports);
-      exports.Buffer = SafeBuffer;
+      copyProps(buffer, exports2);
+      exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
       return Buffer6(arg, encodingOrOffset, length);
@@ -21717,7 +21711,7 @@ var require_safe_buffer = __commonJS({
 
 // node_modules/string_decoder/lib/string_decoder.js
 var require_string_decoder = __commonJS({
-  "node_modules/string_decoder/lib/string_decoder.js"(exports) {
+  "node_modules/string_decoder/lib/string_decoder.js"(exports2) {
     "use strict";
     var Buffer6 = require_safe_buffer().Buffer;
     var isEncoding = Buffer6.isEncoding || function(encoding) {
@@ -21771,7 +21765,7 @@ var require_string_decoder = __commonJS({
       if (typeof nenc !== "string" && (Buffer6.isEncoding === isEncoding || !isEncoding(enc))) throw new Error("Unknown encoding: " + enc);
       return nenc || enc;
     }
-    exports.StringDecoder = StringDecoder;
+    exports2.StringDecoder = StringDecoder;
     function StringDecoder(encoding) {
       this.encoding = normalizeEncoding(encoding);
       var nb;
@@ -21955,7 +21949,7 @@ var require_string_decoder = __commonJS({
 
 // node_modules/readable-stream/lib/internal/streams/end-of-stream.js
 var require_end_of_stream = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/end-of-stream.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/end-of-stream.js"(exports2, module2) {
     "use strict";
     var ERR_STREAM_PREMATURE_CLOSE = require_errors().codes.ERR_STREAM_PREMATURE_CLOSE;
     function once6(callback) {
@@ -22038,13 +22032,13 @@ var require_end_of_stream = __commonJS({
         stream.removeListener("close", onclose);
       };
     }
-    module.exports = eos;
+    module2.exports = eos;
   }
 });
 
 // node_modules/readable-stream/lib/internal/streams/async_iterator.js
 var require_async_iterator = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/async_iterator.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/async_iterator.js"(exports2, module2) {
     "use strict";
     var _Object$setPrototypeO;
     function _defineProperty(obj, key, value) {
@@ -22221,13 +22215,13 @@ var require_async_iterator = __commonJS({
       stream.on("readable", onReadable.bind(null, iterator));
       return iterator;
     };
-    module.exports = createReadableStreamAsyncIterator;
+    module2.exports = createReadableStreamAsyncIterator;
   }
 });
 
 // node_modules/readable-stream/lib/internal/streams/from.js
 var require_from = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/from.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/from.js"(exports2, module2) {
     "use strict";
     function asyncGeneratorStep(gen, resolve2, reject, _next, _throw, key, arg) {
       try {
@@ -22342,23 +22336,23 @@ var require_from = __commonJS({
       }
       return readable;
     }
-    module.exports = from;
+    module2.exports = from;
   }
 });
 
 // node_modules/readable-stream/lib/_stream_readable.js
 var require_stream_readable = __commonJS({
-  "node_modules/readable-stream/lib/_stream_readable.js"(exports, module) {
+  "node_modules/readable-stream/lib/_stream_readable.js"(exports2, module2) {
     "use strict";
-    module.exports = Readable4;
+    module2.exports = Readable4;
     var Duplex4;
     Readable4.ReadableState = ReadableState;
-    var EE = __require("events").EventEmitter;
+    var EE = require("events").EventEmitter;
     var EElistenerCount = function EElistenerCount2(emitter, type2) {
       return emitter.listeners(type2).length;
     };
     var Stream3 = require_stream();
-    var Buffer6 = __require("buffer").Buffer;
+    var Buffer6 = require("buffer").Buffer;
     var OurUint8Array = (typeof global !== "undefined" ? global : typeof window !== "undefined" ? window : typeof self !== "undefined" ? self : {}).Uint8Array || function() {
     };
     function _uint8ArrayToBuffer(chunk) {
@@ -22367,7 +22361,7 @@ var require_stream_readable = __commonJS({
     function _isUint8Array(obj) {
       return Buffer6.isBuffer(obj) || obj instanceof OurUint8Array;
     }
-    var debugUtil = __require("util");
+    var debugUtil = require("util");
     var debug23;
     if (debugUtil && debugUtil.debuglog) {
       debug23 = debugUtil.debuglog("stream");
@@ -23081,9 +23075,9 @@ var require_stream_readable = __commonJS({
 
 // node_modules/readable-stream/lib/_stream_transform.js
 var require_stream_transform = __commonJS({
-  "node_modules/readable-stream/lib/_stream_transform.js"(exports, module) {
+  "node_modules/readable-stream/lib/_stream_transform.js"(exports2, module2) {
     "use strict";
-    module.exports = Transform2;
+    module2.exports = Transform2;
     var _require$codes = require_errors().codes;
     var ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED;
     var ERR_MULTIPLE_CALLBACK = _require$codes.ERR_MULTIPLE_CALLBACK;
@@ -23182,9 +23176,9 @@ var require_stream_transform = __commonJS({
 
 // node_modules/readable-stream/lib/_stream_passthrough.js
 var require_stream_passthrough = __commonJS({
-  "node_modules/readable-stream/lib/_stream_passthrough.js"(exports, module) {
+  "node_modules/readable-stream/lib/_stream_passthrough.js"(exports2, module2) {
     "use strict";
-    module.exports = PassThrough3;
+    module2.exports = PassThrough3;
     var Transform2 = require_stream_transform();
     require_inherits()(PassThrough3, Transform2);
     function PassThrough3(options) {
@@ -23199,7 +23193,7 @@ var require_stream_passthrough = __commonJS({
 
 // node_modules/readable-stream/lib/internal/streams/pipeline.js
 var require_pipeline = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/pipeline.js"(exports, module) {
+  "node_modules/readable-stream/lib/internal/streams/pipeline.js"(exports2, module2) {
     "use strict";
     var eos;
     function once6(callback) {
@@ -23278,39 +23272,39 @@ var require_pipeline = __commonJS({
       });
       return streams.reduce(pipe);
     }
-    module.exports = pipeline3;
+    module2.exports = pipeline3;
   }
 });
 
 // node_modules/readable-stream/readable.js
 var require_readable = __commonJS({
-  "node_modules/readable-stream/readable.js"(exports, module) {
-    var Stream3 = __require("stream");
+  "node_modules/readable-stream/readable.js"(exports2, module2) {
+    var Stream3 = require("stream");
     if (process.env.READABLE_STREAM === "disable" && Stream3) {
-      module.exports = Stream3.Readable;
-      Object.assign(module.exports, Stream3);
-      module.exports.Stream = Stream3;
+      module2.exports = Stream3.Readable;
+      Object.assign(module2.exports, Stream3);
+      module2.exports.Stream = Stream3;
     } else {
-      exports = module.exports = require_stream_readable();
-      exports.Stream = Stream3 || exports;
-      exports.Readable = exports;
-      exports.Writable = require_stream_writable();
-      exports.Duplex = require_stream_duplex();
-      exports.Transform = require_stream_transform();
-      exports.PassThrough = require_stream_passthrough();
-      exports.finished = require_end_of_stream();
-      exports.pipeline = require_pipeline();
+      exports2 = module2.exports = require_stream_readable();
+      exports2.Stream = Stream3 || exports2;
+      exports2.Readable = exports2;
+      exports2.Writable = require_stream_writable();
+      exports2.Duplex = require_stream_duplex();
+      exports2.Transform = require_stream_transform();
+      exports2.PassThrough = require_stream_passthrough();
+      exports2.finished = require_end_of_stream();
+      exports2.pipeline = require_pipeline();
     }
   }
 });
 
 // node_modules/unordered-set/index.js
 var require_unordered_set = __commonJS({
-  "node_modules/unordered-set/index.js"(exports) {
-    exports.add = add;
-    exports.has = has;
-    exports.remove = remove;
-    exports.swap = swap;
+  "node_modules/unordered-set/index.js"(exports2) {
+    exports2.add = add;
+    exports2.has = has;
+    exports2.remove = remove;
+    exports2.swap = swap;
     function add(list, item) {
       if (has(list, item)) return item;
       item._index = list.length;
@@ -23342,8 +23336,8 @@ var require_unordered_set = __commonJS({
 
 // node_modules/timeout-refresh/refresh.js
 var require_refresh = __commonJS({
-  "node_modules/timeout-refresh/refresh.js"(exports, module) {
-    module.exports = Timer;
+  "node_modules/timeout-refresh/refresh.js"(exports2, module2) {
+    module2.exports = Timer;
     function Timer(ms, fn, ctx) {
       if (!(this instanceof Timer)) return new Timer(ms, fn, ctx);
       this.ms = ms;
@@ -23370,8 +23364,8 @@ var require_refresh = __commonJS({
 
 // node_modules/timeout-refresh/browser.js
 var require_browser2 = __commonJS({
-  "node_modules/timeout-refresh/browser.js"(exports, module) {
-    module.exports = Timeout;
+  "node_modules/timeout-refresh/browser.js"(exports2, module2) {
+    module2.exports = Timeout;
     function Timeout(ms, fn, ctx) {
       if (!(this instanceof Timeout)) return new Timeout(ms, fn, ctx);
       this.ms = ms;
@@ -23398,12 +23392,12 @@ var require_browser2 = __commonJS({
 
 // node_modules/timeout-refresh/timers.js
 var require_timers = __commonJS({
-  "node_modules/timeout-refresh/timers.js"(exports, module) {
-    var timers = __require("timers");
+  "node_modules/timeout-refresh/timers.js"(exports2, module2) {
+    var timers = require("timers");
     var enroll = timers.enroll || noop9;
     var active = timers._unrefActive || timers.active || noop9;
     var unenroll = timers.unenroll || noop9;
-    module.exports = Timeout;
+    module2.exports = Timeout;
     function Timeout(ms, fn, ctx) {
       if (!(this instanceof Timeout)) return new Timeout(ms, fn, ctx);
       this.ms = ms;
@@ -23432,22 +23426,22 @@ var require_timers = __commonJS({
 
 // node_modules/timeout-refresh/index.js
 var require_timeout_refresh = __commonJS({
-  "node_modules/timeout-refresh/index.js"(exports, module) {
+  "node_modules/timeout-refresh/index.js"(exports2, module2) {
     var to = setTimeout(function() {
     }, 1e3);
     clearTimeout(to);
-    module.exports = to.refresh ? require_refresh() : process.versions.electron ? require_browser2() : require_timers();
+    module2.exports = to.refresh ? require_refresh() : process.versions.electron ? require_browser2() : require_timers();
   }
 });
 
 // node_modules/utp-native/lib/connection.js
 var require_connection = __commonJS({
-  "node_modules/utp-native/lib/connection.js"(exports, module) {
+  "node_modules/utp-native/lib/connection.js"(exports2, module2) {
     var binding = require_binding();
     var stream = require_readable();
-    var util = __require("util");
+    var util = require("util");
     var unordered = require_unordered_set();
-    var dns = __require("dns");
+    var dns = require("dns");
     var timeout = require_timeout_refresh();
     var EMPTY = Buffer.alloc(0);
     var UTP_ERRORS = [
@@ -23456,7 +23450,7 @@ var require_connection = __commonJS({
       "UTP_ETIMEDOUT",
       "UTP_UNKNOWN"
     ];
-    module.exports = Connection;
+    module2.exports = Connection;
     function Connection(utp3, port, address, handle, halfOpen) {
       stream.Duplex.call(this);
       this.remoteAddress = address;
@@ -23646,16 +23640,16 @@ var require_connection = __commonJS({
 
 // node_modules/utp-native/index.js
 var require_utp_native = __commonJS({
-  "node_modules/utp-native/index.js"(exports, module) {
+  "node_modules/utp-native/index.js"(exports2, module2) {
     var binding = require_binding();
     var Connection = require_connection();
-    var util = __require("util");
-    var events = __require("events");
-    var dns = __require("dns");
+    var util = require("util");
+    var events = require("events");
+    var dns = require("dns");
     var set = require_unordered_set();
     var EMPTY = Buffer.alloc(0);
     var IPv4Pattern = /^((?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])[.]){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/;
-    module.exports = UTP;
+    module2.exports = UTP;
     function UTP(opts) {
       if (!(this instanceof UTP)) return new UTP(opts);
       events.EventEmitter.call(this);
@@ -23896,8 +23890,8 @@ var require_utp_native = __commonJS({
 
 // node_modules/webtorrent/lib/utp.cjs
 var require_utp = __commonJS({
-  "node_modules/webtorrent/lib/utp.cjs"(exports, module) {
-    module.exports = (() => {
+  "node_modules/webtorrent/lib/utp.cjs"(exports2, module2) {
+    module2.exports = (() => {
       try {
         return require_utp_native();
       } catch (err) {
@@ -23910,7 +23904,7 @@ var require_utp = __commonJS({
 
 // node_modules/cache-chunk-store/index.js
 var require_cache_chunk_store = __commonJS({
-  "node_modules/cache-chunk-store/index.js"(exports, module) {
+  "node_modules/cache-chunk-store/index.js"(exports2, module2) {
     var LRU3 = require_lru();
     var queueMicrotask12 = require_queue_microtask();
     var CacheStore = class {
@@ -23995,15 +23989,15 @@ var require_cache_chunk_store = __commonJS({
         this.store.destroy(cb);
       }
     };
-    module.exports = CacheStore;
+    module2.exports = CacheStore;
   }
 });
 
 // node_modules/cpus/index.js
 var require_cpus = __commonJS({
-  "node_modules/cpus/index.js"(exports, module) {
-    var os5 = __require("os");
-    module.exports = function cpus2() {
+  "node_modules/cpus/index.js"(exports2, module2) {
+    var os5 = require("os");
+    module2.exports = function cpus2() {
       return os5.cpus();
     };
   }
@@ -24011,13 +24005,13 @@ var require_cpus = __commonJS({
 
 // node_modules/ipaddr.js/lib/ipaddr.js
 var require_ipaddr = __commonJS({
-  "node_modules/ipaddr.js/lib/ipaddr.js"(exports, module) {
+  "node_modules/ipaddr.js/lib/ipaddr.js"(exports2, module2) {
     (function() {
       var expandIPv6, ipaddr2, ipv4Part, ipv4Regexes, ipv6Part, ipv6Regexes, matchCIDR, root, zoneIndex;
       ipaddr2 = {};
       root = this;
-      if (typeof module !== "undefined" && module !== null && module.exports) {
-        module.exports = ipaddr2;
+      if (typeof module2 !== "undefined" && module2 !== null && module2.exports) {
+        module2.exports = ipaddr2;
       } else {
         root["ipaddr"] = ipaddr2;
       }
@@ -24627,13 +24621,13 @@ var require_ipaddr = __commonJS({
           return addr;
         }
       };
-    }).call(exports);
+    }).call(exports2);
   }
 });
 
 // node_modules/compact2string/index.js
 var require_compact2string = __commonJS({
-  "node_modules/compact2string/index.js"(exports, module) {
+  "node_modules/compact2string/index.js"(exports2, module2) {
     var ipaddr2 = require_ipaddr();
     var compact2string4 = function(buf) {
       switch (buf.length) {
@@ -24669,16 +24663,16 @@ var require_compact2string = __commonJS({
       }
       return output;
     };
-    module.exports = compact2string4;
+    module2.exports = compact2string4;
   }
 });
 
 // node_modules/smart-buffer/build/utils.js
 var require_utils2 = __commonJS({
-  "node_modules/smart-buffer/build/utils.js"(exports) {
+  "node_modules/smart-buffer/build/utils.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var buffer_1 = __require("buffer");
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    var buffer_1 = require("buffer");
     var ERRORS = {
       INVALID_ENCODING: "Invalid encoding provided. Please specify a valid encoding the internal Node.js Buffer supports.",
       INVALID_SMARTBUFFER_SIZE: "Invalid size provided. Size must be a valid integer greater than zero.",
@@ -24693,17 +24687,17 @@ var require_utils2 = __commonJS({
       INVALID_READ_BEYOND_BOUNDS: "Attempted to read beyond the bounds of the managed data.",
       INVALID_WRITE_BEYOND_BOUNDS: "Attempted to write beyond the bounds of the managed data."
     };
-    exports.ERRORS = ERRORS;
+    exports2.ERRORS = ERRORS;
     function checkEncoding(encoding) {
       if (!buffer_1.Buffer.isEncoding(encoding)) {
         throw new Error(ERRORS.INVALID_ENCODING);
       }
     }
-    exports.checkEncoding = checkEncoding;
+    exports2.checkEncoding = checkEncoding;
     function isFiniteInteger(value) {
       return typeof value === "number" && isFinite(value) && isInteger(value);
     }
-    exports.isFiniteInteger = isFiniteInteger;
+    exports2.isFiniteInteger = isFiniteInteger;
     function checkOffsetOrLengthValue(value, offset) {
       if (typeof value === "number") {
         if (!isFiniteInteger(value) || value < 0) {
@@ -24716,17 +24710,17 @@ var require_utils2 = __commonJS({
     function checkLengthValue(length) {
       checkOffsetOrLengthValue(length, false);
     }
-    exports.checkLengthValue = checkLengthValue;
+    exports2.checkLengthValue = checkLengthValue;
     function checkOffsetValue(offset) {
       checkOffsetOrLengthValue(offset, true);
     }
-    exports.checkOffsetValue = checkOffsetValue;
+    exports2.checkOffsetValue = checkOffsetValue;
     function checkTargetOffset(offset, buff) {
       if (offset < 0 || offset > buff.length) {
         throw new Error(ERRORS.INVALID_TARGET_OFFSET);
       }
     }
-    exports.checkTargetOffset = checkTargetOffset;
+    exports2.checkTargetOffset = checkTargetOffset;
     function isInteger(value) {
       return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
     }
@@ -24738,15 +24732,15 @@ var require_utils2 = __commonJS({
         throw new Error(`Platform does not support Buffer.prototype.${bufferMethod}.`);
       }
     }
-    exports.bigIntAndBufferInt64Check = bigIntAndBufferInt64Check;
+    exports2.bigIntAndBufferInt64Check = bigIntAndBufferInt64Check;
   }
 });
 
 // node_modules/smart-buffer/build/smartbuffer.js
 var require_smartbuffer = __commonJS({
-  "node_modules/smart-buffer/build/smartbuffer.js"(exports) {
+  "node_modules/smart-buffer/build/smartbuffer.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+    Object.defineProperty(exports2, "__esModule", { value: true });
     var utils_1 = require_utils2();
     var DEFAULT_SMARTBUFFER_SIZE = 4096;
     var DEFAULT_SMARTBUFFER_ENCODING = "utf8";
@@ -25896,18 +25890,18 @@ var require_smartbuffer = __commonJS({
         return this;
       }
     };
-    exports.SmartBuffer = SmartBuffer;
+    exports2.SmartBuffer = SmartBuffer;
   }
 });
 
 // node_modules/socks/build/common/constants.js
 var require_constants = __commonJS({
-  "node_modules/socks/build/common/constants.js"(exports) {
+  "node_modules/socks/build/common/constants.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.SOCKS5_NO_ACCEPTABLE_AUTH = exports.SOCKS5_CUSTOM_AUTH_END = exports.SOCKS5_CUSTOM_AUTH_START = exports.SOCKS_INCOMING_PACKET_SIZES = exports.SocksClientState = exports.Socks5Response = exports.Socks5HostType = exports.Socks5Auth = exports.Socks4Response = exports.SocksCommand = exports.ERRORS = exports.DEFAULT_TIMEOUT = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.SOCKS5_NO_ACCEPTABLE_AUTH = exports2.SOCKS5_CUSTOM_AUTH_END = exports2.SOCKS5_CUSTOM_AUTH_START = exports2.SOCKS_INCOMING_PACKET_SIZES = exports2.SocksClientState = exports2.Socks5Response = exports2.Socks5HostType = exports2.Socks5Auth = exports2.Socks4Response = exports2.SocksCommand = exports2.ERRORS = exports2.DEFAULT_TIMEOUT = void 0;
     var DEFAULT_TIMEOUT = 3e4;
-    exports.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
+    exports2.DEFAULT_TIMEOUT = DEFAULT_TIMEOUT;
     var ERRORS = {
       InvalidSocksCommand: "An invalid SOCKS command was provided. Valid options are connect, bind, and associate.",
       InvalidSocksCommandForOperation: "An invalid SOCKS command was provided. Only a subset of commands are supported for this operation.",
@@ -25937,7 +25931,7 @@ var require_constants = __commonJS({
       InvalidSocks5IncomingConnectionResponse: "Received invalid Socks5 incoming connection response",
       Socks5ProxyRejectedIncomingBoundConnection: "Socks5 Proxy rejected incoming bound connection"
     };
-    exports.ERRORS = ERRORS;
+    exports2.ERRORS = ERRORS;
     var SOCKS_INCOMING_PACKET_SIZES = {
       Socks5InitialHandshakeResponse: 2,
       Socks5UserPassAuthenticationResponse: 2,
@@ -25954,32 +25948,32 @@ var require_constants = __commonJS({
       Socks4Response: 8
       // 2 header + 2 port + 4 ip
     };
-    exports.SOCKS_INCOMING_PACKET_SIZES = SOCKS_INCOMING_PACKET_SIZES;
+    exports2.SOCKS_INCOMING_PACKET_SIZES = SOCKS_INCOMING_PACKET_SIZES;
     var SocksCommand;
     (function(SocksCommand2) {
       SocksCommand2[SocksCommand2["connect"] = 1] = "connect";
       SocksCommand2[SocksCommand2["bind"] = 2] = "bind";
       SocksCommand2[SocksCommand2["associate"] = 3] = "associate";
-    })(SocksCommand || (exports.SocksCommand = SocksCommand = {}));
+    })(SocksCommand || (exports2.SocksCommand = SocksCommand = {}));
     var Socks4Response;
     (function(Socks4Response2) {
       Socks4Response2[Socks4Response2["Granted"] = 90] = "Granted";
       Socks4Response2[Socks4Response2["Failed"] = 91] = "Failed";
       Socks4Response2[Socks4Response2["Rejected"] = 92] = "Rejected";
       Socks4Response2[Socks4Response2["RejectedIdent"] = 93] = "RejectedIdent";
-    })(Socks4Response || (exports.Socks4Response = Socks4Response = {}));
+    })(Socks4Response || (exports2.Socks4Response = Socks4Response = {}));
     var Socks5Auth;
     (function(Socks5Auth2) {
       Socks5Auth2[Socks5Auth2["NoAuth"] = 0] = "NoAuth";
       Socks5Auth2[Socks5Auth2["GSSApi"] = 1] = "GSSApi";
       Socks5Auth2[Socks5Auth2["UserPass"] = 2] = "UserPass";
-    })(Socks5Auth || (exports.Socks5Auth = Socks5Auth = {}));
+    })(Socks5Auth || (exports2.Socks5Auth = Socks5Auth = {}));
     var SOCKS5_CUSTOM_AUTH_START = 128;
-    exports.SOCKS5_CUSTOM_AUTH_START = SOCKS5_CUSTOM_AUTH_START;
+    exports2.SOCKS5_CUSTOM_AUTH_START = SOCKS5_CUSTOM_AUTH_START;
     var SOCKS5_CUSTOM_AUTH_END = 254;
-    exports.SOCKS5_CUSTOM_AUTH_END = SOCKS5_CUSTOM_AUTH_END;
+    exports2.SOCKS5_CUSTOM_AUTH_END = SOCKS5_CUSTOM_AUTH_END;
     var SOCKS5_NO_ACCEPTABLE_AUTH = 255;
-    exports.SOCKS5_NO_ACCEPTABLE_AUTH = SOCKS5_NO_ACCEPTABLE_AUTH;
+    exports2.SOCKS5_NO_ACCEPTABLE_AUTH = SOCKS5_NO_ACCEPTABLE_AUTH;
     var Socks5Response;
     (function(Socks5Response2) {
       Socks5Response2[Socks5Response2["Granted"] = 0] = "Granted";
@@ -25991,13 +25985,13 @@ var require_constants = __commonJS({
       Socks5Response2[Socks5Response2["TTLExpired"] = 6] = "TTLExpired";
       Socks5Response2[Socks5Response2["CommandNotSupported"] = 7] = "CommandNotSupported";
       Socks5Response2[Socks5Response2["AddressNotSupported"] = 8] = "AddressNotSupported";
-    })(Socks5Response || (exports.Socks5Response = Socks5Response = {}));
+    })(Socks5Response || (exports2.Socks5Response = Socks5Response = {}));
     var Socks5HostType;
     (function(Socks5HostType2) {
       Socks5HostType2[Socks5HostType2["IPv4"] = 1] = "IPv4";
       Socks5HostType2[Socks5HostType2["Hostname"] = 3] = "Hostname";
       Socks5HostType2[Socks5HostType2["IPv6"] = 4] = "IPv6";
-    })(Socks5HostType || (exports.Socks5HostType = Socks5HostType = {}));
+    })(Socks5HostType || (exports2.Socks5HostType = Socks5HostType = {}));
     var SocksClientState;
     (function(SocksClientState2) {
       SocksClientState2[SocksClientState2["Created"] = 0] = "Created";
@@ -26013,43 +26007,43 @@ var require_constants = __commonJS({
       SocksClientState2[SocksClientState2["Established"] = 10] = "Established";
       SocksClientState2[SocksClientState2["Disconnected"] = 11] = "Disconnected";
       SocksClientState2[SocksClientState2["Error"] = 99] = "Error";
-    })(SocksClientState || (exports.SocksClientState = SocksClientState = {}));
+    })(SocksClientState || (exports2.SocksClientState = SocksClientState = {}));
   }
 });
 
 // node_modules/socks/build/common/util.js
 var require_util2 = __commonJS({
-  "node_modules/socks/build/common/util.js"(exports) {
+  "node_modules/socks/build/common/util.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.shuffleArray = exports.SocksClientError = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.shuffleArray = exports2.SocksClientError = void 0;
     var SocksClientError = class extends Error {
       constructor(message, options) {
         super(message);
         this.options = options;
       }
     };
-    exports.SocksClientError = SocksClientError;
+    exports2.SocksClientError = SocksClientError;
     function shuffleArray(array) {
       for (let i2 = array.length - 1; i2 > 0; i2--) {
         const j = Math.floor(Math.random() * (i2 + 1));
         [array[i2], array[j]] = [array[j], array[i2]];
       }
     }
-    exports.shuffleArray = shuffleArray;
+    exports2.shuffleArray = shuffleArray;
   }
 });
 
 // node_modules/ip-address/dist/common.js
 var require_common2 = __commonJS({
-  "node_modules/ip-address/dist/common.js"(exports) {
+  "node_modules/ip-address/dist/common.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.isInSubnet = isInSubnet;
-    exports.isCorrect = isCorrect;
-    exports.numberToPaddedHex = numberToPaddedHex;
-    exports.stringToPaddedHex = stringToPaddedHex;
-    exports.testBit = testBit;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.isInSubnet = isInSubnet;
+    exports2.isCorrect = isCorrect;
+    exports2.numberToPaddedHex = numberToPaddedHex;
+    exports2.stringToPaddedHex = stringToPaddedHex;
+    exports2.testBit = testBit;
     function isInSubnet(address) {
       if (this.subnetMask < address.subnetMask) {
         return false;
@@ -26089,23 +26083,23 @@ var require_common2 = __commonJS({
 
 // node_modules/ip-address/dist/v4/constants.js
 var require_constants2 = __commonJS({
-  "node_modules/ip-address/dist/v4/constants.js"(exports) {
+  "node_modules/ip-address/dist/v4/constants.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.RE_SUBNET_STRING = exports.RE_ADDRESS = exports.GROUPS = exports.BITS = void 0;
-    exports.BITS = 32;
-    exports.GROUPS = 4;
-    exports.RE_ADDRESS = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g;
-    exports.RE_SUBNET_STRING = /\/\d{1,2}$/;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.RE_SUBNET_STRING = exports2.RE_ADDRESS = exports2.GROUPS = exports2.BITS = void 0;
+    exports2.BITS = 32;
+    exports2.GROUPS = 4;
+    exports2.RE_ADDRESS = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/g;
+    exports2.RE_SUBNET_STRING = /\/\d{1,2}$/;
   }
 });
 
 // node_modules/ip-address/dist/address-error.js
 var require_address_error = __commonJS({
-  "node_modules/ip-address/dist/address-error.js"(exports) {
+  "node_modules/ip-address/dist/address-error.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.AddressError = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.AddressError = void 0;
     var AddressError = class extends Error {
       constructor(message, parseMessage) {
         super(message);
@@ -26113,15 +26107,15 @@ var require_address_error = __commonJS({
         this.parseMessage = parseMessage;
       }
     };
-    exports.AddressError = AddressError;
+    exports2.AddressError = AddressError;
   }
 });
 
 // node_modules/ip-address/dist/ipv4.js
 var require_ipv4 = __commonJS({
-  "node_modules/ip-address/dist/ipv4.js"(exports) {
+  "node_modules/ip-address/dist/ipv4.js"(exports2) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -26134,12 +26128,12 @@ var require_ipv4 = __commonJS({
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports && exports.__importStar || function(mod) {
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
@@ -26148,8 +26142,8 @@ var require_ipv4 = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Address4 = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Address4 = void 0;
     var common = __importStar(require_common2());
     var constants3 = __importStar(require_constants2());
     var address_error_1 = require_address_error();
@@ -26456,19 +26450,19 @@ var require_ipv4 = __commonJS({
         return this.address.replace(constants3.RE_ADDRESS, `<span class="hover-group group-v4 group-6">${segments.slice(0, 2).join(".")}</span>.<span class="hover-group group-v4 group-7">${segments.slice(2, 4).join(".")}</span>`);
       }
     };
-    exports.Address4 = Address4;
+    exports2.Address4 = Address4;
   }
 });
 
 // node_modules/ip-address/dist/v6/constants.js
 var require_constants3 = __commonJS({
-  "node_modules/ip-address/dist/v6/constants.js"(exports) {
+  "node_modules/ip-address/dist/v6/constants.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.RE_URL_WITH_PORT = exports.RE_URL = exports.RE_ZONE_STRING = exports.RE_SUBNET_STRING = exports.RE_BAD_ADDRESS = exports.RE_BAD_CHARACTERS = exports.TYPES = exports.SCOPES = exports.GROUPS = exports.BITS = void 0;
-    exports.BITS = 128;
-    exports.GROUPS = 8;
-    exports.SCOPES = {
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.RE_URL_WITH_PORT = exports2.RE_URL = exports2.RE_ZONE_STRING = exports2.RE_SUBNET_STRING = exports2.RE_BAD_ADDRESS = exports2.RE_BAD_CHARACTERS = exports2.TYPES = exports2.SCOPES = exports2.GROUPS = exports2.BITS = void 0;
+    exports2.BITS = 128;
+    exports2.GROUPS = 8;
+    exports2.SCOPES = {
       0: "Reserved",
       1: "Interface local",
       2: "Link local",
@@ -26478,7 +26472,7 @@ var require_constants3 = __commonJS({
       14: "Global",
       15: "Reserved"
     };
-    exports.TYPES = {
+    exports2.TYPES = {
       "ff01::1/128": "Multicast (All nodes on this interface)",
       "ff01::2/128": "Multicast (All routers on this interface)",
       "ff02::1/128": "Multicast (All nodes on this link)",
@@ -26502,24 +26496,24 @@ var require_constants3 = __commonJS({
       "ff00::/8": "Multicast",
       "fe80::/10": "Link-local unicast"
     };
-    exports.RE_BAD_CHARACTERS = /([^0-9a-f:/%])/gi;
-    exports.RE_BAD_ADDRESS = /([0-9a-f]{5,}|:{3,}|[^:]:$|^:[^:]|\/$)/gi;
-    exports.RE_SUBNET_STRING = /\/\d{1,3}(?=%|$)/;
-    exports.RE_ZONE_STRING = /%.*$/;
-    exports.RE_URL = /^\[{0,1}([0-9a-f:]+)\]{0,1}/;
-    exports.RE_URL_WITH_PORT = /\[([0-9a-f:]+)\]:([0-9]{1,5})/;
+    exports2.RE_BAD_CHARACTERS = /([^0-9a-f:/%])/gi;
+    exports2.RE_BAD_ADDRESS = /([0-9a-f]{5,}|:{3,}|[^:]:$|^:[^:]|\/$)/gi;
+    exports2.RE_SUBNET_STRING = /\/\d{1,3}(?=%|$)/;
+    exports2.RE_ZONE_STRING = /%.*$/;
+    exports2.RE_URL = /^\[{0,1}([0-9a-f:]+)\]{0,1}/;
+    exports2.RE_URL_WITH_PORT = /\[([0-9a-f:]+)\]:([0-9]{1,5})/;
   }
 });
 
 // node_modules/ip-address/dist/v6/helpers.js
 var require_helpers = __commonJS({
-  "node_modules/ip-address/dist/v6/helpers.js"(exports) {
+  "node_modules/ip-address/dist/v6/helpers.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.spanAllZeroes = spanAllZeroes;
-    exports.spanAll = spanAll;
-    exports.spanLeadingZeroes = spanLeadingZeroes;
-    exports.simpleGroup = simpleGroup;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.spanAllZeroes = spanAllZeroes;
+    exports2.spanAll = spanAll;
+    exports2.spanLeadingZeroes = spanLeadingZeroes;
+    exports2.simpleGroup = simpleGroup;
     function spanAllZeroes(s2) {
       return s2.replace(/(0+)/g, '<span class="zero">$1</span>');
     }
@@ -26548,9 +26542,9 @@ var require_helpers = __commonJS({
 
 // node_modules/ip-address/dist/v6/regular-expressions.js
 var require_regular_expressions = __commonJS({
-  "node_modules/ip-address/dist/v6/regular-expressions.js"(exports) {
+  "node_modules/ip-address/dist/v6/regular-expressions.js"(exports2) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -26563,12 +26557,12 @@ var require_regular_expressions = __commonJS({
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports && exports.__importStar || function(mod) {
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
@@ -26577,12 +26571,12 @@ var require_regular_expressions = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ADDRESS_BOUNDARY = void 0;
-    exports.groupPossibilities = groupPossibilities;
-    exports.padGroup = padGroup;
-    exports.simpleRegularExpression = simpleRegularExpression;
-    exports.possibleElisions = possibleElisions;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ADDRESS_BOUNDARY = void 0;
+    exports2.groupPossibilities = groupPossibilities;
+    exports2.padGroup = padGroup;
+    exports2.simpleRegularExpression = simpleRegularExpression;
+    exports2.possibleElisions = possibleElisions;
     var v6 = __importStar(require_constants3());
     function groupPossibilities(possibilities) {
       return `(${possibilities.join("|")})`;
@@ -26593,7 +26587,7 @@ var require_regular_expressions = __commonJS({
       }
       return group;
     }
-    exports.ADDRESS_BOUNDARY = "[^A-Fa-f0-9:]";
+    exports2.ADDRESS_BOUNDARY = "[^A-Fa-f0-9:]";
     function simpleRegularExpression(groups) {
       const zeroIndexes = [];
       groups.forEach((group, i2) => {
@@ -26640,9 +26634,9 @@ var require_regular_expressions = __commonJS({
 
 // node_modules/ip-address/dist/ipv6.js
 var require_ipv6 = __commonJS({
-  "node_modules/ip-address/dist/ipv6.js"(exports) {
+  "node_modules/ip-address/dist/ipv6.js"(exports2) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -26655,12 +26649,12 @@ var require_ipv6 = __commonJS({
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports && exports.__importStar || function(mod) {
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
@@ -26669,8 +26663,8 @@ var require_ipv6 = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.Address6 = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Address6 = void 0;
     var common = __importStar(require_common2());
     var constants4 = __importStar(require_constants2());
     var constants6 = __importStar(require_constants3());
@@ -27548,15 +27542,15 @@ var require_ipv6 = __commonJS({
         return new RegExp(this.regularExpressionString(substringSearch), "i");
       }
     };
-    exports.Address6 = Address6;
+    exports2.Address6 = Address6;
   }
 });
 
 // node_modules/ip-address/dist/ip-address.js
 var require_ip_address = __commonJS({
-  "node_modules/ip-address/dist/ip-address.js"(exports) {
+  "node_modules/ip-address/dist/ip-address.js"(exports2) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -27569,12 +27563,12 @@ var require_ip_address = __commonJS({
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
     }));
-    var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create ? (function(o, v) {
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? (function(o, v) {
       Object.defineProperty(o, "default", { enumerable: true, value: v });
     }) : function(o, v) {
       o["default"] = v;
     });
-    var __importStar = exports && exports.__importStar || function(mod) {
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
@@ -27583,36 +27577,36 @@ var require_ip_address = __commonJS({
       __setModuleDefault(result, mod);
       return result;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.v6 = exports.AddressError = exports.Address6 = exports.Address4 = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.v6 = exports2.AddressError = exports2.Address6 = exports2.Address4 = void 0;
     var ipv4_1 = require_ipv4();
-    Object.defineProperty(exports, "Address4", { enumerable: true, get: function() {
+    Object.defineProperty(exports2, "Address4", { enumerable: true, get: function() {
       return ipv4_1.Address4;
     } });
     var ipv6_1 = require_ipv6();
-    Object.defineProperty(exports, "Address6", { enumerable: true, get: function() {
+    Object.defineProperty(exports2, "Address6", { enumerable: true, get: function() {
       return ipv6_1.Address6;
     } });
     var address_error_1 = require_address_error();
-    Object.defineProperty(exports, "AddressError", { enumerable: true, get: function() {
+    Object.defineProperty(exports2, "AddressError", { enumerable: true, get: function() {
       return address_error_1.AddressError;
     } });
     var helpers = __importStar(require_helpers());
-    exports.v6 = { helpers };
+    exports2.v6 = { helpers };
   }
 });
 
 // node_modules/socks/build/common/helpers.js
 var require_helpers2 = __commonJS({
-  "node_modules/socks/build/common/helpers.js"(exports) {
+  "node_modules/socks/build/common/helpers.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ipToBuffer = exports.int32ToIpv4 = exports.ipv4ToInt32 = exports.validateSocksClientChainOptions = exports.validateSocksClientOptions = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ipToBuffer = exports2.int32ToIpv4 = exports2.ipv4ToInt32 = exports2.validateSocksClientChainOptions = exports2.validateSocksClientOptions = void 0;
     var util_1 = require_util2();
     var constants_1 = require_constants();
-    var stream = __require("stream");
+    var stream = require("stream");
     var ip_address_1 = require_ip_address();
-    var net3 = __require("net");
+    var net3 = require("net");
     function validateSocksClientOptions(options, acceptedCommands = ["connect", "bind", "associate"]) {
       if (!constants_1.SocksCommand[options.command]) {
         throw new util_1.SocksClientError(constants_1.ERRORS.InvalidSocksCommand, options);
@@ -27634,7 +27628,7 @@ var require_helpers2 = __commonJS({
         throw new util_1.SocksClientError(constants_1.ERRORS.InvalidSocksClientOptionsExistingSocket, options);
       }
     }
-    exports.validateSocksClientOptions = validateSocksClientOptions;
+    exports2.validateSocksClientOptions = validateSocksClientOptions;
     function validateSocksClientChainOptions(options) {
       if (options.command !== "connect") {
         throw new util_1.SocksClientError(constants_1.ERRORS.InvalidSocksCommandChain, options);
@@ -27655,7 +27649,7 @@ var require_helpers2 = __commonJS({
         throw new util_1.SocksClientError(constants_1.ERRORS.InvalidSocksClientOptionsTimeout, options);
       }
     }
-    exports.validateSocksClientChainOptions = validateSocksClientChainOptions;
+    exports2.validateSocksClientChainOptions = validateSocksClientChainOptions;
     function validateCustomProxyAuth(proxy, options) {
       if (proxy.custom_auth_method !== void 0) {
         if (proxy.custom_auth_method < constants_1.SOCKS5_CUSTOM_AUTH_START || proxy.custom_auth_method > constants_1.SOCKS5_CUSTOM_AUTH_END) {
@@ -27685,7 +27679,7 @@ var require_helpers2 = __commonJS({
       const address = new ip_address_1.Address4(ip);
       return address.toArray().reduce((acc, part) => (acc << 8) + part, 0) >>> 0;
     }
-    exports.ipv4ToInt32 = ipv4ToInt32;
+    exports2.ipv4ToInt32 = ipv4ToInt32;
     function int32ToIpv4(int32) {
       const octet1 = int32 >>> 24 & 255;
       const octet2 = int32 >>> 16 & 255;
@@ -27693,7 +27687,7 @@ var require_helpers2 = __commonJS({
       const octet4 = int32 & 255;
       return [octet1, octet2, octet3, octet4].join(".");
     }
-    exports.int32ToIpv4 = int32ToIpv4;
+    exports2.int32ToIpv4 = int32ToIpv4;
     function ipToBuffer(ip) {
       if (net3.isIPv4(ip)) {
         const address = new ip_address_1.Address4(ip);
@@ -27705,16 +27699,16 @@ var require_helpers2 = __commonJS({
         throw new Error("Invalid IP address format");
       }
     }
-    exports.ipToBuffer = ipToBuffer;
+    exports2.ipToBuffer = ipToBuffer;
   }
 });
 
 // node_modules/socks/build/common/receivebuffer.js
 var require_receivebuffer = __commonJS({
-  "node_modules/socks/build/common/receivebuffer.js"(exports) {
+  "node_modules/socks/build/common/receivebuffer.js"(exports2) {
     "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.ReceiveBuffer = void 0;
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ReceiveBuffer = void 0;
     var ReceiveBuffer = class {
       constructor(size = 4096) {
         this.buffer = Buffer.allocUnsafe(size);
@@ -27753,15 +27747,15 @@ var require_receivebuffer = __commonJS({
         return value;
       }
     };
-    exports.ReceiveBuffer = ReceiveBuffer;
+    exports2.ReceiveBuffer = ReceiveBuffer;
   }
 });
 
 // node_modules/socks/build/client/socksclient.js
 var require_socksclient = __commonJS({
-  "node_modules/socks/build/client/socksclient.js"(exports) {
+  "node_modules/socks/build/client/socksclient.js"(exports2) {
     "use strict";
-    var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
+    var __awaiter = exports2 && exports2.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
         return value instanceof P ? value : new P(function(resolve2) {
           resolve2(value);
@@ -27788,16 +27782,16 @@ var require_socksclient = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.SocksClientError = exports.SocksClient = void 0;
-    var events_1 = __require("events");
-    var net3 = __require("net");
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.SocksClientError = exports2.SocksClient = void 0;
+    var events_1 = require("events");
+    var net3 = require("net");
     var smart_buffer_1 = require_smartbuffer();
     var constants_1 = require_constants();
     var helpers_1 = require_helpers2();
     var receivebuffer_1 = require_receivebuffer();
     var util_1 = require_util2();
-    Object.defineProperty(exports, "SocksClientError", { enumerable: true, get: function() {
+    Object.defineProperty(exports2, "SocksClientError", { enumerable: true, get: function() {
       return util_1.SocksClientError;
     } });
     var ip_address_1 = require_ip_address();
@@ -28432,15 +28426,15 @@ var require_socksclient = __commonJS({
         return Object.assign({}, this.options);
       }
     };
-    exports.SocksClient = SocksClient;
+    exports2.SocksClient = SocksClient;
   }
 });
 
 // node_modules/socks/build/index.js
 var require_build = __commonJS({
-  "node_modules/socks/build/index.js"(exports) {
+  "node_modules/socks/build/index.js"(exports2) {
     "use strict";
-    var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m2, k, k2) {
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? (function(o, m2, k, k2) {
       if (k2 === void 0) k2 = k;
       var desc = Object.getOwnPropertyDescriptor(m2, k);
       if (!desc || ("get" in desc ? !m2.__esModule : desc.writable || desc.configurable)) {
@@ -28453,22 +28447,22 @@ var require_build = __commonJS({
       if (k2 === void 0) k2 = k;
       o[k2] = m2[k];
     }));
-    var __exportStar = exports && exports.__exportStar || function(m2, exports2) {
-      for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports2, p)) __createBinding(exports2, m2, p);
+    var __exportStar = exports2 && exports2.__exportStar || function(m2, exports3) {
+      for (var p in m2) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding(exports3, m2, p);
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    __exportStar(require_socksclient(), exports);
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    __exportStar(require_socksclient(), exports2);
   }
 });
 
 // node_modules/ws/lib/constants.js
 var require_constants4 = __commonJS({
-  "node_modules/ws/lib/constants.js"(exports, module) {
+  "node_modules/ws/lib/constants.js"(exports2, module2) {
     "use strict";
     var BINARY_TYPES = ["nodebuffer", "arraybuffer", "fragments"];
     var hasBlob = typeof Blob !== "undefined";
     if (hasBlob) BINARY_TYPES.push("blob");
-    module.exports = {
+    module2.exports = {
       BINARY_TYPES,
       CLOSE_TIMEOUT: 3e4,
       EMPTY_BUFFER: Buffer.alloc(0),
@@ -28486,7 +28480,7 @@ var require_constants4 = __commonJS({
 
 // node_modules/bufferutil/fallback.js
 var require_fallback = __commonJS({
-  "node_modules/bufferutil/fallback.js"(exports, module) {
+  "node_modules/bufferutil/fallback.js"(exports2, module2) {
     "use strict";
     var mask = (source, mask2, output, offset, length) => {
       for (var i2 = 0; i2 < length; i2++) {
@@ -28499,25 +28493,25 @@ var require_fallback = __commonJS({
         buffer[i2] ^= mask2[i2 & 3];
       }
     };
-    module.exports = { mask, unmask };
+    module2.exports = { mask, unmask };
   }
 });
 
 // node_modules/bufferutil/index.js
 var require_bufferutil = __commonJS({
-  "node_modules/bufferutil/index.js"(exports, module) {
+  "node_modules/bufferutil/index.js"(exports2, module2) {
     "use strict";
     try {
-      module.exports = require_node_gyp_build2()(__dirname);
+      module2.exports = require_node_gyp_build2()(__dirname);
     } catch (e2) {
-      module.exports = require_fallback();
+      module2.exports = require_fallback();
     }
   }
 });
 
 // node_modules/ws/lib/buffer-util.js
 var require_buffer_util = __commonJS({
-  "node_modules/ws/lib/buffer-util.js"(exports, module) {
+  "node_modules/ws/lib/buffer-util.js"(exports2, module2) {
     "use strict";
     var { EMPTY_BUFFER } = require_constants4();
     var FastBuffer = Buffer[Symbol.species];
@@ -28566,7 +28560,7 @@ var require_buffer_util = __commonJS({
       }
       return buf;
     }
-    module.exports = {
+    module2.exports = {
       concat: concat2,
       mask: _mask,
       toArrayBuffer,
@@ -28576,11 +28570,11 @@ var require_buffer_util = __commonJS({
     if (!process.env.WS_NO_BUFFER_UTIL) {
       try {
         const bufferUtil = require_bufferutil();
-        module.exports.mask = function(source, mask, output, offset, length) {
+        module2.exports.mask = function(source, mask, output, offset, length) {
           if (length < 48) _mask(source, mask, output, offset, length);
           else bufferUtil.mask(source, mask, output, offset, length);
         };
-        module.exports.unmask = function(buffer, mask) {
+        module2.exports.unmask = function(buffer, mask) {
           if (buffer.length < 32) _unmask(buffer, mask);
           else bufferUtil.unmask(buffer, mask);
         };
@@ -28592,7 +28586,7 @@ var require_buffer_util = __commonJS({
 
 // node_modules/ws/lib/limiter.js
 var require_limiter2 = __commonJS({
-  "node_modules/ws/lib/limiter.js"(exports, module) {
+  "node_modules/ws/lib/limiter.js"(exports2, module2) {
     "use strict";
     var kDone = /* @__PURE__ */ Symbol("kDone");
     var kRun = /* @__PURE__ */ Symbol("kRun");
@@ -28636,15 +28630,15 @@ var require_limiter2 = __commonJS({
         }
       }
     };
-    module.exports = Limiter;
+    module2.exports = Limiter;
   }
 });
 
 // node_modules/ws/lib/permessage-deflate.js
 var require_permessage_deflate = __commonJS({
-  "node_modules/ws/lib/permessage-deflate.js"(exports, module) {
+  "node_modules/ws/lib/permessage-deflate.js"(exports2, module2) {
     "use strict";
-    var zlib3 = __require("zlib");
+    var zlib3 = require("zlib");
     var bufferUtil = require_buffer_util();
     var Limiter = require_limiter2();
     var { kStatusCode } = require_constants4();
@@ -28994,7 +28988,7 @@ var require_permessage_deflate = __commonJS({
         });
       }
     };
-    module.exports = PerMessageDeflate2;
+    module2.exports = PerMessageDeflate2;
     function deflateOnData(chunk) {
       this[kBuffers].push(chunk);
       this[kTotalLength] += chunk.length;
@@ -29025,7 +29019,7 @@ var require_permessage_deflate = __commonJS({
 
 // node_modules/utf-8-validate/fallback.js
 var require_fallback2 = __commonJS({
-  "node_modules/utf-8-validate/fallback.js"(exports, module) {
+  "node_modules/utf-8-validate/fallback.js"(exports2, module2) {
     "use strict";
     function isValidUTF8(buf) {
       const len = buf.length;
@@ -29056,27 +29050,27 @@ var require_fallback2 = __commonJS({
       }
       return true;
     }
-    module.exports = isValidUTF8;
+    module2.exports = isValidUTF8;
   }
 });
 
 // node_modules/utf-8-validate/index.js
 var require_utf_8_validate = __commonJS({
-  "node_modules/utf-8-validate/index.js"(exports, module) {
+  "node_modules/utf-8-validate/index.js"(exports2, module2) {
     "use strict";
     try {
-      module.exports = require_node_gyp_build2()(__dirname);
+      module2.exports = require_node_gyp_build2()(__dirname);
     } catch (e2) {
-      module.exports = require_fallback2();
+      module2.exports = require_fallback2();
     }
   }
 });
 
 // node_modules/ws/lib/validation.js
 var require_validation = __commonJS({
-  "node_modules/ws/lib/validation.js"(exports, module) {
+  "node_modules/ws/lib/validation.js"(exports2, module2) {
     "use strict";
-    var { isUtf8 } = __require("buffer");
+    var { isUtf8 } = require("buffer");
     var { hasBlob } = require_constants4();
     var tokenChars = [
       0,
@@ -29251,20 +29245,20 @@ var require_validation = __commonJS({
     function isBlob4(value) {
       return hasBlob && typeof value === "object" && typeof value.arrayBuffer === "function" && typeof value.type === "string" && typeof value.stream === "function" && (value[Symbol.toStringTag] === "Blob" || value[Symbol.toStringTag] === "File");
     }
-    module.exports = {
+    module2.exports = {
       isBlob: isBlob4,
       isValidStatusCode,
       isValidUTF8: _isValidUTF8,
       tokenChars
     };
     if (isUtf8) {
-      module.exports.isValidUTF8 = function(buf) {
+      module2.exports.isValidUTF8 = function(buf) {
         return buf.length < 24 ? _isValidUTF8(buf) : isUtf8(buf);
       };
     } else if (!process.env.WS_NO_UTF_8_VALIDATE) {
       try {
         const isValidUTF8 = require_utf_8_validate();
-        module.exports.isValidUTF8 = function(buf) {
+        module2.exports.isValidUTF8 = function(buf) {
           return buf.length < 32 ? _isValidUTF8(buf) : isValidUTF8(buf);
         };
       } catch (e2) {
@@ -29275,9 +29269,9 @@ var require_validation = __commonJS({
 
 // node_modules/ws/lib/receiver.js
 var require_receiver = __commonJS({
-  "node_modules/ws/lib/receiver.js"(exports, module) {
+  "node_modules/ws/lib/receiver.js"(exports2, module2) {
     "use strict";
-    var { Writable } = __require("stream");
+    var { Writable } = require("stream");
     var PerMessageDeflate2 = require_permessage_deflate();
     var {
       BINARY_TYPES,
@@ -29861,16 +29855,16 @@ var require_receiver = __commonJS({
         return err;
       }
     };
-    module.exports = Receiver2;
+    module2.exports = Receiver2;
   }
 });
 
 // node_modules/ws/lib/sender.js
 var require_sender = __commonJS({
-  "node_modules/ws/lib/sender.js"(exports, module) {
+  "node_modules/ws/lib/sender.js"(exports2, module2) {
     "use strict";
-    var { Duplex: Duplex4 } = __require("stream");
-    var { randomFillSync } = __require("crypto");
+    var { Duplex: Duplex4 } = require("stream");
+    var { randomFillSync } = require("crypto");
     var PerMessageDeflate2 = require_permessage_deflate();
     var { EMPTY_BUFFER, kWebSocket, NOOP } = require_constants4();
     var { isBlob: isBlob4, isValidStatusCode } = require_validation();
@@ -30337,7 +30331,7 @@ var require_sender = __commonJS({
         }
       }
     };
-    module.exports = Sender2;
+    module2.exports = Sender2;
     function callCallbacks(sender, err, cb) {
       if (typeof cb === "function") cb(err);
       for (let i2 = 0; i2 < sender._queue.length; i2++) {
@@ -30355,7 +30349,7 @@ var require_sender = __commonJS({
 
 // node_modules/ws/lib/event-target.js
 var require_event_target = __commonJS({
-  "node_modules/ws/lib/event-target.js"(exports, module) {
+  "node_modules/ws/lib/event-target.js"(exports2, module2) {
     "use strict";
     var { kForOnEventAttribute, kListener } = require_constants4();
     var kCode = /* @__PURE__ */ Symbol("kCode");
@@ -30565,7 +30559,7 @@ var require_event_target = __commonJS({
         }
       }
     };
-    module.exports = {
+    module2.exports = {
       CloseEvent,
       ErrorEvent,
       Event: Event2,
@@ -30584,7 +30578,7 @@ var require_event_target = __commonJS({
 
 // node_modules/ws/lib/extension.js
 var require_extension = __commonJS({
-  "node_modules/ws/lib/extension.js"(exports, module) {
+  "node_modules/ws/lib/extension.js"(exports2, module2) {
     "use strict";
     var { tokenChars } = require_validation();
     function push(dest, name, elem) {
@@ -30731,22 +30725,22 @@ var require_extension = __commonJS({
         }).join(", ");
       }).join(", ");
     }
-    module.exports = { format, parse };
+    module2.exports = { format, parse };
   }
 });
 
 // node_modules/ws/lib/websocket.js
 var require_websocket = __commonJS({
-  "node_modules/ws/lib/websocket.js"(exports, module) {
+  "node_modules/ws/lib/websocket.js"(exports2, module2) {
     "use strict";
-    var EventEmitter17 = __require("events");
-    var https2 = __require("https");
-    var http5 = __require("http");
-    var net3 = __require("net");
-    var tls = __require("tls");
-    var { randomBytes: randomBytes2, createHash: createHash2 } = __require("crypto");
-    var { Duplex: Duplex4, Readable: Readable4 } = __require("stream");
-    var { URL: URL2 } = __require("url");
+    var EventEmitter17 = require("events");
+    var https2 = require("https");
+    var http5 = require("http");
+    var net3 = require("net");
+    var tls = require("tls");
+    var { randomBytes: randomBytes2, createHash: createHash2 } = require("crypto");
+    var { Duplex: Duplex4, Readable: Readable4 } = require("stream");
+    var { URL: URL2 } = require("url");
     var PerMessageDeflate2 = require_permessage_deflate();
     var Receiver2 = require_receiver();
     var Sender2 = require_sender();
@@ -31209,7 +31203,7 @@ var require_websocket = __commonJS({
     });
     WebSocket4.prototype.addEventListener = addEventListener;
     WebSocket4.prototype.removeEventListener = removeEventListener;
-    module.exports = WebSocket4;
+    module2.exports = WebSocket4;
     function initAsClient(websocket, address, protocols, options) {
       const opts = {
         allowSynchronousEvents: true,
@@ -31623,10 +31617,10 @@ var require_websocket = __commonJS({
 
 // node_modules/ws/lib/stream.js
 var require_stream2 = __commonJS({
-  "node_modules/ws/lib/stream.js"(exports, module) {
+  "node_modules/ws/lib/stream.js"(exports2, module2) {
     "use strict";
     var WebSocket4 = require_websocket();
-    var { Duplex: Duplex4 } = __require("stream");
+    var { Duplex: Duplex4 } = require("stream");
     function emitClose(stream) {
       stream.emit("close");
     }
@@ -31715,13 +31709,13 @@ var require_stream2 = __commonJS({
       duplex.on("error", duplexOnError);
       return duplex;
     }
-    module.exports = createWebSocketStream2;
+    module2.exports = createWebSocketStream2;
   }
 });
 
 // node_modules/ws/lib/subprotocol.js
 var require_subprotocol = __commonJS({
-  "node_modules/ws/lib/subprotocol.js"(exports, module) {
+  "node_modules/ws/lib/subprotocol.js"(exports2, module2) {
     "use strict";
     var { tokenChars } = require_validation();
     function parse(header) {
@@ -31760,18 +31754,18 @@ var require_subprotocol = __commonJS({
       protocols.add(protocol);
       return protocols;
     }
-    module.exports = { parse };
+    module2.exports = { parse };
   }
 });
 
 // node_modules/ws/lib/websocket-server.js
 var require_websocket_server = __commonJS({
-  "node_modules/ws/lib/websocket-server.js"(exports, module) {
+  "node_modules/ws/lib/websocket-server.js"(exports2, module2) {
     "use strict";
-    var EventEmitter17 = __require("events");
-    var http5 = __require("http");
-    var { Duplex: Duplex4 } = __require("stream");
-    var { createHash: createHash2 } = __require("crypto");
+    var EventEmitter17 = require("events");
+    var http5 = require("http");
+    var { Duplex: Duplex4 } = require("stream");
+    var { createHash: createHash2 } = require("crypto");
     var extension2 = require_extension();
     var PerMessageDeflate2 = require_permessage_deflate();
     var subprotocol2 = require_subprotocol();
@@ -32115,7 +32109,7 @@ var require_websocket_server = __commonJS({
         cb(ws, req);
       }
     };
-    module.exports = WebSocketServer3;
+    module2.exports = WebSocketServer3;
     function addListeners(server, map) {
       for (const event of Object.keys(map)) server.on(event, map[event]);
       return function removeListeners() {
@@ -32159,8 +32153,8 @@ var require_websocket_server = __commonJS({
 
 // node_modules/bittorrent-peerid/lib/utils.js
 var require_utils3 = __commonJS({
-  "node_modules/bittorrent-peerid/lib/utils.js"(exports, module) {
-    module.exports = {
+  "node_modules/bittorrent-peerid/lib/utils.js"(exports2, module2) {
+    module2.exports = {
       isAzStyle(peerId) {
         if (peerId.charAt(0) !== "-") return false;
         if (peerId.charAt(7) === "-") return true;
@@ -32315,9 +32309,9 @@ var require_utils3 = __commonJS({
 
 // node_modules/bittorrent-peerid/index.js
 var require_bittorrent_peerid = __commonJS({
-  "node_modules/bittorrent-peerid/index.js"(exports, module) {
+  "node_modules/bittorrent-peerid/index.js"(exports2, module2) {
     var utils = require_utils3();
-    module.exports = (peerId) => {
+    module2.exports = (peerId) => {
       let buffer;
       if (Buffer.isBuffer(peerId)) {
         buffer = peerId;
@@ -32669,8 +32663,8 @@ var require_bittorrent_peerid = __commonJS({
 
 // node_modules/run-series/index.js
 var require_run_series = __commonJS({
-  "node_modules/run-series/index.js"(exports, module) {
-    module.exports = runSeries;
+  "node_modules/run-series/index.js"(exports2, module2) {
+    module2.exports = runSeries;
     function runSeries(tasks, cb) {
       var current = 0;
       var results = [];
@@ -32696,7 +32690,7 @@ var require_run_series = __commonJS({
 
 // node_modules/string2compact/node_modules/ipaddr.js/lib/ipaddr.js
 var require_ipaddr2 = __commonJS({
-  "node_modules/string2compact/node_modules/ipaddr.js/lib/ipaddr.js"(exports, module) {
+  "node_modules/string2compact/node_modules/ipaddr.js/lib/ipaddr.js"(exports2, module2) {
     (function(root) {
       "use strict";
       const ipv4Part = "(0?\\d+|0x[a-f0-9]+)";
@@ -33473,18 +33467,18 @@ var require_ipaddr2 = __commonJS({
         }
         return defaultName;
       };
-      if (typeof module !== "undefined" && module.exports) {
-        module.exports = ipaddr2;
+      if (typeof module2 !== "undefined" && module2.exports) {
+        module2.exports = ipaddr2;
       } else {
         root.ipaddr = ipaddr2;
       }
-    })(exports);
+    })(exports2);
   }
 });
 
 // node_modules/random-iterate/index.js
 var require_random_iterate = __commonJS({
-  "node_modules/random-iterate/index.js"(exports, module) {
+  "node_modules/random-iterate/index.js"(exports2, module2) {
     var iterate = function(list) {
       var offset = 0;
       return function() {
@@ -33499,28 +33493,28 @@ var require_random_iterate = __commonJS({
         return el;
       };
     };
-    module.exports = iterate;
+    module2.exports = iterate;
   }
 });
 
 // node_modules/queue-tick/queue-microtask.js
 var require_queue_microtask2 = __commonJS({
-  "node_modules/queue-tick/queue-microtask.js"(exports, module) {
-    module.exports = typeof queueMicrotask === "function" ? queueMicrotask : (fn) => Promise.resolve().then(fn);
+  "node_modules/queue-tick/queue-microtask.js"(exports2, module2) {
+    module2.exports = typeof queueMicrotask === "function" ? queueMicrotask : (fn) => Promise.resolve().then(fn);
   }
 });
 
 // node_modules/queue-tick/process-next-tick.js
 var require_process_next_tick = __commonJS({
-  "node_modules/queue-tick/process-next-tick.js"(exports, module) {
-    module.exports = typeof process !== "undefined" && typeof process.nextTick === "function" ? process.nextTick.bind(process) : require_queue_microtask2();
+  "node_modules/queue-tick/process-next-tick.js"(exports2, module2) {
+    module2.exports = typeof process !== "undefined" && typeof process.nextTick === "function" ? process.nextTick.bind(process) : require_queue_microtask2();
   }
 });
 
 // node_modules/random-access-storage/index.js
 var require_random_access_storage = __commonJS({
-  "node_modules/random-access-storage/index.js"(exports, module) {
-    var EventEmitter17 = __require("events");
+  "node_modules/random-access-storage/index.js"(exports2, module2) {
+    var EventEmitter17 = require("events");
     var queueTick = require_process_next_tick();
     var NOT_READABLE = defaultImpl(new Error("Not readable"));
     var NOT_WRITABLE = defaultImpl(new Error("Not writable"));
@@ -33538,7 +33532,7 @@ var require_random_access_storage = __commonJS({
     var SUSPEND_OP = 6;
     var CLOSE_OP = 7;
     var UNLINK_OP = 8;
-    module.exports = class RandomAccessStorage extends EventEmitter17 {
+    module2.exports = class RandomAccessStorage extends EventEmitter17 {
       constructor(opts) {
         super();
         this._queued = [];
@@ -33793,31 +33787,31 @@ var require_random_access_storage = __commonJS({
 
 // node_modules/which-runtime/index.js
 var require_which_runtime = __commonJS({
-  "node_modules/which-runtime/index.js"(exports) {
+  "node_modules/which-runtime/index.js"(exports2) {
     var { runtime, platform: platform2, arch } = typeof Bare !== "undefined" ? { runtime: "bare", platform: global.Bare.platform, arch: global.Bare.arch } : typeof process !== "undefined" ? { runtime: "node", platform: global.process.platform, arch: global.process.arch } : typeof Window !== "undefined" ? { runtime: "browser", platform: "unknown", arch: "unknown" } : { runtime: "unknown", platform: "unknown", arch: "unknown" };
-    exports.runtime = runtime;
-    exports.platform = platform2;
-    exports.arch = arch;
-    exports.isBare = runtime === "bare";
-    exports.isBareKit = exports.isBare && typeof BareKit !== "undefined";
-    exports.isPear = typeof Pear !== "undefined";
-    exports.isNode = runtime === "node";
-    exports.isBrowser = runtime === "browser";
-    exports.isWindows = platform2 === "win32";
-    exports.isLinux = platform2 === "linux";
-    exports.isMac = platform2 === "darwin";
-    exports.isIOS = platform2 === "ios" || platform2 === "ios-simulator";
-    exports.isAndroid = platform2 === "android";
-    exports.isElectron = typeof process !== "undefined" && !!global.process.versions?.electron;
-    exports.isElectronRenderer = exports.isElectron && global.process.type === "renderer";
-    exports.isElectronWorker = exports.isElectron && global.process.type === "worker";
+    exports2.runtime = runtime;
+    exports2.platform = platform2;
+    exports2.arch = arch;
+    exports2.isBare = runtime === "bare";
+    exports2.isBareKit = exports2.isBare && typeof BareKit !== "undefined";
+    exports2.isPear = typeof Pear !== "undefined";
+    exports2.isNode = runtime === "node";
+    exports2.isBrowser = runtime === "browser";
+    exports2.isWindows = platform2 === "win32";
+    exports2.isLinux = platform2 === "linux";
+    exports2.isMac = platform2 === "darwin";
+    exports2.isIOS = platform2 === "ios" || platform2 === "ios-simulator";
+    exports2.isAndroid = platform2 === "android";
+    exports2.isElectron = typeof process !== "undefined" && !!global.process.versions?.electron;
+    exports2.isElectronRenderer = exports2.isElectron && global.process.type === "renderer";
+    exports2.isElectronWorker = exports2.isElectron && global.process.type === "worker";
   }
 });
 
 // node_modules/bare-semver/lib/constants.js
 var require_constants5 = __commonJS({
-  "node_modules/bare-semver/lib/constants.js"(exports, module) {
-    module.exports = {
+  "node_modules/bare-semver/lib/constants.js"(exports2, module2) {
+    module2.exports = {
       EQ: 1,
       LT: 2,
       LTE: 3,
@@ -33829,8 +33823,8 @@ var require_constants5 = __commonJS({
 
 // node_modules/bare-semver/lib/errors.js
 var require_errors2 = __commonJS({
-  "node_modules/bare-semver/lib/errors.js"(exports, module) {
-    module.exports = class SemVerError extends Error {
+  "node_modules/bare-semver/lib/errors.js"(exports2, module2) {
+    module2.exports = class SemVerError extends Error {
       constructor(msg, code, fn = SemVerError) {
         super(`${code}: ${msg}`);
         this.code = code;
@@ -33853,7 +33847,7 @@ var require_errors2 = __commonJS({
 
 // node_modules/bare-semver/lib/version.js
 var require_version = __commonJS({
-  "node_modules/bare-semver/lib/version.js"(exports, module) {
+  "node_modules/bare-semver/lib/version.js"(exports2, module2) {
     var errors = require_errors2();
     var Version = class {
       constructor(major, minor, patch, opts = {}) {
@@ -33865,7 +33859,7 @@ var require_version = __commonJS({
         this.build = build;
       }
       compare(version) {
-        return exports.compare(this, version);
+        return exports2.compare(this, version);
       }
       toString() {
         let result = `${this.major}.${this.minor}.${this.patch}`;
@@ -33878,8 +33872,8 @@ var require_version = __commonJS({
         return result;
       }
     };
-    module.exports = exports = Version;
-    exports.parse = function parse(input, state = { position: 0, partial: false, range: false }) {
+    module2.exports = exports2 = Version;
+    exports2.parse = function parse(input, state = { position: 0, partial: false, range: false }) {
       let i2 = state.position;
       let c;
       const unexpected = (expected) => {
@@ -33964,7 +33958,7 @@ var require_version = __commonJS({
       return new Version(...components, { prerelease, build });
     };
     var integer = /^[0-9]+$/;
-    exports.compare = function compare(a, b) {
+    exports2.compare = function compare(a, b) {
       if (a.major > b.major) return 1;
       if (a.major < b.major) return -1;
       if (a.minor > b.minor) return 1;
@@ -33997,7 +33991,7 @@ var require_version = __commonJS({
 
 // node_modules/bare-semver/lib/comparator.js
 var require_comparator = __commonJS({
-  "node_modules/bare-semver/lib/comparator.js"(exports, module) {
+  "node_modules/bare-semver/lib/comparator.js"(exports2, module2) {
     var constants3 = require_constants5();
     var symbols = {
       [constants3.EQ]: "=",
@@ -34006,7 +34000,7 @@ var require_comparator = __commonJS({
       [constants3.GT]: ">",
       [constants3.GTE]: ">="
     };
-    module.exports = class Comparator {
+    module2.exports = class Comparator {
       constructor(operator, version) {
         this.operator = operator;
         this.version = version;
@@ -34035,7 +34029,7 @@ var require_comparator = __commonJS({
 
 // node_modules/bare-semver/lib/range.js
 var require_range = __commonJS({
-  "node_modules/bare-semver/lib/range.js"(exports, module) {
+  "node_modules/bare-semver/lib/range.js"(exports2, module2) {
     var constants3 = require_constants5();
     var errors = require_errors2();
     var Version = require_version();
@@ -34067,8 +34061,8 @@ var require_range = __commonJS({
         return result;
       }
     };
-    module.exports = exports = Range;
-    exports.parse = function parse(input, state = { position: 0, partial: false }) {
+    module2.exports = exports2 = Range;
+    exports2.parse = function parse(input, state = { position: 0, partial: false }) {
       let i2 = state.position;
       let c;
       const unexpected = (expected) => {
@@ -34128,13 +34122,13 @@ var require_range = __commonJS({
 
 // node_modules/bare-semver/index.js
 var require_bare_semver = __commonJS({
-  "node_modules/bare-semver/index.js"(exports) {
-    exports.constants = require_constants5();
-    exports.errors = require_errors2();
-    var Version = exports.Version = require_version();
-    var Range = exports.Range = require_range();
-    exports.Comparator = require_comparator();
-    exports.satisfies = function satisfies(version, range) {
+  "node_modules/bare-semver/index.js"(exports2) {
+    exports2.constants = require_constants5();
+    exports2.errors = require_errors2();
+    var Version = exports2.Version = require_version();
+    var Range = exports2.Range = require_range();
+    exports2.Comparator = require_comparator();
+    exports2.satisfies = function satisfies(version, range) {
       if (typeof version === "string") version = Version.parse(version);
       if (typeof range === "string") range = Range.parse(range);
       return range.test(version);
@@ -34144,8 +34138,8 @@ var require_bare_semver = __commonJS({
 
 // node_modules/bare-module-resolve/lib/errors.js
 var require_errors3 = __commonJS({
-  "node_modules/bare-module-resolve/lib/errors.js"(exports, module) {
-    module.exports = class ModuleResolveError extends Error {
+  "node_modules/bare-module-resolve/lib/errors.js"(exports2, module2) {
+    module2.exports = class ModuleResolveError extends Error {
       constructor(msg, code, fn = ModuleResolveError) {
         super(`${code}: ${msg}`);
         this.code = code;
@@ -34193,10 +34187,10 @@ var require_errors3 = __commonJS({
 
 // node_modules/bare-module-resolve/index.js
 var require_bare_module_resolve = __commonJS({
-  "node_modules/bare-module-resolve/index.js"(exports, module) {
+  "node_modules/bare-module-resolve/index.js"(exports2, module2) {
     var { satisfies } = require_bare_semver();
     var errors = require_errors3();
-    module.exports = exports = function resolve2(specifier, parentURL, opts, readPackage) {
+    module2.exports = exports2 = function resolve2(specifier, parentURL, opts, readPackage) {
       if (typeof opts === "function") {
         readPackage = opts;
         opts = {};
@@ -34205,7 +34199,7 @@ var require_bare_module_resolve = __commonJS({
       }
       return {
         *[Symbol.iterator]() {
-          const generator = exports.module(specifier, parentURL, opts);
+          const generator = exports2.module(specifier, parentURL, opts);
           let next = generator.next();
           while (next.done !== true) {
             const value = next.value;
@@ -34218,7 +34212,7 @@ var require_bare_module_resolve = __commonJS({
           return next.value;
         },
         async *[Symbol.asyncIterator]() {
-          const generator = exports.module(specifier, parentURL, opts);
+          const generator = exports2.module(specifier, parentURL, opts);
           let next = generator.next();
           while (next.done !== true) {
             const value = next.value;
@@ -34238,39 +34232,39 @@ var require_bare_module_resolve = __commonJS({
     var UNRESOLVED = 0;
     var YIELDED = 1;
     var RESOLVED = YIELDED | 2;
-    exports.constants = {
+    exports2.constants = {
       UNRESOLVED,
       YIELDED,
       RESOLVED
     };
-    exports.module = function* (specifier, parentURL, opts = {}) {
+    exports2.module = function* (specifier, parentURL, opts = {}) {
       const { resolutions = null, imports = null } = opts;
-      if (exports.startsWithWindowsDriveLetter(specifier)) {
+      if (exports2.startsWithWindowsDriveLetter(specifier)) {
         specifier = "/" + specifier;
       }
       let status;
       if (resolutions) {
-        status = yield* exports.preresolved(specifier, resolutions, parentURL, opts);
+        status = yield* exports2.preresolved(specifier, resolutions, parentURL, opts);
         if (status) return status;
       }
-      status = yield* exports.url(specifier, parentURL, opts);
+      status = yield* exports2.url(specifier, parentURL, opts);
       if (status) return status;
-      status = yield* exports.packageImports(specifier, parentURL, opts);
+      status = yield* exports2.packageImports(specifier, parentURL, opts);
       if (status) return status;
       if (specifier === "." || specifier === ".." || specifier[0] === "/" || specifier[0] === "\\" || specifier.startsWith("./") || specifier.startsWith(".\\") || specifier.startsWith("../") || specifier.startsWith("..\\")) {
         if (imports) {
-          status = yield* exports.packageImportsExports(specifier, imports, parentURL, true, opts);
+          status = yield* exports2.packageImportsExports(specifier, imports, parentURL, true, opts);
           if (status) return status;
         }
-        status = yield* exports.deferred(specifier, opts);
+        status = yield* exports2.deferred(specifier, opts);
         if (status) return status;
-        status = yield* exports.file(specifier, parentURL, false, opts);
+        status = yield* exports2.file(specifier, parentURL, false, opts);
         if (status === RESOLVED) return status;
-        return yield* exports.directory(specifier, parentURL, opts);
+        return yield* exports2.directory(specifier, parentURL, opts);
       }
-      return yield* exports.package(specifier, parentURL, opts);
+      return yield* exports2.package(specifier, parentURL, opts);
     };
-    exports.url = function* (url, parentURL, opts = {}) {
+    exports2.url = function* (url, parentURL, opts = {}) {
       const { imports = null, deferredProtocol = "deferred:", resolutions = null } = opts;
       let resolution;
       try {
@@ -34279,7 +34273,7 @@ var require_bare_module_resolve = __commonJS({
         return UNRESOLVED;
       }
       if (imports) {
-        const status = yield* exports.packageImportsExports(
+        const status = yield* exports2.packageImportsExports(
           resolution.href,
           imports,
           parentURL,
@@ -34299,26 +34293,26 @@ var require_bare_module_resolve = __commonJS({
             };
           }
         }
-        return yield* exports.module(specifier, parentURL, opts);
+        return yield* exports2.module(specifier, parentURL, opts);
       }
       if (resolution.protocol === "node:") {
         const specifier = resolution.pathname;
         if (specifier === "." || specifier === ".." || specifier[0] === "/" || specifier.startsWith("./") || specifier.startsWith("../")) {
           throw errors.INVALID_MODULE_SPECIFIER(`Module specifier '${url}' is not a valid package name`);
         }
-        return yield* exports.package(specifier, parentURL, opts);
+        return yield* exports2.package(specifier, parentURL, opts);
       }
       const resolved = yield { resolution };
       return resolved ? RESOLVED : YIELDED;
     };
-    exports.preresolved = function* (specifier, resolutions, parentURL, opts = {}) {
+    exports2.preresolved = function* (specifier, resolutions, parentURL, opts = {}) {
       const imports = resolutions[parentURL.href];
       if (typeof imports === "object" && imports !== null) {
-        return yield* exports.packageImportsExports(specifier, imports, parentURL, true, opts);
+        return yield* exports2.packageImportsExports(specifier, imports, parentURL, true, opts);
       }
       return UNRESOLVED;
     };
-    exports.deferred = function* (specifier, opts = {}) {
+    exports2.deferred = function* (specifier, opts = {}) {
       const { deferredProtocol = "deferred:", defer = [] } = opts;
       if (defer.includes(specifier)) {
         const resolved = yield { resolution: new URL(deferredProtocol + specifier) };
@@ -34326,7 +34320,7 @@ var require_bare_module_resolve = __commonJS({
       }
       return UNRESOLVED;
     };
-    exports.package = function* (packageSpecifier, parentURL, opts = {}) {
+    exports2.package = function* (packageSpecifier, parentURL, opts = {}) {
       const { builtins = [] } = opts;
       if (packageSpecifier === "") {
         throw errors.INVALID_MODULE_SPECIFIER(
@@ -34350,58 +34344,58 @@ var require_bare_module_resolve = __commonJS({
         );
       }
       let status;
-      status = yield* exports.builtinTarget(packageSpecifier, null, builtins, opts);
+      status = yield* exports2.builtinTarget(packageSpecifier, null, builtins, opts);
       if (status) return status;
-      status = yield* exports.deferred(packageSpecifier, opts);
+      status = yield* exports2.deferred(packageSpecifier, opts);
       if (status) return status;
       let packageSubpath = "." + packageSpecifier.substring(packageName.length);
-      status = yield* exports.packageSelf(packageName, packageSubpath, parentURL, opts);
+      status = yield* exports2.packageSelf(packageName, packageSubpath, parentURL, opts);
       if (status) return status;
       parentURL = new URL(parentURL.href);
-      for (const packageURL of exports.lookupPackageRoot(packageName, parentURL)) {
+      for (const packageURL of exports2.lookupPackageRoot(packageName, parentURL)) {
         const info = yield { package: packageURL };
         if (info) {
-          if (info.engines) exports.validateEngines(packageURL, info.engines, opts);
+          if (info.engines) exports2.validateEngines(packageURL, info.engines, opts);
           if (info.exports) {
-            return yield* exports.packageExports(packageURL, packageSubpath, info.exports, opts);
+            return yield* exports2.packageExports(packageURL, packageSubpath, info.exports, opts);
           }
           if (packageSubpath === ".") {
             if (typeof info.main === "string" && info.main !== "") {
               packageSubpath = info.main;
             } else {
-              return yield* exports.file("index", packageURL, true, opts);
+              return yield* exports2.file("index", packageURL, true, opts);
             }
           }
-          status = yield* exports.file(packageSubpath, packageURL, false, opts);
+          status = yield* exports2.file(packageSubpath, packageURL, false, opts);
           if (status === RESOLVED) return status;
-          return yield* exports.directory(packageSubpath, packageURL, opts);
+          return yield* exports2.directory(packageSubpath, packageURL, opts);
         }
       }
       return UNRESOLVED;
     };
-    exports.packageSelf = function* (packageName, packageSubpath, parentURL, opts = {}) {
-      for (const packageURL of exports.lookupPackageScope(parentURL, opts)) {
+    exports2.packageSelf = function* (packageName, packageSubpath, parentURL, opts = {}) {
+      for (const packageURL of exports2.lookupPackageScope(parentURL, opts)) {
         const info = yield { package: packageURL };
         if (info) {
           if (info.name !== packageName) return false;
           if (info.exports) {
-            return yield* exports.packageExports(packageURL, packageSubpath, info.exports, opts);
+            return yield* exports2.packageExports(packageURL, packageSubpath, info.exports, opts);
           }
           if (packageSubpath === ".") {
             if (typeof info.main === "string" && info.main !== "") {
               packageSubpath = info.main;
             } else {
-              return yield* exports.file("index", packageURL, true, opts);
+              return yield* exports2.file("index", packageURL, true, opts);
             }
           }
-          const status = yield* exports.file(packageSubpath, packageURL, false, opts);
+          const status = yield* exports2.file(packageSubpath, packageURL, false, opts);
           if (status === RESOLVED) return status;
-          return yield* exports.directory(packageSubpath, packageURL, opts);
+          return yield* exports2.directory(packageSubpath, packageURL, opts);
         }
       }
       return UNRESOLVED;
     };
-    exports.packageExports = function* (packageURL, subpath, packageExports, opts = {}) {
+    exports2.packageExports = function* (packageURL, subpath, packageExports, opts = {}) {
       if (subpath === ".") {
         let mainExport;
         if (typeof packageExports === "string" || Array.isArray(packageExports)) {
@@ -34415,13 +34409,13 @@ var require_bare_module_resolve = __commonJS({
           }
         }
         if (mainExport) {
-          const status = yield* exports.packageTarget(packageURL, mainExport, null, false, opts);
+          const status = yield* exports2.packageTarget(packageURL, mainExport, null, false, opts);
           if (status) return status;
         }
       } else if (typeof packageExports === "object" && packageExports !== null) {
         const keys = Object.keys(packageExports);
         if (keys.every((key) => key.startsWith("."))) {
-          const status = yield* exports.packageImportsExports(
+          const status = yield* exports2.packageImportsExports(
             subpath,
             packageExports,
             packageURL,
@@ -34435,18 +34429,18 @@ var require_bare_module_resolve = __commonJS({
         `Package subpath '${subpath}' is not defined by "exports" in '${packageURL}'`
       );
     };
-    exports.packageImports = function* (specifier, parentURL, opts = {}) {
+    exports2.packageImports = function* (specifier, parentURL, opts = {}) {
       const { imports = null } = opts;
       if (specifier === "#" || specifier.startsWith("#/")) {
         throw errors.INVALID_MODULE_SPECIFIER(
           `Module specifier '${specifier}' is not a valid internal imports specifier`
         );
       }
-      for (const packageURL of exports.lookupPackageScope(parentURL, opts)) {
+      for (const packageURL of exports2.lookupPackageScope(parentURL, opts)) {
         const info = yield { package: packageURL };
         if (info) {
           if (info.imports) {
-            const status = yield* exports.packageImportsExports(
+            const status = yield* exports2.packageImportsExports(
               specifier,
               info.imports,
               packageURL,
@@ -34464,17 +34458,17 @@ var require_bare_module_resolve = __commonJS({
         }
       }
       if (imports) {
-        const status = yield* exports.packageImportsExports(specifier, imports, parentURL, true, opts);
+        const status = yield* exports2.packageImportsExports(specifier, imports, parentURL, true, opts);
         if (status) return status;
       }
       return UNRESOLVED;
     };
-    exports.packageImportsExports = function* (matchKey, matchObject, packageURL, isImports, opts = {}) {
+    exports2.packageImportsExports = function* (matchKey, matchObject, packageURL, isImports, opts = {}) {
       if (matchKey in matchObject && !matchKey.includes("*")) {
         const target = matchObject[matchKey];
-        return yield* exports.packageTarget(packageURL, target, null, isImports, opts);
+        return yield* exports2.packageTarget(packageURL, target, null, isImports, opts);
       }
-      const expansionKeys = Object.keys(matchObject).filter((key) => key.includes("*")).sort(exports.patternKeyCompare);
+      const expansionKeys = Object.keys(matchObject).filter((key) => key.includes("*")).sort(exports2.patternKeyCompare);
       for (const expansionKey of expansionKeys) {
         const patternIndex = expansionKey.indexOf("*");
         const patternBase = expansionKey.substring(0, patternIndex);
@@ -34486,13 +34480,13 @@ var require_bare_module_resolve = __commonJS({
               patternBase.length,
               matchKey.length - patternTrailer.length
             );
-            return yield* exports.packageTarget(packageURL, target, patternMatch, isImports, opts);
+            return yield* exports2.packageTarget(packageURL, target, patternMatch, isImports, opts);
           }
         }
       }
       return UNRESOLVED;
     };
-    exports.validateEngines = function validateEngines(packageURL, packageEngines, opts = {}) {
+    exports2.validateEngines = function validateEngines(packageURL, packageEngines, opts = {}) {
       const { engines = {} } = opts;
       for (const [engine, range] of Object.entries(packageEngines)) {
         if (engine in engines) {
@@ -34505,7 +34499,7 @@ var require_bare_module_resolve = __commonJS({
         }
       }
     };
-    exports.patternKeyCompare = function patternKeyCompare(keyA, keyB) {
+    exports2.patternKeyCompare = function patternKeyCompare(keyA, keyB) {
       const patternIndexA = keyA.indexOf("*");
       const patternIndexB = keyB.indexOf("*");
       const baseLengthA = patternIndexA === -1 ? keyA.length : patternIndexA + 1;
@@ -34518,7 +34512,7 @@ var require_bare_module_resolve = __commonJS({
       if (keyB.length > keyA.length) return 1;
       return 0;
     };
-    exports.packageTarget = function* (packageURL, target, patternMatch, isImports, opts = {}) {
+    exports2.packageTarget = function* (packageURL, target, patternMatch, isImports, opts = {}) {
       const { conditions = [], matchedConditions = [] } = opts;
       if (typeof target === "string") {
         if (!target.startsWith("./") && !isImports) {
@@ -34529,17 +34523,17 @@ var require_bare_module_resolve = __commonJS({
         if (patternMatch !== null) {
           target = target.replaceAll("*", patternMatch);
         }
-        const status = yield* exports.url(target, packageURL, opts);
+        const status = yield* exports2.url(target, packageURL, opts);
         if (status) return status;
         if (target === "." || target === ".." || target[0] === "/" || target.startsWith("./") || target.startsWith("../")) {
           const resolved = yield { resolution: new URL(target, packageURL) };
           return resolved ? RESOLVED : YIELDED;
         }
-        return yield* exports.package(target, packageURL, opts);
+        return yield* exports2.package(target, packageURL, opts);
       }
       if (Array.isArray(target)) {
         for (const targetValue of target) {
-          const status = yield* exports.packageTarget(
+          const status = yield* exports2.packageTarget(
             packageURL,
             targetValue,
             patternMatch,
@@ -34550,13 +34544,13 @@ var require_bare_module_resolve = __commonJS({
         }
       } else if (typeof target === "object" && target !== null) {
         let status = UNRESOLVED;
-        for (const [condition, targetValue, subset] of exports.conditionMatches(
+        for (const [condition, targetValue, subset] of exports2.conditionMatches(
           target,
           conditions,
           opts
         )) {
           matchedConditions.push(condition);
-          status |= yield* exports.packageTarget(packageURL, targetValue, patternMatch, isImports, {
+          status |= yield* exports2.packageTarget(packageURL, targetValue, patternMatch, isImports, {
             ...opts,
             conditions: subset
           });
@@ -34566,7 +34560,7 @@ var require_bare_module_resolve = __commonJS({
       }
       return UNRESOLVED;
     };
-    exports.builtinTarget = function* (packageSpecifier, packageVersion, target, opts = {}) {
+    exports2.builtinTarget = function* (packageSpecifier, packageVersion, target, opts = {}) {
       const { builtinProtocol = "builtin:", conditions = [], matchedConditions = [] } = opts;
       if (typeof target === "string") {
         const targetParts = target.split("@");
@@ -34601,7 +34595,7 @@ var require_bare_module_resolve = __commonJS({
         }
       } else if (Array.isArray(target)) {
         for (const targetValue of target) {
-          const status = yield* exports.builtinTarget(
+          const status = yield* exports2.builtinTarget(
             packageSpecifier,
             packageVersion,
             targetValue,
@@ -34611,13 +34605,13 @@ var require_bare_module_resolve = __commonJS({
         }
       } else if (typeof target === "object" && target !== null) {
         let status = UNRESOLVED;
-        for (const [condition, targetValue, subset] of exports.conditionMatches(
+        for (const [condition, targetValue, subset] of exports2.conditionMatches(
           target,
           conditions,
           opts
         )) {
           matchedConditions.push(condition);
-          status |= yield* exports.builtinTarget(packageSpecifier, packageVersion, targetValue, {
+          status |= yield* exports2.builtinTarget(packageSpecifier, packageVersion, targetValue, {
             ...opts,
             conditions: subset
           });
@@ -34627,7 +34621,7 @@ var require_bare_module_resolve = __commonJS({
       }
       return UNRESOLVED;
     };
-    exports.conditionMatches = function* conditionMatches(target, conditions, opts = {}) {
+    exports2.conditionMatches = function* conditionMatches(target, conditions, opts = {}) {
       if (conditions.every((condition) => typeof condition === "string")) {
         const keys = Object.keys(target);
         for (const condition of keys) {
@@ -34646,23 +34640,23 @@ var require_bare_module_resolve = __commonJS({
       }
       return yielded;
     };
-    exports.lookupPackageRoot = function* (packageName, parentURL) {
+    exports2.lookupPackageRoot = function* (packageName, parentURL) {
       parentURL = new URL(parentURL.href);
       do {
         const packageURL = new URL("node_modules/" + packageName + "/", parentURL);
         const info = yield new URL("package.json", packageURL);
         if (info) return info;
         parentURL.pathname = parentURL.pathname.substring(0, parentURL.pathname.lastIndexOf("/"));
-        if (parentURL.pathname.length === 3 && exports.isWindowsDriveLetter(parentURL.pathname.substring(1))) {
+        if (parentURL.pathname.length === 3 && exports2.isWindowsDriveLetter(parentURL.pathname.substring(1))) {
           break;
         }
       } while (parentURL.pathname !== "" && parentURL.pathname !== "/");
       return null;
     };
-    exports.lookupPackageScope = function* lookupPackageScope(scopeURL, opts = {}) {
+    exports2.lookupPackageScope = function* lookupPackageScope(scopeURL, opts = {}) {
       const { resolutions = null } = opts;
       if (resolutions) {
-        for (const { resolution } of exports.preresolved("#package", resolutions, scopeURL, opts)) {
+        for (const { resolution } of exports2.preresolved("#package", resolutions, scopeURL, opts)) {
           if (resolution) return yield resolution;
         }
       }
@@ -34672,13 +34666,13 @@ var require_bare_module_resolve = __commonJS({
         const info = yield new URL("package.json", scopeURL);
         if (info) return info;
         scopeURL.pathname = scopeURL.pathname.substring(0, scopeURL.pathname.lastIndexOf("/"));
-        if (scopeURL.pathname.length === 3 && exports.isWindowsDriveLetter(scopeURL.pathname.substring(1))) {
+        if (scopeURL.pathname.length === 3 && exports2.isWindowsDriveLetter(scopeURL.pathname.substring(1))) {
           break;
         }
       } while (scopeURL.pathname !== "" && scopeURL.pathname !== "/");
       return null;
     };
-    exports.file = function* (filename, parentURL, isIndex, opts = {}) {
+    exports2.file = function* (filename, parentURL, isIndex, opts = {}) {
       if (filename === "." || filename === ".." || filename[filename.length - 1] === "/" || filename[filename.length - 1] === "\\") {
         return UNRESOLVED;
       }
@@ -34702,7 +34696,7 @@ var require_bare_module_resolve = __commonJS({
       }
       return status;
     };
-    exports.directory = function* (dirname2, parentURL, opts = {}) {
+    exports2.directory = function* (dirname2, parentURL, opts = {}) {
       let directoryURL;
       if (dirname2[dirname2.length - 1] === "/" || dirname2[dirname2.length - 1] === "\\") {
         directoryURL = new URL(dirname2, parentURL);
@@ -34712,15 +34706,15 @@ var require_bare_module_resolve = __commonJS({
       const info = yield { package: new URL("package.json", directoryURL) };
       if (info) {
         if (info.exports) {
-          return yield* exports.packageExports(directoryURL, ".", info.exports, opts);
+          return yield* exports2.packageExports(directoryURL, ".", info.exports, opts);
         }
         if (typeof info.main === "string" && info.main !== "") {
-          const status = yield* exports.file(info.main, directoryURL, false, opts);
+          const status = yield* exports2.file(info.main, directoryURL, false, opts);
           if (status === RESOLVED) return status;
-          return yield* exports.directory(info.main, directoryURL, opts);
+          return yield* exports2.directory(info.main, directoryURL, opts);
         }
       }
-      return yield* exports.file("index", directoryURL, true, opts);
+      return yield* exports2.file("index", directoryURL, true, opts);
     };
     function isASCIIUpperAlpha(c) {
       return c >= 65 && c <= 90;
@@ -34731,19 +34725,19 @@ var require_bare_module_resolve = __commonJS({
     function isASCIIAlpha(c) {
       return isASCIIUpperAlpha(c) || isASCIILowerAlpha(c);
     }
-    exports.isWindowsDriveLetter = function isWindowsDriveLetter(input) {
+    exports2.isWindowsDriveLetter = function isWindowsDriveLetter(input) {
       return input.length >= 2 && isASCIIAlpha(input.charCodeAt(0)) && (input.charCodeAt(1) === 58 || input.charCodeAt(1) === 124);
     };
-    exports.startsWithWindowsDriveLetter = function startsWithWindowsDriveLetter(input) {
-      return input.length >= 2 && exports.isWindowsDriveLetter(input) && (input.length === 2 || input.charCodeAt(2) === 47 || input.charCodeAt(2) === 92 || input.charCodeAt(2) === 63 || input.charCodeAt(2) === 35);
+    exports2.startsWithWindowsDriveLetter = function startsWithWindowsDriveLetter(input) {
+      return input.length >= 2 && exports2.isWindowsDriveLetter(input) && (input.length === 2 || input.charCodeAt(2) === 47 || input.charCodeAt(2) === 92 || input.charCodeAt(2) === 63 || input.charCodeAt(2) === 35);
     };
   }
 });
 
 // node_modules/bare-addon-resolve/lib/errors.js
 var require_errors4 = __commonJS({
-  "node_modules/bare-addon-resolve/lib/errors.js"(exports, module) {
-    module.exports = class AddonResolveError extends Error {
+  "node_modules/bare-addon-resolve/lib/errors.js"(exports2, module2) {
+    module2.exports = class AddonResolveError extends Error {
       constructor(msg, code, fn = AddonResolveError) {
         super(`${code}: ${msg}`);
         this.code = code;
@@ -34774,11 +34768,11 @@ var require_errors4 = __commonJS({
 
 // node_modules/bare-addon-resolve/index.js
 var require_bare_addon_resolve = __commonJS({
-  "node_modules/bare-addon-resolve/index.js"(exports, module) {
+  "node_modules/bare-addon-resolve/index.js"(exports2, module2) {
     var resolve2 = require_bare_module_resolve();
     var { Version } = require_bare_semver();
     var errors = require_errors4();
-    module.exports = exports = function resolve3(specifier, parentURL, opts, readPackage) {
+    module2.exports = exports2 = function resolve3(specifier, parentURL, opts, readPackage) {
       if (typeof opts === "function") {
         readPackage = opts;
         opts = {};
@@ -34787,7 +34781,7 @@ var require_bare_addon_resolve = __commonJS({
       }
       return {
         *[Symbol.iterator]() {
-          const generator = exports.addon(specifier, parentURL, opts);
+          const generator = exports2.addon(specifier, parentURL, opts);
           let next = generator.next();
           while (next.done !== true) {
             const value = next.value;
@@ -34800,7 +34794,7 @@ var require_bare_addon_resolve = __commonJS({
           return next.value;
         },
         async *[Symbol.asyncIterator]() {
-          const generator = exports.addon(specifier, parentURL, opts);
+          const generator = exports2.addon(specifier, parentURL, opts);
           let next = generator.next();
           while (next.done !== true) {
             const value = next.value;
@@ -34818,14 +34812,14 @@ var require_bare_addon_resolve = __commonJS({
       return null;
     }
     var { UNRESOLVED, YIELDED, RESOLVED } = resolve2.constants;
-    exports.constants = {
+    exports2.constants = {
       UNRESOLVED,
       YIELDED,
       RESOLVED
     };
-    exports.addon = function* (specifier, parentURL, opts = {}) {
+    exports2.addon = function* (specifier, parentURL, opts = {}) {
       const { resolutions = null } = opts;
-      if (exports.startsWithWindowsDriveLetter(specifier)) {
+      if (exports2.startsWithWindowsDriveLetter(specifier)) {
         specifier = "/" + specifier;
       }
       let status;
@@ -34833,7 +34827,7 @@ var require_bare_addon_resolve = __commonJS({
         status = yield* resolve2.preresolved(specifier, resolutions, parentURL, opts);
         if (status) return status;
       }
-      status = yield* exports.url(specifier, parentURL, opts);
+      status = yield* exports2.url(specifier, parentURL, opts);
       if (status) return status;
       let version = null;
       const i2 = specifier.lastIndexOf("@");
@@ -34847,13 +34841,13 @@ var require_bare_addon_resolve = __commonJS({
         }
       }
       if (specifier === "." || specifier === ".." || specifier[0] === "/" || specifier[0] === "\\" || specifier.startsWith("./") || specifier.startsWith(".\\") || specifier.startsWith("../") || specifier.startsWith("..\\")) {
-        status = yield* exports.file(specifier, parentURL, opts);
+        status = yield* exports2.file(specifier, parentURL, opts);
         if (status === RESOLVED) return status;
-        return yield* exports.directory(specifier, version, parentURL, opts);
+        return yield* exports2.directory(specifier, version, parentURL, opts);
       }
-      return yield* exports.package(specifier, version, parentURL, opts);
+      return yield* exports2.package(specifier, version, parentURL, opts);
     };
-    exports.url = function* (url, parentURL, opts = {}) {
+    exports2.url = function* (url, parentURL, opts = {}) {
       let resolution;
       try {
         resolution = new URL(url);
@@ -34863,7 +34857,7 @@ var require_bare_addon_resolve = __commonJS({
       const resolved = yield { resolution };
       return resolved ? RESOLVED : YIELDED;
     };
-    exports.package = function* (packageSpecifier, packageVersion, parentURL, opts = {}) {
+    exports2.package = function* (packageSpecifier, packageVersion, parentURL, opts = {}) {
       if (packageSpecifier === "") {
         throw errors.INVALID_ADDON_SPECIFIER(
           `Addon specifier '${packageSpecifier}' is not a valid package name`
@@ -34886,7 +34880,7 @@ var require_bare_addon_resolve = __commonJS({
         );
       }
       const packageSubpath = "." + packageSpecifier.substring(packageName.length);
-      const status = yield* exports.packageSelf(
+      const status = yield* exports2.packageSelf(
         packageName,
         packageSubpath,
         packageVersion,
@@ -34900,34 +34894,34 @@ var require_bare_addon_resolve = __commonJS({
         parentURL.pathname = parentURL.pathname.substring(0, parentURL.pathname.lastIndexOf("/"));
         const info = yield { package: new URL("package.json", packageURL) };
         if (info) {
-          return yield* exports.directory(packageSubpath, packageVersion, packageURL, opts);
+          return yield* exports2.directory(packageSubpath, packageVersion, packageURL, opts);
         }
       } while (parentURL.pathname !== "" && parentURL.pathname !== "/");
       return UNRESOLVED;
     };
-    exports.packageSelf = function* (packageName, packageSubpath, packageVersion, parentURL, opts = {}) {
+    exports2.packageSelf = function* (packageName, packageSubpath, packageVersion, parentURL, opts = {}) {
       for (const packageURL of resolve2.lookupPackageScope(parentURL, opts)) {
         const info = yield { package: packageURL };
         if (info) {
           if (info.name === packageName) {
-            return yield* exports.directory(packageSubpath, packageVersion, packageURL, opts);
+            return yield* exports2.directory(packageSubpath, packageVersion, packageURL, opts);
           }
           break;
         }
       }
       return UNRESOLVED;
     };
-    exports.lookupPrebuildsScope = function* lookupPrebuildsScope(url, opts = {}) {
+    exports2.lookupPrebuildsScope = function* lookupPrebuildsScope(url, opts = {}) {
       const scopeURL = new URL(url.href);
       do {
         yield new URL("prebuilds/", scopeURL);
         scopeURL.pathname = scopeURL.pathname.substring(0, scopeURL.pathname.lastIndexOf("/"));
-        if (scopeURL.pathname.length === 3 && exports.isWindowsDriveLetter(scopeURL.pathname.substring(1))) {
+        if (scopeURL.pathname.length === 3 && exports2.isWindowsDriveLetter(scopeURL.pathname.substring(1))) {
           break;
         }
       } while (scopeURL.pathname !== "" && scopeURL.pathname !== "/");
     };
-    exports.file = function* (filename, parentURL, opts = {}) {
+    exports2.file = function* (filename, parentURL, opts = {}) {
       if (filename === "." || filename === ".." || filename[filename.length - 1] === "/" || filename[filename.length - 1] === "\\") {
         return UNRESOLVED;
       }
@@ -34945,7 +34939,7 @@ var require_bare_addon_resolve = __commonJS({
       }
       return status;
     };
-    exports.directory = function* (dirname2, version, parentURL, opts = {}) {
+    exports2.directory = function* (dirname2, version, parentURL, opts = {}) {
       const {
         host = null,
         // Shorthand for single host resolution
@@ -34981,31 +34975,31 @@ var require_bare_addon_resolve = __commonJS({
       let status;
       status = yield* resolve2.builtinTarget(name, version, builtins, opts);
       if (status) return status;
-      for (const prebuildsURL of exports.lookupPrebuildsScope(directoryURL, opts)) {
+      for (const prebuildsURL of exports2.lookupPrebuildsScope(directoryURL, opts)) {
         status = UNRESOLVED;
         for (const host2 of hosts) {
           const conditions = host2.split("-");
           const universal = supportsUniversalPrebuilds(host2) ? conditions.with(1, "universal").join("-") : null;
           matchedConditions.push(...conditions);
           if (version !== null) {
-            status |= yield* exports.file(host2 + "/" + name + "@" + version, prebuildsURL, opts);
+            status |= yield* exports2.file(host2 + "/" + name + "@" + version, prebuildsURL, opts);
             if (universal) {
-              status |= yield* exports.file(universal + "/" + name + "@" + version, prebuildsURL, opts);
+              status |= yield* exports2.file(universal + "/" + name + "@" + version, prebuildsURL, opts);
             }
           }
           if (unversioned) {
-            status |= yield* exports.file(host2 + "/" + name, prebuildsURL, opts);
+            status |= yield* exports2.file(host2 + "/" + name, prebuildsURL, opts);
             if (universal) {
-              status |= yield* exports.file(universal + "/" + name, prebuildsURL, opts);
+              status |= yield* exports2.file(universal + "/" + name, prebuildsURL, opts);
             }
           }
           for (const _ of conditions) matchedConditions.pop();
         }
         if (status === RESOLVED) return status;
       }
-      return yield* exports.linked(name, version, opts);
+      return yield* exports2.linked(name, version, opts);
     };
-    exports.linked = function* (name, version = null, opts = {}) {
+    exports2.linked = function* (name, version = null, opts = {}) {
       const {
         linked = true,
         host = null,
@@ -35086,8 +35080,8 @@ var require_bare_addon_resolve = __commonJS({
       }
       return UNRESOLVED;
     }
-    exports.isWindowsDriveLetter = resolve2.isWindowsDriveLetter;
-    exports.startsWithWindowsDriveLetter = resolve2.startsWithWindowsDriveLetter;
+    exports2.isWindowsDriveLetter = resolve2.isWindowsDriveLetter;
+    exports2.startsWithWindowsDriveLetter = resolve2.startsWithWindowsDriveLetter;
     function supportsUniversalPrebuilds(host) {
       return host === "darwin-arm64" || host === "darwin-x64" || host === "ios-arm64-simulator" || host === "ios-x64-simulator";
     }
@@ -35096,13 +35090,13 @@ var require_bare_addon_resolve = __commonJS({
 
 // node_modules/require-addon/lib/node.js
 var require_node3 = __commonJS({
-  "node_modules/require-addon/lib/node.js"(exports, module) {
-    if (typeof __require.addon === "function") {
-      module.exports = __require.addon.bind(__require);
+  "node_modules/require-addon/lib/node.js"(exports2, module2) {
+    if (typeof require.addon === "function") {
+      module2.exports = require.addon.bind(require);
     } else {
       let readPackage2 = function(packageURL) {
         try {
-          return __require(url.fileURLToPath(packageURL));
+          return require(url.fileURLToPath(packageURL));
         } catch (err) {
           return null;
         }
@@ -35110,8 +35104,8 @@ var require_node3 = __commonJS({
         return process.platform === "linux" && fs6.existsSync("/etc/alpine-release");
       };
       readPackage = readPackage2, isAlpine = isAlpine2;
-      const url = __require("url");
-      const fs6 = __require("fs");
+      const url = require("url");
+      const fs6 = require("fs");
       const resolve2 = require_bare_addon_resolve();
       let host = process.platform + "-" + process.arch;
       const conditions = ["addon", "node", process.platform, process.arch];
@@ -35120,7 +35114,7 @@ var require_node3 = __commonJS({
         host += "-musl";
         conditions.push("musl");
       }
-      module.exports = function addon(specifier, parentURL) {
+      module2.exports = function addon(specifier, parentURL) {
         if (typeof parentURL === "string") parentURL = url.pathToFileURL(parentURL);
         const candidates = [];
         let cause;
@@ -35134,7 +35128,7 @@ var require_node3 = __commonJS({
           switch (resolution.protocol) {
             case "file:":
               try {
-                return __require(url.fileURLToPath(resolution));
+                return require(url.fileURLToPath(resolution));
               } catch (err2) {
                 cause = err2;
                 continue;
@@ -35161,22 +35155,22 @@ var require_node3 = __commonJS({
 
 // node_modules/fs-native-extensions/binding.js
 var require_binding2 = __commonJS({
-  "node_modules/fs-native-extensions/binding.js"(exports, module) {
-    __require.addon = require_node3();
-    module.exports = __require.addon(".", __filename);
+  "node_modules/fs-native-extensions/binding.js"(exports2, module2) {
+    require.addon = require_node3();
+    module2.exports = require.addon(".", __filename);
   }
 });
 
 // node_modules/fs-native-extensions/index.js
 var require_fs_native_extensions = __commonJS({
-  "node_modules/fs-native-extensions/index.js"(exports) {
+  "node_modules/fs-native-extensions/index.js"(exports2) {
     var { isWindows } = require_which_runtime();
     var binding = require_binding2();
     function onwork(err, result) {
       if (err) this.reject(err);
       else this.resolve(result);
     }
-    exports.tryLock = function tryLock(fd, offset = 0, length = 0, opts = {}) {
+    exports2.tryLock = function tryLock(fd, offset = 0, length = 0, opts = {}) {
       if (typeof offset === "object") {
         opts = offset;
         offset = 0;
@@ -35196,7 +35190,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return true;
     };
-    exports.waitForLock = function waitForLock(fd, offset = 0, length = 0, opts = {}) {
+    exports2.waitForLock = function waitForLock(fd, offset = 0, length = 0, opts = {}) {
       if (typeof offset === "object") {
         opts = offset;
         offset = 0;
@@ -35231,7 +35225,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.tryDowngradeLock = function tryDowngradeLock(fd, offset = 0, length = 0) {
+    exports2.tryDowngradeLock = function tryDowngradeLock(fd, offset = 0, length = 0) {
       try {
         binding.tryDowngradeLock(fd, offset, length);
       } catch (err) {
@@ -35240,7 +35234,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return true;
     };
-    exports.waitForDowngradeLock = function downgradeLock(fd, offset = 0, length = 0) {
+    exports2.waitForDowngradeLock = function downgradeLock(fd, offset = 0, length = 0) {
       const req = {
         handle: null,
         resolve: null,
@@ -35257,7 +35251,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.tryUpgradeLock = function tryUpgradeLock(fd, offset = 0, length = 0) {
+    exports2.tryUpgradeLock = function tryUpgradeLock(fd, offset = 0, length = 0) {
       try {
         binding.tryUpgradeLock(fd, offset, length);
       } catch (err) {
@@ -35266,7 +35260,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return true;
     };
-    exports.waitForUpgradeLock = function upgradeLock(fd, offset = 0, length = 0) {
+    exports2.waitForUpgradeLock = function upgradeLock(fd, offset = 0, length = 0) {
       const req = {
         handle: null,
         resolve: null,
@@ -35283,10 +35277,10 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.unlock = function unlock(fd, offset = 0, length = 0) {
+    exports2.unlock = function unlock(fd, offset = 0, length = 0) {
       binding.unlock(fd, offset, length);
     };
-    exports.trim = function trim(fd, offset, length) {
+    exports2.trim = function trim(fd, offset, length) {
       const req = {
         handle: null,
         resolve: null,
@@ -35303,7 +35297,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.sparse = function sparse(fd) {
+    exports2.sparse = function sparse(fd) {
       if (!isWindows) return Promise.resolve();
       const req = {
         handle: null,
@@ -35321,7 +35315,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.swap = function swap(from, to) {
+    exports2.swap = function swap(from, to) {
       const req = {
         handle: null,
         resolve: null,
@@ -35338,7 +35332,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.getAttr = function getAttr(fd, name) {
+    exports2.getAttr = function getAttr(fd, name) {
       const req = {
         handle: null,
         resolve: null,
@@ -35357,7 +35351,7 @@ var require_fs_native_extensions = __commonJS({
         (buffer) => buffer === null ? null : Buffer.from(buffer)
       );
     };
-    exports.setAttr = function setAttr(fd, name, value, encoding) {
+    exports2.setAttr = function setAttr(fd, name, value, encoding) {
       if (typeof value === "string") value = Buffer.from(value, encoding);
       const req = {
         value,
@@ -35384,7 +35378,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.removeAttr = function removeAttr(fd, name) {
+    exports2.removeAttr = function removeAttr(fd, name) {
       const req = {
         handle: null,
         resolve: null,
@@ -35401,7 +35395,7 @@ var require_fs_native_extensions = __commonJS({
       }
       return promise2;
     };
-    exports.listAttrs = function listAttrs(fd) {
+    exports2.listAttrs = function listAttrs(fd) {
       const req = {
         handle: null,
         resolve: null,
@@ -35423,10 +35417,10 @@ var require_fs_native_extensions = __commonJS({
 
 // node_modules/random-access-file/index.js
 var require_random_access_file = __commonJS({
-  "node_modules/random-access-file/index.js"(exports, module) {
+  "node_modules/random-access-file/index.js"(exports2, module2) {
     var RandomAccessStorage = require_random_access_storage();
-    var fs6 = __require("fs");
-    var path6 = __require("path");
+    var fs6 = require("fs");
+    var path6 = require("path");
     var constants3 = fs6.constants;
     var fsext = null;
     try {
@@ -35457,7 +35451,7 @@ var require_random_access_file = __commonJS({
         }
       }
     };
-    module.exports = class RandomAccessFile extends RandomAccessStorage {
+    module2.exports = class RandomAccessFile extends RandomAccessStorage {
       constructor(filename, opts = {}) {
         const size = opts.size || (opts.truncate ? 0 : -1);
         super();
@@ -35621,11 +35615,11 @@ var require_random_access_file = __commonJS({
 
 // node_modules/thunky/index.js
 var require_thunky = __commonJS({
-  "node_modules/thunky/index.js"(exports, module) {
+  "node_modules/thunky/index.js"(exports2, module2) {
     "use strict";
     var nextTick2 = nextTickArgs;
     process.nextTick(upgrade, 42);
-    module.exports = thunky2;
+    module2.exports = thunky2;
     function thunky2(fn) {
       var state = run;
       return thunk;
@@ -35670,7 +35664,7 @@ var require_thunky = __commonJS({
 
 // node_modules/immediate-chunk-store/index.js
 var require_immediate_chunk_store = __commonJS({
-  "node_modules/immediate-chunk-store/index.js"(exports, module) {
+  "node_modules/immediate-chunk-store/index.js"(exports2, module2) {
     var queueMicrotask12 = require_queue_microtask();
     var ImmediateStore = class {
       constructor(store) {
@@ -35713,14 +35707,14 @@ var require_immediate_chunk_store = __commonJS({
         this.store.destroy(cb);
       }
     };
-    module.exports = ImmediateStore;
+    module2.exports = ImmediateStore;
   }
 });
 
 // node_modules/memory-chunk-store/index.js
 var require_memory_chunk_store = __commonJS({
-  "node_modules/memory-chunk-store/index.js"(exports, module) {
-    module.exports = Storage2;
+  "node_modules/memory-chunk-store/index.js"(exports2, module2) {
+    module2.exports = Storage2;
     var queueMicrotask12 = require_queue_microtask();
     function Storage2(chunkLength, opts) {
       if (!(this instanceof Storage2)) return new Storage2(chunkLength, opts);
@@ -35778,8 +35772,8 @@ var require_memory_chunk_store = __commonJS({
 
 // node_modules/run-parallel-limit/index.js
 var require_run_parallel_limit = __commonJS({
-  "node_modules/run-parallel-limit/index.js"(exports, module) {
-    module.exports = runParallelLimit;
+  "node_modules/run-parallel-limit/index.js"(exports2, module2) {
+    module2.exports = runParallelLimit;
     var queueMicrotask12 = require_queue_microtask();
     function runParallelLimit(tasks, limit, cb) {
       if (typeof limit !== "number") throw new Error("second argument must be a Number");
@@ -35851,7 +35845,7 @@ var require_run_parallel_limit = __commonJS({
 
 // node_modules/webtorrent/node_modules/mime/Mime.js
 var require_Mime = __commonJS({
-  "node_modules/webtorrent/node_modules/mime/Mime.js"(exports, module) {
+  "node_modules/webtorrent/node_modules/mime/Mime.js"(exports2, module2) {
     "use strict";
     function Mime() {
       this._types = /* @__PURE__ */ Object.create(null);
@@ -35899,30 +35893,30 @@ var require_Mime = __commonJS({
       type2 = /^\s*([^;\s]*)/.test(type2) && RegExp.$1;
       return type2 && this._extensions[type2.toLowerCase()] || null;
     };
-    module.exports = Mime;
+    module2.exports = Mime;
   }
 });
 
 // node_modules/webtorrent/node_modules/mime/types/standard.js
 var require_standard = __commonJS({
-  "node_modules/webtorrent/node_modules/mime/types/standard.js"(exports, module) {
-    module.exports = { "application/andrew-inset": ["ez"], "application/applixware": ["aw"], "application/atom+xml": ["atom"], "application/atomcat+xml": ["atomcat"], "application/atomdeleted+xml": ["atomdeleted"], "application/atomsvc+xml": ["atomsvc"], "application/atsc-dwd+xml": ["dwd"], "application/atsc-held+xml": ["held"], "application/atsc-rsat+xml": ["rsat"], "application/bdoc": ["bdoc"], "application/calendar+xml": ["xcs"], "application/ccxml+xml": ["ccxml"], "application/cdfx+xml": ["cdfx"], "application/cdmi-capability": ["cdmia"], "application/cdmi-container": ["cdmic"], "application/cdmi-domain": ["cdmid"], "application/cdmi-object": ["cdmio"], "application/cdmi-queue": ["cdmiq"], "application/cu-seeme": ["cu"], "application/dash+xml": ["mpd"], "application/davmount+xml": ["davmount"], "application/docbook+xml": ["dbk"], "application/dssc+der": ["dssc"], "application/dssc+xml": ["xdssc"], "application/ecmascript": ["es", "ecma"], "application/emma+xml": ["emma"], "application/emotionml+xml": ["emotionml"], "application/epub+zip": ["epub"], "application/exi": ["exi"], "application/express": ["exp"], "application/fdt+xml": ["fdt"], "application/font-tdpfr": ["pfr"], "application/geo+json": ["geojson"], "application/gml+xml": ["gml"], "application/gpx+xml": ["gpx"], "application/gxf": ["gxf"], "application/gzip": ["gz"], "application/hjson": ["hjson"], "application/hyperstudio": ["stk"], "application/inkml+xml": ["ink", "inkml"], "application/ipfix": ["ipfix"], "application/its+xml": ["its"], "application/java-archive": ["jar", "war", "ear"], "application/java-serialized-object": ["ser"], "application/java-vm": ["class"], "application/javascript": ["js", "mjs"], "application/json": ["json", "map"], "application/json5": ["json5"], "application/jsonml+json": ["jsonml"], "application/ld+json": ["jsonld"], "application/lgr+xml": ["lgr"], "application/lost+xml": ["lostxml"], "application/mac-binhex40": ["hqx"], "application/mac-compactpro": ["cpt"], "application/mads+xml": ["mads"], "application/manifest+json": ["webmanifest"], "application/marc": ["mrc"], "application/marcxml+xml": ["mrcx"], "application/mathematica": ["ma", "nb", "mb"], "application/mathml+xml": ["mathml"], "application/mbox": ["mbox"], "application/mediaservercontrol+xml": ["mscml"], "application/metalink+xml": ["metalink"], "application/metalink4+xml": ["meta4"], "application/mets+xml": ["mets"], "application/mmt-aei+xml": ["maei"], "application/mmt-usd+xml": ["musd"], "application/mods+xml": ["mods"], "application/mp21": ["m21", "mp21"], "application/mp4": ["mp4s", "m4p"], "application/msword": ["doc", "dot"], "application/mxf": ["mxf"], "application/n-quads": ["nq"], "application/n-triples": ["nt"], "application/node": ["cjs"], "application/octet-stream": ["bin", "dms", "lrf", "mar", "so", "dist", "distz", "pkg", "bpk", "dump", "elc", "deploy", "exe", "dll", "deb", "dmg", "iso", "img", "msi", "msp", "msm", "buffer"], "application/oda": ["oda"], "application/oebps-package+xml": ["opf"], "application/ogg": ["ogx"], "application/omdoc+xml": ["omdoc"], "application/onenote": ["onetoc", "onetoc2", "onetmp", "onepkg"], "application/oxps": ["oxps"], "application/p2p-overlay+xml": ["relo"], "application/patch-ops-error+xml": ["xer"], "application/pdf": ["pdf"], "application/pgp-encrypted": ["pgp"], "application/pgp-signature": ["asc", "sig"], "application/pics-rules": ["prf"], "application/pkcs10": ["p10"], "application/pkcs7-mime": ["p7m", "p7c"], "application/pkcs7-signature": ["p7s"], "application/pkcs8": ["p8"], "application/pkix-attr-cert": ["ac"], "application/pkix-cert": ["cer"], "application/pkix-crl": ["crl"], "application/pkix-pkipath": ["pkipath"], "application/pkixcmp": ["pki"], "application/pls+xml": ["pls"], "application/postscript": ["ai", "eps", "ps"], "application/provenance+xml": ["provx"], "application/pskc+xml": ["pskcxml"], "application/raml+yaml": ["raml"], "application/rdf+xml": ["rdf", "owl"], "application/reginfo+xml": ["rif"], "application/relax-ng-compact-syntax": ["rnc"], "application/resource-lists+xml": ["rl"], "application/resource-lists-diff+xml": ["rld"], "application/rls-services+xml": ["rs"], "application/route-apd+xml": ["rapd"], "application/route-s-tsid+xml": ["sls"], "application/route-usd+xml": ["rusd"], "application/rpki-ghostbusters": ["gbr"], "application/rpki-manifest": ["mft"], "application/rpki-roa": ["roa"], "application/rsd+xml": ["rsd"], "application/rss+xml": ["rss"], "application/rtf": ["rtf"], "application/sbml+xml": ["sbml"], "application/scvp-cv-request": ["scq"], "application/scvp-cv-response": ["scs"], "application/scvp-vp-request": ["spq"], "application/scvp-vp-response": ["spp"], "application/sdp": ["sdp"], "application/senml+xml": ["senmlx"], "application/sensml+xml": ["sensmlx"], "application/set-payment-initiation": ["setpay"], "application/set-registration-initiation": ["setreg"], "application/shf+xml": ["shf"], "application/sieve": ["siv", "sieve"], "application/smil+xml": ["smi", "smil"], "application/sparql-query": ["rq"], "application/sparql-results+xml": ["srx"], "application/srgs": ["gram"], "application/srgs+xml": ["grxml"], "application/sru+xml": ["sru"], "application/ssdl+xml": ["ssdl"], "application/ssml+xml": ["ssml"], "application/swid+xml": ["swidtag"], "application/tei+xml": ["tei", "teicorpus"], "application/thraud+xml": ["tfi"], "application/timestamped-data": ["tsd"], "application/toml": ["toml"], "application/trig": ["trig"], "application/ttml+xml": ["ttml"], "application/ubjson": ["ubj"], "application/urc-ressheet+xml": ["rsheet"], "application/urc-targetdesc+xml": ["td"], "application/voicexml+xml": ["vxml"], "application/wasm": ["wasm"], "application/widget": ["wgt"], "application/winhlp": ["hlp"], "application/wsdl+xml": ["wsdl"], "application/wspolicy+xml": ["wspolicy"], "application/xaml+xml": ["xaml"], "application/xcap-att+xml": ["xav"], "application/xcap-caps+xml": ["xca"], "application/xcap-diff+xml": ["xdf"], "application/xcap-el+xml": ["xel"], "application/xcap-ns+xml": ["xns"], "application/xenc+xml": ["xenc"], "application/xhtml+xml": ["xhtml", "xht"], "application/xliff+xml": ["xlf"], "application/xml": ["xml", "xsl", "xsd", "rng"], "application/xml-dtd": ["dtd"], "application/xop+xml": ["xop"], "application/xproc+xml": ["xpl"], "application/xslt+xml": ["*xsl", "xslt"], "application/xspf+xml": ["xspf"], "application/xv+xml": ["mxml", "xhvml", "xvml", "xvm"], "application/yang": ["yang"], "application/yin+xml": ["yin"], "application/zip": ["zip"], "audio/3gpp": ["*3gpp"], "audio/adpcm": ["adp"], "audio/amr": ["amr"], "audio/basic": ["au", "snd"], "audio/midi": ["mid", "midi", "kar", "rmi"], "audio/mobile-xmf": ["mxmf"], "audio/mp3": ["*mp3"], "audio/mp4": ["m4a", "mp4a"], "audio/mpeg": ["mpga", "mp2", "mp2a", "mp3", "m2a", "m3a"], "audio/ogg": ["oga", "ogg", "spx", "opus"], "audio/s3m": ["s3m"], "audio/silk": ["sil"], "audio/wav": ["wav"], "audio/wave": ["*wav"], "audio/webm": ["weba"], "audio/xm": ["xm"], "font/collection": ["ttc"], "font/otf": ["otf"], "font/ttf": ["ttf"], "font/woff": ["woff"], "font/woff2": ["woff2"], "image/aces": ["exr"], "image/apng": ["apng"], "image/avif": ["avif"], "image/bmp": ["bmp"], "image/cgm": ["cgm"], "image/dicom-rle": ["drle"], "image/emf": ["emf"], "image/fits": ["fits"], "image/g3fax": ["g3"], "image/gif": ["gif"], "image/heic": ["heic"], "image/heic-sequence": ["heics"], "image/heif": ["heif"], "image/heif-sequence": ["heifs"], "image/hej2k": ["hej2"], "image/hsj2": ["hsj2"], "image/ief": ["ief"], "image/jls": ["jls"], "image/jp2": ["jp2", "jpg2"], "image/jpeg": ["jpeg", "jpg", "jpe"], "image/jph": ["jph"], "image/jphc": ["jhc"], "image/jpm": ["jpm"], "image/jpx": ["jpx", "jpf"], "image/jxr": ["jxr"], "image/jxra": ["jxra"], "image/jxrs": ["jxrs"], "image/jxs": ["jxs"], "image/jxsc": ["jxsc"], "image/jxsi": ["jxsi"], "image/jxss": ["jxss"], "image/ktx": ["ktx"], "image/ktx2": ["ktx2"], "image/png": ["png"], "image/sgi": ["sgi"], "image/svg+xml": ["svg", "svgz"], "image/t38": ["t38"], "image/tiff": ["tif", "tiff"], "image/tiff-fx": ["tfx"], "image/webp": ["webp"], "image/wmf": ["wmf"], "message/disposition-notification": ["disposition-notification"], "message/global": ["u8msg"], "message/global-delivery-status": ["u8dsn"], "message/global-disposition-notification": ["u8mdn"], "message/global-headers": ["u8hdr"], "message/rfc822": ["eml", "mime"], "model/3mf": ["3mf"], "model/gltf+json": ["gltf"], "model/gltf-binary": ["glb"], "model/iges": ["igs", "iges"], "model/mesh": ["msh", "mesh", "silo"], "model/mtl": ["mtl"], "model/obj": ["obj"], "model/step+xml": ["stpx"], "model/step+zip": ["stpz"], "model/step-xml+zip": ["stpxz"], "model/stl": ["stl"], "model/vrml": ["wrl", "vrml"], "model/x3d+binary": ["*x3db", "x3dbz"], "model/x3d+fastinfoset": ["x3db"], "model/x3d+vrml": ["*x3dv", "x3dvz"], "model/x3d+xml": ["x3d", "x3dz"], "model/x3d-vrml": ["x3dv"], "text/cache-manifest": ["appcache", "manifest"], "text/calendar": ["ics", "ifb"], "text/coffeescript": ["coffee", "litcoffee"], "text/css": ["css"], "text/csv": ["csv"], "text/html": ["html", "htm", "shtml"], "text/jade": ["jade"], "text/jsx": ["jsx"], "text/less": ["less"], "text/markdown": ["markdown", "md"], "text/mathml": ["mml"], "text/mdx": ["mdx"], "text/n3": ["n3"], "text/plain": ["txt", "text", "conf", "def", "list", "log", "in", "ini"], "text/richtext": ["rtx"], "text/rtf": ["*rtf"], "text/sgml": ["sgml", "sgm"], "text/shex": ["shex"], "text/slim": ["slim", "slm"], "text/spdx": ["spdx"], "text/stylus": ["stylus", "styl"], "text/tab-separated-values": ["tsv"], "text/troff": ["t", "tr", "roff", "man", "me", "ms"], "text/turtle": ["ttl"], "text/uri-list": ["uri", "uris", "urls"], "text/vcard": ["vcard"], "text/vtt": ["vtt"], "text/xml": ["*xml"], "text/yaml": ["yaml", "yml"], "video/3gpp": ["3gp", "3gpp"], "video/3gpp2": ["3g2"], "video/h261": ["h261"], "video/h263": ["h263"], "video/h264": ["h264"], "video/iso.segment": ["m4s"], "video/jpeg": ["jpgv"], "video/jpm": ["*jpm", "jpgm"], "video/mj2": ["mj2", "mjp2"], "video/mp2t": ["ts"], "video/mp4": ["mp4", "mp4v", "mpg4"], "video/mpeg": ["mpeg", "mpg", "mpe", "m1v", "m2v"], "video/ogg": ["ogv"], "video/quicktime": ["qt", "mov"], "video/webm": ["webm"] };
+  "node_modules/webtorrent/node_modules/mime/types/standard.js"(exports2, module2) {
+    module2.exports = { "application/andrew-inset": ["ez"], "application/applixware": ["aw"], "application/atom+xml": ["atom"], "application/atomcat+xml": ["atomcat"], "application/atomdeleted+xml": ["atomdeleted"], "application/atomsvc+xml": ["atomsvc"], "application/atsc-dwd+xml": ["dwd"], "application/atsc-held+xml": ["held"], "application/atsc-rsat+xml": ["rsat"], "application/bdoc": ["bdoc"], "application/calendar+xml": ["xcs"], "application/ccxml+xml": ["ccxml"], "application/cdfx+xml": ["cdfx"], "application/cdmi-capability": ["cdmia"], "application/cdmi-container": ["cdmic"], "application/cdmi-domain": ["cdmid"], "application/cdmi-object": ["cdmio"], "application/cdmi-queue": ["cdmiq"], "application/cu-seeme": ["cu"], "application/dash+xml": ["mpd"], "application/davmount+xml": ["davmount"], "application/docbook+xml": ["dbk"], "application/dssc+der": ["dssc"], "application/dssc+xml": ["xdssc"], "application/ecmascript": ["es", "ecma"], "application/emma+xml": ["emma"], "application/emotionml+xml": ["emotionml"], "application/epub+zip": ["epub"], "application/exi": ["exi"], "application/express": ["exp"], "application/fdt+xml": ["fdt"], "application/font-tdpfr": ["pfr"], "application/geo+json": ["geojson"], "application/gml+xml": ["gml"], "application/gpx+xml": ["gpx"], "application/gxf": ["gxf"], "application/gzip": ["gz"], "application/hjson": ["hjson"], "application/hyperstudio": ["stk"], "application/inkml+xml": ["ink", "inkml"], "application/ipfix": ["ipfix"], "application/its+xml": ["its"], "application/java-archive": ["jar", "war", "ear"], "application/java-serialized-object": ["ser"], "application/java-vm": ["class"], "application/javascript": ["js", "mjs"], "application/json": ["json", "map"], "application/json5": ["json5"], "application/jsonml+json": ["jsonml"], "application/ld+json": ["jsonld"], "application/lgr+xml": ["lgr"], "application/lost+xml": ["lostxml"], "application/mac-binhex40": ["hqx"], "application/mac-compactpro": ["cpt"], "application/mads+xml": ["mads"], "application/manifest+json": ["webmanifest"], "application/marc": ["mrc"], "application/marcxml+xml": ["mrcx"], "application/mathematica": ["ma", "nb", "mb"], "application/mathml+xml": ["mathml"], "application/mbox": ["mbox"], "application/mediaservercontrol+xml": ["mscml"], "application/metalink+xml": ["metalink"], "application/metalink4+xml": ["meta4"], "application/mets+xml": ["mets"], "application/mmt-aei+xml": ["maei"], "application/mmt-usd+xml": ["musd"], "application/mods+xml": ["mods"], "application/mp21": ["m21", "mp21"], "application/mp4": ["mp4s", "m4p"], "application/msword": ["doc", "dot"], "application/mxf": ["mxf"], "application/n-quads": ["nq"], "application/n-triples": ["nt"], "application/node": ["cjs"], "application/octet-stream": ["bin", "dms", "lrf", "mar", "so", "dist", "distz", "pkg", "bpk", "dump", "elc", "deploy", "exe", "dll", "deb", "dmg", "iso", "img", "msi", "msp", "msm", "buffer"], "application/oda": ["oda"], "application/oebps-package+xml": ["opf"], "application/ogg": ["ogx"], "application/omdoc+xml": ["omdoc"], "application/onenote": ["onetoc", "onetoc2", "onetmp", "onepkg"], "application/oxps": ["oxps"], "application/p2p-overlay+xml": ["relo"], "application/patch-ops-error+xml": ["xer"], "application/pdf": ["pdf"], "application/pgp-encrypted": ["pgp"], "application/pgp-signature": ["asc", "sig"], "application/pics-rules": ["prf"], "application/pkcs10": ["p10"], "application/pkcs7-mime": ["p7m", "p7c"], "application/pkcs7-signature": ["p7s"], "application/pkcs8": ["p8"], "application/pkix-attr-cert": ["ac"], "application/pkix-cert": ["cer"], "application/pkix-crl": ["crl"], "application/pkix-pkipath": ["pkipath"], "application/pkixcmp": ["pki"], "application/pls+xml": ["pls"], "application/postscript": ["ai", "eps", "ps"], "application/provenance+xml": ["provx"], "application/pskc+xml": ["pskcxml"], "application/raml+yaml": ["raml"], "application/rdf+xml": ["rdf", "owl"], "application/reginfo+xml": ["rif"], "application/relax-ng-compact-syntax": ["rnc"], "application/resource-lists+xml": ["rl"], "application/resource-lists-diff+xml": ["rld"], "application/rls-services+xml": ["rs"], "application/route-apd+xml": ["rapd"], "application/route-s-tsid+xml": ["sls"], "application/route-usd+xml": ["rusd"], "application/rpki-ghostbusters": ["gbr"], "application/rpki-manifest": ["mft"], "application/rpki-roa": ["roa"], "application/rsd+xml": ["rsd"], "application/rss+xml": ["rss"], "application/rtf": ["rtf"], "application/sbml+xml": ["sbml"], "application/scvp-cv-request": ["scq"], "application/scvp-cv-response": ["scs"], "application/scvp-vp-request": ["spq"], "application/scvp-vp-response": ["spp"], "application/sdp": ["sdp"], "application/senml+xml": ["senmlx"], "application/sensml+xml": ["sensmlx"], "application/set-payment-initiation": ["setpay"], "application/set-registration-initiation": ["setreg"], "application/shf+xml": ["shf"], "application/sieve": ["siv", "sieve"], "application/smil+xml": ["smi", "smil"], "application/sparql-query": ["rq"], "application/sparql-results+xml": ["srx"], "application/srgs": ["gram"], "application/srgs+xml": ["grxml"], "application/sru+xml": ["sru"], "application/ssdl+xml": ["ssdl"], "application/ssml+xml": ["ssml"], "application/swid+xml": ["swidtag"], "application/tei+xml": ["tei", "teicorpus"], "application/thraud+xml": ["tfi"], "application/timestamped-data": ["tsd"], "application/toml": ["toml"], "application/trig": ["trig"], "application/ttml+xml": ["ttml"], "application/ubjson": ["ubj"], "application/urc-ressheet+xml": ["rsheet"], "application/urc-targetdesc+xml": ["td"], "application/voicexml+xml": ["vxml"], "application/wasm": ["wasm"], "application/widget": ["wgt"], "application/winhlp": ["hlp"], "application/wsdl+xml": ["wsdl"], "application/wspolicy+xml": ["wspolicy"], "application/xaml+xml": ["xaml"], "application/xcap-att+xml": ["xav"], "application/xcap-caps+xml": ["xca"], "application/xcap-diff+xml": ["xdf"], "application/xcap-el+xml": ["xel"], "application/xcap-ns+xml": ["xns"], "application/xenc+xml": ["xenc"], "application/xhtml+xml": ["xhtml", "xht"], "application/xliff+xml": ["xlf"], "application/xml": ["xml", "xsl", "xsd", "rng"], "application/xml-dtd": ["dtd"], "application/xop+xml": ["xop"], "application/xproc+xml": ["xpl"], "application/xslt+xml": ["*xsl", "xslt"], "application/xspf+xml": ["xspf"], "application/xv+xml": ["mxml", "xhvml", "xvml", "xvm"], "application/yang": ["yang"], "application/yin+xml": ["yin"], "application/zip": ["zip"], "audio/3gpp": ["*3gpp"], "audio/adpcm": ["adp"], "audio/amr": ["amr"], "audio/basic": ["au", "snd"], "audio/midi": ["mid", "midi", "kar", "rmi"], "audio/mobile-xmf": ["mxmf"], "audio/mp3": ["*mp3"], "audio/mp4": ["m4a", "mp4a"], "audio/mpeg": ["mpga", "mp2", "mp2a", "mp3", "m2a", "m3a"], "audio/ogg": ["oga", "ogg", "spx", "opus"], "audio/s3m": ["s3m"], "audio/silk": ["sil"], "audio/wav": ["wav"], "audio/wave": ["*wav"], "audio/webm": ["weba"], "audio/xm": ["xm"], "font/collection": ["ttc"], "font/otf": ["otf"], "font/ttf": ["ttf"], "font/woff": ["woff"], "font/woff2": ["woff2"], "image/aces": ["exr"], "image/apng": ["apng"], "image/avif": ["avif"], "image/bmp": ["bmp"], "image/cgm": ["cgm"], "image/dicom-rle": ["drle"], "image/emf": ["emf"], "image/fits": ["fits"], "image/g3fax": ["g3"], "image/gif": ["gif"], "image/heic": ["heic"], "image/heic-sequence": ["heics"], "image/heif": ["heif"], "image/heif-sequence": ["heifs"], "image/hej2k": ["hej2"], "image/hsj2": ["hsj2"], "image/ief": ["ief"], "image/jls": ["jls"], "image/jp2": ["jp2", "jpg2"], "image/jpeg": ["jpeg", "jpg", "jpe"], "image/jph": ["jph"], "image/jphc": ["jhc"], "image/jpm": ["jpm"], "image/jpx": ["jpx", "jpf"], "image/jxr": ["jxr"], "image/jxra": ["jxra"], "image/jxrs": ["jxrs"], "image/jxs": ["jxs"], "image/jxsc": ["jxsc"], "image/jxsi": ["jxsi"], "image/jxss": ["jxss"], "image/ktx": ["ktx"], "image/ktx2": ["ktx2"], "image/png": ["png"], "image/sgi": ["sgi"], "image/svg+xml": ["svg", "svgz"], "image/t38": ["t38"], "image/tiff": ["tif", "tiff"], "image/tiff-fx": ["tfx"], "image/webp": ["webp"], "image/wmf": ["wmf"], "message/disposition-notification": ["disposition-notification"], "message/global": ["u8msg"], "message/global-delivery-status": ["u8dsn"], "message/global-disposition-notification": ["u8mdn"], "message/global-headers": ["u8hdr"], "message/rfc822": ["eml", "mime"], "model/3mf": ["3mf"], "model/gltf+json": ["gltf"], "model/gltf-binary": ["glb"], "model/iges": ["igs", "iges"], "model/mesh": ["msh", "mesh", "silo"], "model/mtl": ["mtl"], "model/obj": ["obj"], "model/step+xml": ["stpx"], "model/step+zip": ["stpz"], "model/step-xml+zip": ["stpxz"], "model/stl": ["stl"], "model/vrml": ["wrl", "vrml"], "model/x3d+binary": ["*x3db", "x3dbz"], "model/x3d+fastinfoset": ["x3db"], "model/x3d+vrml": ["*x3dv", "x3dvz"], "model/x3d+xml": ["x3d", "x3dz"], "model/x3d-vrml": ["x3dv"], "text/cache-manifest": ["appcache", "manifest"], "text/calendar": ["ics", "ifb"], "text/coffeescript": ["coffee", "litcoffee"], "text/css": ["css"], "text/csv": ["csv"], "text/html": ["html", "htm", "shtml"], "text/jade": ["jade"], "text/jsx": ["jsx"], "text/less": ["less"], "text/markdown": ["markdown", "md"], "text/mathml": ["mml"], "text/mdx": ["mdx"], "text/n3": ["n3"], "text/plain": ["txt", "text", "conf", "def", "list", "log", "in", "ini"], "text/richtext": ["rtx"], "text/rtf": ["*rtf"], "text/sgml": ["sgml", "sgm"], "text/shex": ["shex"], "text/slim": ["slim", "slm"], "text/spdx": ["spdx"], "text/stylus": ["stylus", "styl"], "text/tab-separated-values": ["tsv"], "text/troff": ["t", "tr", "roff", "man", "me", "ms"], "text/turtle": ["ttl"], "text/uri-list": ["uri", "uris", "urls"], "text/vcard": ["vcard"], "text/vtt": ["vtt"], "text/xml": ["*xml"], "text/yaml": ["yaml", "yml"], "video/3gpp": ["3gp", "3gpp"], "video/3gpp2": ["3g2"], "video/h261": ["h261"], "video/h263": ["h263"], "video/h264": ["h264"], "video/iso.segment": ["m4s"], "video/jpeg": ["jpgv"], "video/jpm": ["*jpm", "jpgm"], "video/mj2": ["mj2", "mjp2"], "video/mp2t": ["ts"], "video/mp4": ["mp4", "mp4v", "mpg4"], "video/mpeg": ["mpeg", "mpg", "mpe", "m1v", "m2v"], "video/ogg": ["ogv"], "video/quicktime": ["qt", "mov"], "video/webm": ["webm"] };
   }
 });
 
 // node_modules/webtorrent/node_modules/mime/lite.js
 var require_lite = __commonJS({
-  "node_modules/webtorrent/node_modules/mime/lite.js"(exports, module) {
+  "node_modules/webtorrent/node_modules/mime/lite.js"(exports2, module2) {
     "use strict";
     var Mime = require_Mime();
-    module.exports = new Mime(require_standard());
+    module2.exports = new Mime(require_standard());
   }
 });
 
 // node_modules/webtorrent/package.json
 var require_package = __commonJS({
-  "node_modules/webtorrent/package.json"(exports, module) {
-    module.exports = {
+  "node_modules/webtorrent/package.json"(exports2, module2) {
+    module2.exports = {
       name: "webtorrent",
       description: "Streaming torrent client",
       version: "2.8.5",
@@ -36115,17 +36109,17 @@ var require_package = __commonJS({
 
 // node_modules/webtorrent/version.cjs
 var require_version2 = __commonJS({
-  "node_modules/webtorrent/version.cjs"(exports, module) {
-    module.exports = require_package().version;
+  "node_modules/webtorrent/version.cjs"(exports2, module2) {
+    module2.exports = require_package().version;
   }
 });
 
 // node_modules/escape-html/index.js
 var require_escape_html = __commonJS({
-  "node_modules/escape-html/index.js"(exports, module) {
+  "node_modules/escape-html/index.js"(exports2, module2) {
     "use strict";
     var matchHtmlRegExp = /["'&<>]/;
-    module.exports = escapeHtml2;
+    module2.exports = escapeHtml2;
     function escapeHtml2(string) {
       var str = "" + string;
       var match = matchHtmlRegExp.exec(str);
@@ -36169,7 +36163,7 @@ var require_escape_html = __commonJS({
 
 // node_modules/end-of-stream/index.js
 var require_end_of_stream2 = __commonJS({
-  "node_modules/end-of-stream/index.js"(exports, module) {
+  "node_modules/end-of-stream/index.js"(exports2, module2) {
     var once6 = require_once();
     var noop9 = function() {
     };
@@ -36246,18 +36240,18 @@ var require_end_of_stream2 = __commonJS({
         stream.removeListener("close", onclose);
       };
     };
-    module.exports = eos;
+    module2.exports = eos;
   }
 });
 
 // node_modules/pump/index.js
 var require_pump = __commonJS({
-  "node_modules/pump/index.js"(exports, module) {
+  "node_modules/pump/index.js"(exports2, module2) {
     var once6 = require_once();
     var eos = require_end_of_stream2();
     var fs6;
     try {
-      fs6 = __require("fs");
+      fs6 = require("fs");
     } catch (e2) {
     }
     var noop9 = function() {
@@ -36321,15 +36315,15 @@ var require_pump = __commonJS({
       });
       return streams.reduce(pipe);
     };
-    module.exports = pump3;
+    module2.exports = pump3;
   }
 });
 
 // node_modules/range-parser/index.js
 var require_range_parser = __commonJS({
-  "node_modules/range-parser/index.js"(exports, module) {
+  "node_modules/range-parser/index.js"(exports2, module2) {
     "use strict";
-    module.exports = rangeParser2;
+    module2.exports = rangeParser2;
     function rangeParser2(size, str, options) {
       if (typeof str !== "string") {
         throw new TypeError("argument str must be a string");
@@ -36407,15 +36401,20 @@ var require_range_parser = __commonJS({
 });
 
 // node_modules/webtorrent/index.js
-import EventEmitter16 from "events";
-import path5 from "path";
+var index_exports = {};
+__export(index_exports, {
+  default: () => WebTorrent
+});
+module.exports = __toCommonJS(index_exports);
+var import_events16 = __toESM(require("events"), 1);
+var import_path6 = __toESM(require("path"), 1);
 
 // node_modules/create-torrent/index.js
 init_bencode();
 var import_block_iterator = __toESM(require_block_iterator(), 1);
 var import_piece_length = __toESM(require_piece_length(), 1);
+var import_path2 = __toESM(require("path"), 1);
 var import_is_file = __toESM(require_is_file(), 1);
-import corePath2 from "path";
 
 // node_modules/junk/index.js
 var ignoreList = [
@@ -36505,21 +36504,21 @@ if (typeof ReadableStream !== "undefined") {
 }
 
 // node_modules/create-torrent/get-files.js
-import corePath from "path";
-import fs from "fs";
+var import_path = __toESM(require("path"), 1);
+var import_fs = __toESM(require("fs"), 1);
 var import_once = __toESM(require_once(), 1);
 var import_run_parallel = __toESM(require_run_parallel(), 1);
 function notHidden(file) {
   return file[0] !== ".";
 }
 function traversePath(path6, fn, cb) {
-  fs.stat(path6, (err, stats) => {
+  import_fs.default.stat(path6, (err, stats) => {
     if (err) return cb(err);
     if (stats.isDirectory()) {
-      fs.readdir(path6, (err2, entries) => {
+      import_fs.default.readdir(path6, (err2, entries) => {
         if (err2) return cb(err2);
         (0, import_run_parallel.default)(entries.filter(notHidden).filter(isNotJunk).map((entry) => (cb2) => {
-          traversePath(corePath.join(path6, entry), fn, cb2);
+          traversePath(import_path.default.join(path6, entry), fn, cb2);
         }), cb);
       });
     } else if (stats.isFile()) {
@@ -36528,28 +36527,28 @@ function traversePath(path6, fn, cb) {
   });
 }
 function getFilePathStream(path6) {
-  return () => fs.createReadStream(path6);
+  return () => import_fs.default.createReadStream(path6);
 }
 function getFiles(path6, keepRoot, cb) {
   traversePath(path6, getFileInfo, (err, files) => {
     if (err) return cb(err);
     if (Array.isArray(files)) files = files.flat(Infinity);
     else files = [files];
-    path6 = corePath.normalize(path6);
+    path6 = import_path.default.normalize(path6);
     if (keepRoot) {
-      path6 = path6.slice(0, path6.lastIndexOf(corePath.sep) + 1);
+      path6 = path6.slice(0, path6.lastIndexOf(import_path.default.sep) + 1);
     }
-    if (path6[path6.length - 1] !== corePath.sep) path6 += corePath.sep;
+    if (path6[path6.length - 1] !== import_path.default.sep) path6 += import_path.default.sep;
     files.forEach((file) => {
       file.getStream = getFilePathStream(file.path);
-      file.path = file.path.replace(path6, "").split(corePath.sep);
+      file.path = file.path.replace(path6, "").split(import_path.default.sep);
     });
     cb(null, files);
   });
 }
 function getFileInfo(path6, cb) {
   cb = (0, import_once.default)(cb);
-  fs.stat(path6, (err, stat2) => {
+  import_fs.default.stat(path6, (err, stat2) => {
     if (err) return cb(err);
     const info = {
       length: stat2.size,
@@ -36641,7 +36640,7 @@ function _parseInput(input, opts, cb) {
   if (!opts.name) {
     input.some((item) => {
       if (typeof item === "string") {
-        opts.name = corePath2.basename(item);
+        opts.name = import_path2.default.basename(item);
         return true;
       } else if (!item.unknownName) {
         opts.name = item[pathSymbol][item[pathSymbol].length - 1];
@@ -36823,6 +36822,7 @@ var create_torrent_default = createTorrent;
 var import_debug22 = __toESM(require_src(), 1);
 
 // node_modules/bittorrent-dht/client.js
+var import_events = require("events");
 init_bencode();
 var import_debug = __toESM(require_src(), 1);
 var import_k_bucket = __toESM(require_k_bucket(), 1);
@@ -36831,12 +36831,11 @@ var import_last_one_wins = __toESM(require_last_one_wins(), 1);
 var import_lru = __toESM(require_lru(), 1);
 var import_randombytes = __toESM(require_randombytes(), 1);
 var import_record_cache = __toESM(require_record_cache(), 1);
-import { EventEmitter } from "events";
-import crypto2 from "crypto";
+var import_crypto = __toESM(require("crypto"), 1);
 var debug = (0, import_debug.default)("bittorrent-dht");
 var ROTATE_INTERVAL = 5 * 60 * 1e3;
 var BUCKET_OUTDATED_TIMESPAN = 15 * 60 * 1e3;
-var DHT = class extends EventEmitter {
+var DHT = class extends import_events.EventEmitter {
   constructor(opts = {}) {
     super();
     this._tables = new import_lru.default({ maxAge: ROTATE_INTERVAL, max: opts.maxTables || 1e3 });
@@ -37421,7 +37420,7 @@ var DHT = class extends EventEmitter {
 function noop() {
 }
 function sha1(buf) {
-  return crypto2.createHash("sha1").update(buf).digest();
+  return import_crypto.default.createHash("sha1").update(buf).digest();
 }
 function createGetResponse(id, token, value) {
   const r2 = { id, token, v: value.v };
@@ -37477,14 +37476,14 @@ function toBuffer(str) {
 var client_default = DHT;
 
 // node_modules/load-ip-set/index.js
-import fs3 from "fs";
+var import_fs2 = __toESM(require("fs"), 1);
 
 // node_modules/node-fetch/src/index.js
-import http2 from "node:http";
-import https from "node:https";
-import zlib from "node:zlib";
-import Stream2, { PassThrough as PassThrough2, pipeline as pump } from "node:stream";
-import { Buffer as Buffer3 } from "node:buffer";
+var import_node_http2 = __toESM(require("node:http"), 1);
+var import_node_https = __toESM(require("node:https"), 1);
+var import_node_zlib = __toESM(require("node:zlib"), 1);
+var import_node_stream2 = __toESM(require("node:stream"), 1);
+var import_node_buffer2 = require("node:buffer");
 
 // node_modules/data-uri-to-buffer/dist/index.js
 function dataUriToBuffer(uri) {
@@ -37526,11 +37525,11 @@ function dataUriToBuffer(uri) {
 var dist_default = dataUriToBuffer;
 
 // node_modules/node-fetch/src/body.js
+var import_node_stream = __toESM(require("node:stream"), 1);
+var import_node_util = require("node:util");
+var import_node_buffer = require("node:buffer");
 init_fetch_blob();
 init_esm_min();
-import Stream, { PassThrough } from "node:stream";
-import { types, deprecate, promisify } from "node:util";
-import { Buffer as Buffer2 } from "node:buffer";
 
 // node_modules/node-fetch/src/errors/base.js
 var FetchBaseError = class extends Error {
@@ -37586,7 +37585,7 @@ var isSameProtocol = (destination, original) => {
 };
 
 // node_modules/node-fetch/src/body.js
-var pipeline = promisify(Stream.pipeline);
+var pipeline = (0, import_node_util.promisify)(import_node_stream.default.pipeline);
 var INTERNALS = /* @__PURE__ */ Symbol("Body internals");
 var Body = class {
   constructor(body, {
@@ -37596,25 +37595,25 @@ var Body = class {
     if (body === null) {
       body = null;
     } else if (isURLSearchParameters(body)) {
-      body = Buffer2.from(body.toString());
+      body = import_node_buffer.Buffer.from(body.toString());
     } else if (isBlob2(body)) {
-    } else if (Buffer2.isBuffer(body)) {
-    } else if (types.isAnyArrayBuffer(body)) {
-      body = Buffer2.from(body);
+    } else if (import_node_buffer.Buffer.isBuffer(body)) {
+    } else if (import_node_util.types.isAnyArrayBuffer(body)) {
+      body = import_node_buffer.Buffer.from(body);
     } else if (ArrayBuffer.isView(body)) {
-      body = Buffer2.from(body.buffer, body.byteOffset, body.byteLength);
-    } else if (body instanceof Stream) {
+      body = import_node_buffer.Buffer.from(body.buffer, body.byteOffset, body.byteLength);
+    } else if (body instanceof import_node_stream.default) {
     } else if (body instanceof FormData) {
       body = formDataToBlob(body);
       boundary = body.type.split("=")[1];
     } else {
-      body = Buffer2.from(String(body));
+      body = import_node_buffer.Buffer.from(String(body));
     }
     let stream = body;
-    if (Buffer2.isBuffer(body)) {
-      stream = Stream.Readable.from(body);
+    if (import_node_buffer.Buffer.isBuffer(body)) {
+      stream = import_node_stream.default.Readable.from(body);
     } else if (isBlob2(body)) {
-      stream = Stream.Readable.from(body.stream());
+      stream = import_node_stream.default.Readable.from(body.stream());
     }
     this[INTERNALS] = {
       body,
@@ -37624,7 +37623,7 @@ var Body = class {
       error: null
     };
     this.size = size;
-    if (body instanceof Stream) {
+    if (body instanceof import_node_stream.default) {
       body.on("error", (error_) => {
         const error = error_ instanceof FetchBaseError ? error_ : new FetchError(`Invalid response body while trying to fetch ${this.url}: ${error_.message}`, "system", error_);
         this[INTERNALS].error = error;
@@ -37698,7 +37697,7 @@ var Body = class {
     return consumeBody(this);
   }
 };
-Body.prototype.buffer = deprecate(Body.prototype.buffer, "Please use 'response.arrayBuffer()' instead of 'response.buffer()'", "node-fetch#buffer");
+Body.prototype.buffer = (0, import_node_util.deprecate)(Body.prototype.buffer, "Please use 'response.arrayBuffer()' instead of 'response.buffer()'", "node-fetch#buffer");
 Object.defineProperties(Body.prototype, {
   body: { enumerable: true },
   bodyUsed: { enumerable: true },
@@ -37706,7 +37705,7 @@ Object.defineProperties(Body.prototype, {
   blob: { enumerable: true },
   json: { enumerable: true },
   text: { enumerable: true },
-  data: { get: deprecate(
+  data: { get: (0, import_node_util.deprecate)(
     () => {
     },
     "data doesn't exist, use json(), text(), arrayBuffer(), or body instead",
@@ -37723,10 +37722,10 @@ async function consumeBody(data) {
   }
   const { body } = data;
   if (body === null) {
-    return Buffer2.alloc(0);
+    return import_node_buffer.Buffer.alloc(0);
   }
-  if (!(body instanceof Stream)) {
-    return Buffer2.alloc(0);
+  if (!(body instanceof import_node_stream.default)) {
+    return import_node_buffer.Buffer.alloc(0);
   }
   const accum = [];
   let accumBytes = 0;
@@ -37747,9 +37746,9 @@ async function consumeBody(data) {
   if (body.readableEnded === true || body._readableState.ended === true) {
     try {
       if (accum.every((c) => typeof c === "string")) {
-        return Buffer2.from(accum.join(""));
+        return import_node_buffer.Buffer.from(accum.join(""));
       }
-      return Buffer2.concat(accum, accumBytes);
+      return import_node_buffer.Buffer.concat(accum, accumBytes);
     } catch (error) {
       throw new FetchError(`Could not create Buffer from response body for ${data.url}: ${error.message}`, "system", error);
     }
@@ -37764,9 +37763,9 @@ var clone = (instance, highWaterMark) => {
   if (instance.bodyUsed) {
     throw new Error("cannot clone body after it is used");
   }
-  if (body instanceof Stream && typeof body.getBoundary !== "function") {
-    p1 = new PassThrough({ highWaterMark });
-    p2 = new PassThrough({ highWaterMark });
+  if (body instanceof import_node_stream.default && typeof body.getBoundary !== "function") {
+    p1 = new import_node_stream.PassThrough({ highWaterMark });
+    p2 = new import_node_stream.PassThrough({ highWaterMark });
     body.pipe(p1);
     body.pipe(p2);
     instance[INTERNALS].stream = p1;
@@ -37774,7 +37773,7 @@ var clone = (instance, highWaterMark) => {
   }
   return body;
 };
-var getNonSpecFormDataBoundary = deprecate(
+var getNonSpecFormDataBoundary = (0, import_node_util.deprecate)(
   (body) => body.getBoundary(),
   "form-data doesn't follow the spec and requires special treatment. Use alternative package",
   "https://github.com/node-fetch/node-fetch/issues/1167"
@@ -37792,7 +37791,7 @@ var extractContentType = (body, request) => {
   if (isBlob2(body)) {
     return body.type || null;
   }
-  if (Buffer2.isBuffer(body) || types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
+  if (import_node_buffer.Buffer.isBuffer(body) || import_node_util.types.isAnyArrayBuffer(body) || ArrayBuffer.isView(body)) {
     return null;
   }
   if (body instanceof FormData) {
@@ -37801,7 +37800,7 @@ var extractContentType = (body, request) => {
   if (body && typeof body.getBoundary === "function") {
     return `multipart/form-data;boundary=${getNonSpecFormDataBoundary(body)}`;
   }
-  if (body instanceof Stream) {
+  if (body instanceof import_node_stream.default) {
     return null;
   }
   return "text/plain;charset=UTF-8";
@@ -37814,7 +37813,7 @@ var getTotalBytes = (request) => {
   if (isBlob2(body)) {
     return body.size;
   }
-  if (Buffer2.isBuffer(body)) {
+  if (import_node_buffer.Buffer.isBuffer(body)) {
     return body.length;
   }
   if (body && typeof body.getLengthSync === "function") {
@@ -37831,16 +37830,16 @@ var writeToStream = async (dest, { body }) => {
 };
 
 // node_modules/node-fetch/src/headers.js
-import { types as types2 } from "node:util";
-import http from "node:http";
-var validateHeaderName = typeof http.validateHeaderName === "function" ? http.validateHeaderName : (name) => {
+var import_node_util2 = require("node:util");
+var import_node_http = __toESM(require("node:http"), 1);
+var validateHeaderName = typeof import_node_http.default.validateHeaderName === "function" ? import_node_http.default.validateHeaderName : (name) => {
   if (!/^[\^`\-\w!#$%&'*+.|~]+$/.test(name)) {
     const error = new TypeError(`Header name must be a valid HTTP token [${name}]`);
     Object.defineProperty(error, "code", { value: "ERR_INVALID_HTTP_TOKEN" });
     throw error;
   }
 };
-var validateHeaderValue = typeof http.validateHeaderValue === "function" ? http.validateHeaderValue : (name, value) => {
+var validateHeaderValue = typeof import_node_http.default.validateHeaderValue === "function" ? import_node_http.default.validateHeaderValue : (name, value) => {
   if (/[^\t\u0020-\u007E\u0080-\u00FF]/.test(value)) {
     const error = new TypeError(`Invalid character in header content ["${name}"]`);
     Object.defineProperty(error, "code", { value: "ERR_INVALID_CHAR" });
@@ -37862,7 +37861,7 @@ var Headers = class _Headers extends URLSearchParams {
         result.push(...values.map((value) => [name, value]));
       }
     } else if (init == null) {
-    } else if (typeof init === "object" && !types2.isBoxedPrimitive(init)) {
+    } else if (typeof init === "object" && !import_node_util2.types.isBoxedPrimitive(init)) {
       const method = init[Symbol.iterator];
       if (method == null) {
         result.push(...Object.entries(init));
@@ -37871,7 +37870,7 @@ var Headers = class _Headers extends URLSearchParams {
           throw new TypeError("Header pairs must be iterable");
         }
         result = [...init].map((pair) => {
-          if (typeof pair !== "object" || types2.isBoxedPrimitive(pair)) {
+          if (typeof pair !== "object" || import_node_util2.types.isBoxedPrimitive(pair)) {
             throw new TypeError("Each header pair must be an iterable object");
           }
           return [...pair];
@@ -38141,8 +38140,8 @@ Object.defineProperties(Response.prototype, {
 });
 
 // node_modules/node-fetch/src/request.js
-import { format as formatUrl } from "node:url";
-import { deprecate as deprecate2 } from "node:util";
+var import_node_url = require("node:url");
+var import_node_util3 = require("node:util");
 
 // node_modules/node-fetch/src/utils/get-search.js
 var getSearch = (parsedURL) => {
@@ -38155,7 +38154,7 @@ var getSearch = (parsedURL) => {
 };
 
 // node_modules/node-fetch/src/utils/referrer.js
-import { isIP } from "node:net";
+var import_node_net = require("node:net");
 function stripURLForUseAsAReferrer(url, originOnly = false) {
   if (url == null) {
     return "no-referrer";
@@ -38196,7 +38195,7 @@ function isOriginPotentiallyTrustworthy(url) {
     return true;
   }
   const hostIp = url.host.replace(/(^\[)|(]$)/g, "");
-  const hostIPVersion = isIP(hostIp);
+  const hostIPVersion = (0, import_node_net.isIP)(hostIp);
   if (hostIPVersion === 4 && /^127\./.test(hostIp)) {
     return true;
   }
@@ -38299,7 +38298,7 @@ var INTERNALS3 = /* @__PURE__ */ Symbol("Request internals");
 var isRequest = (object) => {
   return typeof object === "object" && typeof object[INTERNALS3] === "object";
 };
-var doBadDataWarn = deprecate2(
+var doBadDataWarn = (0, import_node_util3.deprecate)(
   () => {
   },
   ".data is not a valid RequestInit property, use .body instead",
@@ -38376,7 +38375,7 @@ var Request = class _Request extends Body {
   }
   /** @returns {string} */
   get url() {
-    return formatUrl(this[INTERNALS3].parsedURL);
+    return (0, import_node_url.format)(this[INTERNALS3].parsedURL);
   }
   /** @returns {Headers} */
   get headers() {
@@ -38511,13 +38510,13 @@ async function fetch2(url, options_) {
       resolve2(response2);
       return;
     }
-    const send = (parsedURL.protocol === "https:" ? https : http2).request;
+    const send = (parsedURL.protocol === "https:" ? import_node_https.default : import_node_http2.default).request;
     const { signal } = request;
     let response = null;
     const abort = () => {
       const error = new AbortError("The operation was aborted.");
       reject(error);
-      if (request.body && request.body instanceof Stream2.Readable) {
+      if (request.body && request.body instanceof import_node_stream2.default.Readable) {
         request.body.destroy(error);
       }
       if (!response || !response.body) {
@@ -38616,7 +38615,7 @@ async function fetch2(url, options_) {
                 requestOptions.headers.delete(name);
               }
             }
-            if (response_.statusCode !== 303 && request.body && options_.body instanceof Stream2.Readable) {
+            if (response_.statusCode !== 303 && request.body && options_.body instanceof import_node_stream2.default.Readable) {
               reject(new FetchError("Cannot follow redirect with body being a readable stream", "unsupported-redirect"));
               finalize();
               return;
@@ -38643,7 +38642,7 @@ async function fetch2(url, options_) {
           signal.removeEventListener("abort", abortAndFinalize);
         });
       }
-      let body = pump(response_, new PassThrough2(), (error) => {
+      let body = (0, import_node_stream2.pipeline)(response_, new import_node_stream2.PassThrough(), (error) => {
         if (error) {
           reject(error);
         }
@@ -38667,11 +38666,11 @@ async function fetch2(url, options_) {
         return;
       }
       const zlibOptions = {
-        flush: zlib.Z_SYNC_FLUSH,
-        finishFlush: zlib.Z_SYNC_FLUSH
+        flush: import_node_zlib.default.Z_SYNC_FLUSH,
+        finishFlush: import_node_zlib.default.Z_SYNC_FLUSH
       };
       if (codings === "gzip" || codings === "x-gzip") {
-        body = pump(body, zlib.createGunzip(zlibOptions), (error) => {
+        body = (0, import_node_stream2.pipeline)(body, import_node_zlib.default.createGunzip(zlibOptions), (error) => {
           if (error) {
             reject(error);
           }
@@ -38681,20 +38680,20 @@ async function fetch2(url, options_) {
         return;
       }
       if (codings === "deflate" || codings === "x-deflate") {
-        const raw = pump(response_, new PassThrough2(), (error) => {
+        const raw = (0, import_node_stream2.pipeline)(response_, new import_node_stream2.PassThrough(), (error) => {
           if (error) {
             reject(error);
           }
         });
         raw.once("data", (chunk) => {
           if ((chunk[0] & 15) === 8) {
-            body = pump(body, zlib.createInflate(), (error) => {
+            body = (0, import_node_stream2.pipeline)(body, import_node_zlib.default.createInflate(), (error) => {
               if (error) {
                 reject(error);
               }
             });
           } else {
-            body = pump(body, zlib.createInflateRaw(), (error) => {
+            body = (0, import_node_stream2.pipeline)(body, import_node_zlib.default.createInflateRaw(), (error) => {
               if (error) {
                 reject(error);
               }
@@ -38712,7 +38711,7 @@ async function fetch2(url, options_) {
         return;
       }
       if (codings === "br") {
-        body = pump(body, zlib.createBrotliDecompress(), (error) => {
+        body = (0, import_node_stream2.pipeline)(body, import_node_zlib.default.createBrotliDecompress(), (error) => {
           if (error) {
             reject(error);
           }
@@ -38728,7 +38727,7 @@ async function fetch2(url, options_) {
   });
 }
 function fixResponseChunkedTransferBadEnding(request, errorCallback) {
-  const LAST_CHUNK = Buffer3.from("0\r\n\r\n");
+  const LAST_CHUNK = import_node_buffer2.Buffer.from("0\r\n\r\n");
   let isChunkedTransfer = false;
   let properLastChunkReceived = false;
   let previousChunk;
@@ -38745,9 +38744,9 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
       }
     };
     const onData = (buf) => {
-      properLastChunkReceived = Buffer3.compare(buf.slice(-5), LAST_CHUNK) === 0;
+      properLastChunkReceived = import_node_buffer2.Buffer.compare(buf.slice(-5), LAST_CHUNK) === 0;
       if (!properLastChunkReceived && previousChunk) {
-        properLastChunkReceived = Buffer3.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 && Buffer3.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0;
+        properLastChunkReceived = import_node_buffer2.Buffer.compare(previousChunk.slice(-3), LAST_CHUNK.slice(0, 3)) === 0 && import_node_buffer2.Buffer.compare(buf.slice(-2), LAST_CHUNK.slice(3)) === 0;
       }
       previousChunk = buf;
     };
@@ -38777,8 +38776,8 @@ var import_ip_set = __toESM(require_ip_set(), 1);
 var import_netmask = __toESM(require_netmask(), 1);
 var import_once2 = __toESM(require_once(), 1);
 var import_split = __toESM(require_split(), 1);
+var import_zlib = __toESM(require("zlib"), 1);
 var import_queue_microtask2 = __toESM(require_queue_microtask(), 1);
-import zlib2 from "zlib";
 var ipSetRegex = /^\s*(?:[^#].*?\s*:\s*)?([a-f0-9.:]+)(?:\s*-\s*([a-f0-9.:]+))?\s*$/;
 var cidrRegex = /^\s*(?:[^#].*?\s*:\s*)?([0-9.:]+)\/([0-9]{1,2})\s*$/;
 async function loadIPSet(input, opts, cb) {
@@ -38802,8 +38801,8 @@ async function loadIPSet(input, opts, cb) {
     }
     cb(null, new import_ip_set.default(blocklist));
   } else {
-    let f3 = fs3.createReadStream(input).on("error", cb);
-    if (/.gz$/.test(input)) f3 = f3.pipe(zlib2.Gunzip());
+    let f3 = import_fs2.default.createReadStream(input).on("error", cb);
+    if (/.gz$/.test(input)) f3 = f3.pipe(import_zlib.default.Gunzip());
     onStream(f3);
   }
   function handleLine(line, blocklist) {
@@ -38834,7 +38833,7 @@ var import_run_parallel7 = __toESM(require_run_parallel(), 1);
 
 // node_modules/parse-torrent/index.js
 init_bencode();
-import fs4 from "fs";
+var import_fs3 = __toESM(require("fs"), 1);
 
 // node_modules/@thaunknown/thirty-two/lib/thirty-two/index.js
 init_node();
@@ -39100,9 +39099,9 @@ function magnetURIEncode(obj) {
 var magnet_uri_default = magnetURIDecode;
 
 // node_modules/parse-torrent/index.js
+var import_path3 = __toESM(require("path"), 1);
 init_node();
 var import_queue_microtask3 = __toESM(require_queue_microtask(), 1);
-import path from "path";
 async function parseTorrent(torrentId) {
   if (typeof torrentId === "string" && /^(stream-)?magnet:/.test(torrentId)) {
     const torrentObj = magnet_uri_default(torrentId);
@@ -39159,8 +39158,8 @@ async function parseTorrentRemote(torrentId, opts, cb) {
     } catch (err) {
       return cb(new Error(`Error downloading torrent: ${err.message}`));
     }
-  } else if (typeof fs4.readFile === "function" && typeof torrentId === "string") {
-    fs4.readFile(torrentId, (err, torrentBuf) => {
+  } else if (typeof import_fs3.default.readFile === "function" && typeof torrentId === "string") {
+    import_fs3.default.readFile(torrentId, (err, torrentBuf) => {
       if (err) return cb(new Error("Invalid torrent identifier"));
       parseOrThrow(torrentBuf);
     });
@@ -39228,7 +39227,7 @@ async function decodeTorrentFile(torrent) {
     const parts = [].concat(result.name, file["path.utf-8"] || file.path || []).map((p) => ArrayBuffer.isView(p) ? arr2text(p) : p);
     sum += file.length;
     return {
-      path: path.join.apply(null, [path.sep].concat(parts)).slice(1),
+      path: import_path3.default.join.apply(null, [import_path3.default.sep].concat(parts)).slice(1),
       name: parts[parts.length - 1],
       length: file.length,
       offset: sum - file.length
@@ -39285,15 +39284,16 @@ var toMagnetURI = magnetURIEncode;
 var import_debug2 = __toESM(require_src(), 1);
 
 // node_modules/node-datachannel/dist/esm/lib/node-datachannel.mjs
-import cjsUrl from "node:url";
-import cjsPath from "node:path";
-import cjsModule from "node:module";
-var __filename2 = cjsUrl.fileURLToPath(import.meta.url);
-var __dirname2 = cjsPath.dirname(__filename2);
-var require2 = cjsModule.createRequire(import.meta.url);
 var nodeDataChannel;
-try { nodeDataChannel = require2("../../../build/Release/node_datachannel.node"); }
-catch(e) { console.warn("WebTorrent: node-datachannel not available:", e.message); nodeDataChannel = {}; }
+try {
+  var import_node_url2 = __toESM(require("node:url"), 1);
+  var import_node_path = __toESM(require("node:path"), 1);
+  var import_node_module = __toESM(require("node:module"), 1);
+  var __filename2 = __filename;
+  var __dirname2 = __dirname;
+  var require2 = require;
+  nodeDataChannel = require2("../../../build/Release/node_datachannel.node");
+} catch(e) { console.warn("WebTorrent: node-datachannel not available:", e.message); nodeDataChannel = {}; }
 
 // node_modules/node-datachannel/dist/esm/lib/websocket-server.mjs
 var _server;
@@ -39454,7 +39454,7 @@ var RTCErrorEvent = class extends Event {
 };
 
 // node_modules/webrtc-polyfill/lib/Blob.js
-var _Blob2 = globalThis.Blob || (await import("node:buffer")).Blob;
+var _Blob2 = globalThis.Blob || require("buffer").Blob;
 var Blob_default = _Blob2;
 
 // node_modules/webrtc-polyfill/lib/RTCDataChannel.js
@@ -39739,11 +39739,11 @@ var RTCIceCandidate = class {
 };
 
 // node_modules/webrtc-polyfill/lib/MediaStream.js
-import { Readable } from "node:stream";
+var import_node_stream3 = require("node:stream");
 var MediaStreamTrack = class extends EventTarget {
   media;
   track;
-  stream = new Readable({ read: () => {
+  stream = new import_node_stream3.Readable({ read: () => {
   } });
   #kind;
   #label;
@@ -41313,14 +41313,14 @@ var import_speed_limiter = __toESM(require_speed_limiter(), 1);
 var import_unordered_array_remove = __toESM(require_unordered_array_remove(), 1);
 
 // node_modules/default-gateway/index.js
-import { isIP as isIP2 } from "node:net";
+var import_node_net2 = require("node:net");
 
 // node_modules/execa/index.js
+var import_node_buffer4 = require("node:buffer");
+var import_node_path3 = __toESM(require("node:path"), 1);
+var import_node_child_process3 = __toESM(require("node:child_process"), 1);
+var import_node_process4 = __toESM(require("node:process"), 1);
 var import_cross_spawn = __toESM(require_cross_spawn(), 1);
-import { Buffer as Buffer5 } from "node:buffer";
-import path3 from "node:path";
-import childProcess from "node:child_process";
-import process5 from "node:process";
 
 // node_modules/strip-final-newline/index.js
 function stripFinalNewline(input) {
@@ -41336,9 +41336,9 @@ function stripFinalNewline(input) {
 }
 
 // node_modules/npm-run-path/index.js
-import process2 from "node:process";
-import path2 from "node:path";
-import { fileURLToPath } from "node:url";
+var import_node_process = __toESM(require("node:process"), 1);
+var import_node_path2 = __toESM(require("node:path"), 1);
+var import_node_url3 = require("node:url");
 
 // node_modules/npm-run-path/node_modules/path-key/index.js
 function pathKey(options = {}) {
@@ -41354,14 +41354,14 @@ function pathKey(options = {}) {
 
 // node_modules/npm-run-path/index.js
 var npmRunPath = ({
-  cwd = process2.cwd(),
-  path: pathOption = process2.env[pathKey()],
+  cwd = import_node_process.default.cwd(),
+  path: pathOption = import_node_process.default.env[pathKey()],
   preferLocal = true,
-  execPath = process2.execPath,
+  execPath = import_node_process.default.execPath,
   addExecPath = true
 } = {}) => {
-  const cwdString = cwd instanceof URL ? fileURLToPath(cwd) : cwd;
-  const cwdPath = path2.resolve(cwdString);
+  const cwdString = cwd instanceof URL ? (0, import_node_url3.fileURLToPath)(cwd) : cwd;
+  const cwdPath = import_node_path2.default.resolve(cwdString);
   const result = [];
   if (preferLocal) {
     applyPreferLocal(result, cwdPath);
@@ -41369,21 +41369,21 @@ var npmRunPath = ({
   if (addExecPath) {
     applyExecPath(result, execPath, cwdPath);
   }
-  return [...result, pathOption].join(path2.delimiter);
+  return [...result, pathOption].join(import_node_path2.default.delimiter);
 };
 var applyPreferLocal = (result, cwdPath) => {
   let previous;
   while (previous !== cwdPath) {
-    result.push(path2.join(cwdPath, "node_modules/.bin"));
+    result.push(import_node_path2.default.join(cwdPath, "node_modules/.bin"));
     previous = cwdPath;
-    cwdPath = path2.resolve(cwdPath, "..");
+    cwdPath = import_node_path2.default.resolve(cwdPath, "..");
   }
 };
 var applyExecPath = (result, execPath, cwdPath) => {
-  const execPathString = execPath instanceof URL ? fileURLToPath(execPath) : execPath;
-  result.push(path2.resolve(cwdPath, execPathString, ".."));
+  const execPathString = execPath instanceof URL ? (0, import_node_url3.fileURLToPath)(execPath) : execPath;
+  result.push(import_node_path2.default.resolve(cwdPath, execPathString, ".."));
 };
-var npmRunPathEnv = ({ env = process2.env, ...options } = {}) => {
+var npmRunPathEnv = ({ env = import_node_process.default.env, ...options } = {}) => {
   env = { ...env };
   const pathName = pathKey({ env });
   options.path = env[pathName];
@@ -41468,10 +41468,10 @@ onetime.callCount = (function_) => {
 var onetime_default = onetime;
 
 // node_modules/execa/lib/error.js
-import process3 from "node:process";
+var import_node_process2 = __toESM(require("node:process"), 1);
 
 // node_modules/human-signals/build/src/main.js
-import { constants as constants2 } from "node:os";
+var import_node_os2 = require("node:os");
 
 // node_modules/human-signals/build/src/realtime.js
 var getRealtimeSignals = () => {
@@ -41489,7 +41489,7 @@ var SIGRTMIN = 34;
 var SIGRTMAX = 64;
 
 // node_modules/human-signals/build/src/signals.js
-import { constants } from "node:os";
+var import_node_os = require("node:os");
 
 // node_modules/human-signals/build/src/core.js
 var SIGNALS = [
@@ -41780,7 +41780,7 @@ var normalizeSignal = ({
 }) => {
   const {
     signals: { [name]: constantSignal }
-  } = constants;
+  } = import_node_os.constants;
   const supported = constantSignal !== void 0;
   const number = supported ? constantSignal : defaultNumber;
   return { name, number, description, supported, action, forced, standard };
@@ -41826,7 +41826,7 @@ var getSignalByNumber = (number, signals) => {
   };
 };
 var findSignalByNumber = (number, signals) => {
-  const signal = signals.find(({ name }) => constants2.signals[name] === number);
+  const signal = signals.find(({ name }) => import_node_os2.constants.signals[name] === number);
   if (signal !== void 0) {
     return signal;
   }
@@ -41865,7 +41865,7 @@ var makeError = ({
   timedOut,
   isCanceled,
   killed,
-  parsed: { options: { timeout, cwd = process3.cwd() } }
+  parsed: { options: { timeout, cwd = import_node_process2.default.cwd() } }
 }) => {
   exitCode = exitCode === null ? void 0 : exitCode;
   signal = signal === null ? void 0 : signal;
@@ -41930,8 +41930,8 @@ var normalizeStdio = (options) => {
 };
 
 // node_modules/execa/lib/kill.js
+var import_node_os3 = __toESM(require("node:os"), 1);
 var import_signal_exit = __toESM(require_signal_exit(), 1);
-import os from "node:os";
 var DEFAULT_FORCE_KILL_TIMEOUT = 1e3 * 5;
 var spawnedKill = (kill, signal = "SIGTERM", options = {}) => {
   const killResult = kill(signal);
@@ -41951,7 +41951,7 @@ var setKillTimeout = (kill, signal, options, killResult) => {
   }
 };
 var shouldForceKill = (signal, { forceKillAfterTimeout }, killResult) => isSigterm(signal) && forceKillAfterTimeout !== false && killResult;
-var isSigterm = (signal) => signal === os.constants.signals.SIGTERM || typeof signal === "string" && signal.toUpperCase() === "SIGTERM";
+var isSigterm = (signal) => signal === import_node_os3.default.constants.signals.SIGTERM || typeof signal === "string" && signal.toUpperCase() === "SIGTERM";
 var getForceKillAfterTimeout = ({ forceKillAfterTimeout = true }) => {
   if (forceKillAfterTimeout === true) {
     return DEFAULT_FORCE_KILL_TIMEOUT;
@@ -42004,8 +42004,8 @@ var setExitHandler = async (spawned, { cleanup, detached }, timedPromise) => {
 };
 
 // node_modules/execa/lib/pipe.js
-import { createWriteStream } from "node:fs";
-import { ChildProcess } from "node:child_process";
+var import_node_fs2 = require("node:fs");
+var import_node_child_process = require("node:child_process");
 
 // node_modules/is-stream/index.js
 function isStream(stream) {
@@ -42016,10 +42016,10 @@ function isWritableStream(stream) {
 }
 
 // node_modules/execa/lib/pipe.js
-var isExecaChildProcess = (target) => target instanceof ChildProcess && typeof target.then === "function";
+var isExecaChildProcess = (target) => target instanceof import_node_child_process.ChildProcess && typeof target.then === "function";
 var pipeToTarget = (spawned, streamName, target) => {
   if (typeof target === "string") {
-    spawned[streamName].pipe(createWriteStream(target));
+    spawned[streamName].pipe((0, import_node_fs2.createWriteStream)(target));
     return spawned;
   }
   if (isWritableStream(target)) {
@@ -42048,7 +42048,7 @@ var addPipeMethods = (spawned) => {
 };
 
 // node_modules/execa/lib/stream.js
-import { createReadStream as createReadStream2, readFileSync } from "node:fs";
+var import_node_fs3 = require("node:fs");
 var import_get_stream = __toESM(require_get_stream(), 1);
 var import_merge_stream = __toESM(require_merge_stream(), 1);
 var validateInputOptions = (input) => {
@@ -42061,7 +42061,7 @@ var getInputSync = ({ input, inputFile }) => {
     return input;
   }
   validateInputOptions(input);
-  return readFileSync(inputFile);
+  return (0, import_node_fs3.readFileSync)(inputFile);
 };
 var handleInputSync = (options) => {
   const input = getInputSync(options);
@@ -42075,7 +42075,7 @@ var getInput = ({ input, inputFile }) => {
     return input;
   }
   validateInputOptions(input);
-  return createReadStream2(inputFile);
+  return (0, import_node_fs3.createReadStream)(inputFile);
 };
 var handleInput = (spawned, options) => {
   const input = getInput(options);
@@ -42165,8 +42165,8 @@ var getSpawnedPromise = (spawned) => new Promise((resolve2, reject) => {
 });
 
 // node_modules/execa/lib/command.js
-import { Buffer as Buffer4 } from "node:buffer";
-import { ChildProcess as ChildProcess2 } from "node:child_process";
+var import_node_buffer3 = require("node:buffer");
+var import_node_child_process2 = require("node:child_process");
 var normalizeArgs = (file, args = []) => {
   if (!Array.isArray(args)) {
     return [file];
@@ -42192,12 +42192,12 @@ var parseExpression = (expression) => {
   if (typeOfExpression === "number") {
     return String(expression);
   }
-  if (typeOfExpression === "object" && expression !== null && !(expression instanceof ChildProcess2) && "stdout" in expression) {
+  if (typeOfExpression === "object" && expression !== null && !(expression instanceof import_node_child_process2.ChildProcess) && "stdout" in expression) {
     const typeOfStdout = typeof expression.stdout;
     if (typeOfStdout === "string") {
       return expression.stdout;
     }
-    if (Buffer4.isBuffer(expression.stdout)) {
+    if (import_node_buffer3.Buffer.isBuffer(expression.stdout)) {
       return expression.stdout.toString();
     }
     throw new TypeError(`Unexpected "${typeOfStdout}" stdout in template expression`);
@@ -42237,9 +42237,9 @@ var parseTemplates = (templates, expressions) => {
 };
 
 // node_modules/execa/lib/verbose.js
-import { debuglog } from "node:util";
-import process4 from "node:process";
-var verboseDefault = debuglog("execa").enabled;
+var import_node_util4 = require("node:util");
+var import_node_process3 = __toESM(require("node:process"), 1);
+var verboseDefault = (0, import_node_util4.debuglog)("execa").enabled;
 var padField = (field, padding) => String(field).padStart(padding, "0");
 var getTimestamp = () => {
   const date = /* @__PURE__ */ new Date();
@@ -42249,14 +42249,14 @@ var logCommand = (escapedCommand, { verbose }) => {
   if (!verbose) {
     return;
   }
-  process4.stderr.write(`[${getTimestamp()}] ${escapedCommand}
+  import_node_process3.default.stderr.write(`[${getTimestamp()}] ${escapedCommand}
 `);
 };
 
 // node_modules/execa/index.js
 var DEFAULT_MAX_BUFFER = 1e3 * 1e3 * 100;
 var getEnv = ({ env: envOption, extendEnv, preferLocal, localDir, execPath }) => {
-  const env = extendEnv ? { ...process5.env, ...envOption } : envOption;
+  const env = extendEnv ? { ...import_node_process4.default.env, ...envOption } : envOption;
   if (preferLocal) {
     return npmRunPathEnv({ env, cwd: localDir, execPath });
   }
@@ -42273,8 +42273,8 @@ var handleArguments = (file, args, options = {}) => {
     stripFinalNewline: true,
     extendEnv: true,
     preferLocal: false,
-    localDir: options.cwd || process5.cwd(),
-    execPath: process5.execPath,
+    localDir: options.cwd || import_node_process4.default.cwd(),
+    execPath: import_node_process4.default.execPath,
     encoding: "utf8",
     reject: true,
     cleanup: true,
@@ -42285,13 +42285,13 @@ var handleArguments = (file, args, options = {}) => {
   };
   options.env = getEnv(options);
   options.stdio = normalizeStdio(options);
-  if (process5.platform === "win32" && path3.basename(file, ".exe") === "cmd") {
+  if (import_node_process4.default.platform === "win32" && import_node_path3.default.basename(file, ".exe") === "cmd") {
     args.unshift("/q");
   }
   return { file, args, options, parsed };
 };
 var handleOutput = (options, value, error) => {
-  if (typeof value !== "string" && !Buffer5.isBuffer(value)) {
+  if (typeof value !== "string" && !import_node_buffer4.Buffer.isBuffer(value)) {
     return error === void 0 ? void 0 : "";
   }
   if (options.stripFinalNewline) {
@@ -42307,9 +42307,9 @@ function execa(file, args, options) {
   validateTimeout(parsed.options);
   let spawned;
   try {
-    spawned = childProcess.spawn(parsed.file, parsed.args, parsed.options);
+    spawned = import_node_child_process3.default.spawn(parsed.file, parsed.args, parsed.options);
   } catch (error) {
-    const dummySpawned = new childProcess.ChildProcess();
+    const dummySpawned = new import_node_child_process3.default.ChildProcess();
     const errorPromise = Promise.reject(makeError({
       error,
       stdout: "",
@@ -42384,7 +42384,7 @@ function execaSync(file, args, options) {
   const input = handleInputSync(parsed.options);
   let result;
   try {
-    result = childProcess.spawnSync(parsed.file, parsed.args, { ...parsed.options, input });
+    result = import_node_child_process3.default.spawnSync(parsed.file, parsed.args, { ...parsed.options, input });
   } catch (error) {
     throw makeError({
       error,
@@ -42458,8 +42458,8 @@ function create$(options) {
 var $ = create$();
 
 // node_modules/default-gateway/index.js
-import { platform, type, release, networkInterfaces } from "node:os";
-var plat = platform();
+var import_node_os4 = require("node:os");
+var plat = (0, import_node_os4.platform)();
 var dests = /* @__PURE__ */ new Set(["default", "0.0.0.0", "0.0.0.0/0", "::", "::/0"]);
 var promise;
 var sync;
@@ -42469,13 +42469,13 @@ if (plat === "linux") {
       const results = /default( via .+?)?( dev .+?)( |$)/.exec(line) || [];
       const gateway = (results[1] || "").substring(5);
       const iface = (results[2] || "").substring(5);
-      if (gateway && isIP2(gateway)) {
+      if (gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       } else if (iface && !gateway) {
-        const interfaces = networkInterfaces();
+        const interfaces = (0, import_node_os4.networkInterfaces)();
         const addresses = interfaces[iface];
         for (const addr of addresses || []) {
-          if (Number(family.substring(3)) === family && isIP2(addr.address)) {
+          if (Number(family.substring(3)) === family && (0, import_node_net2.isIP)(addr.address)) {
             return { gateway: addr.address, version: family, int: iface ?? null };
           }
         }
@@ -42492,14 +42492,14 @@ if (plat === "linux") {
     return parse(stdout, family);
   };
 } else if (plat === "darwin") {
-  const v4IfaceColumn = parseInt(release()) >= 19 ? 3 : 5;
+  const v4IfaceColumn = parseInt((0, import_node_os4.release)()) >= 19 ? 3 : 5;
   const parse = (stdout, family) => {
     for (const line of (stdout || "").trim().split("\n")) {
       const results = line.split(/ +/) || [];
       const target = results[0];
       const gateway = results[1];
       const iface = results[family === 4 ? v4IfaceColumn : 3];
-      if (dests.has(target) && gateway && isIP2(gateway)) {
+      if (dests.has(target) && gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       }
     }
@@ -42523,7 +42523,7 @@ if (plat === "linux") {
       const gateways = (gwArr.match(/"(.+?)"/g) || []).map((match) => match.substring(1, match.length - 1));
       const gatewayCosts = gwCostsArr.match(/[0-9]+/g) || [];
       for (const [index, gateway] of Object.entries(gateways)) {
-        if (!gateway || isIP2(gateway) !== family) continue;
+        if (!gateway || (0, import_node_net2.isIP)(gateway) !== family) continue;
         const metric = parseInt(gatewayCosts[index]) + parseInt(ipMetric);
         if (!bestGw || metric < bestMetric) {
           [bestGw, bestMetric, bestId] = [gateway, metric, id];
@@ -42535,7 +42535,7 @@ if (plat === "linux") {
     const line = (ifTable || "").trim().split("\n")[1];
     let [mac, name] = line.trim().split(/\s+/);
     mac = mac.toLowerCase();
-    for (const [osname, addrs2] of Object.entries(networkInterfaces())) {
+    for (const [osname, addrs2] of Object.entries((0, import_node_os4.networkInterfaces)())) {
       for (const addr of addrs2) {
         if (addr?.mac?.toLowerCase() === mac) {
           return osname;
@@ -42575,7 +42575,7 @@ if (plat === "linux") {
   const parse = (stdout, family) => {
     for (const line of (stdout || "").trim().split("\n")) {
       const [_, gateway, iface] = /default via (.+?) dev (.+?)( |$)/.exec(line) || [];
-      if (gateway && isIP2(gateway)) {
+      if (gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       }
     }
@@ -42593,7 +42593,7 @@ if (plat === "linux") {
   const parse = (stdout, family) => {
     for (const line of (stdout || "").trim().split("\n")) {
       const [target, gateway, _, iface] = line.split(/ +/) || [];
-      if (dests.has(target) && gateway && isIP2(gateway)) {
+      if (dests.has(target) && gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       }
     }
@@ -42607,7 +42607,7 @@ if (plat === "linux") {
     const { stdout } = execaSync("netstat", ["-rn", "-f", family === 4 ? "inet" : "inet6"]);
     return parse(stdout, family);
   };
-} else if (plat === "aix" && type() === "OS400") {
+} else if (plat === "aix" && (0, import_node_os4.type)() === "OS400") {
   const db2util = "/QOpenSys/pkgs/bin/db2util";
   const sql = "select NEXT_HOP, LOCAL_BINDING_INTERFACE from QSYS2.NETSTAT_ROUTE_INFO where ROUTE_TYPE='DFTROUTE' and NEXT_HOP!='*DIRECT' and CONNECTION_TYPE=?";
   const parse = (stdout, family) => {
@@ -42635,7 +42635,7 @@ if (plat === "linux") {
       const target = results[0];
       const gateway = results[1];
       const iface = results[7];
-      if (dests.has(target) && gateway && isIP2(gateway)) {
+      if (dests.has(target) && gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       }
     }
@@ -42649,14 +42649,14 @@ if (plat === "linux") {
     const { stdout } = execaSync("netstat", ["-rn", "-f", family === 4 ? "inet" : "inet6"]);
     return parse(stdout, family);
   };
-} else if (plat === "sunos" || plat === "aix" && type() !== "OS400") {
+} else if (plat === "sunos" || plat === "aix" && (0, import_node_os4.type)() !== "OS400") {
   const parse = (stdout, family) => {
     for (const line of (stdout || "").trim().split("\n")) {
       const results = line.split(/ +/) || [];
       const target = results[0];
       const gateway = results[1];
       const iface = results[5];
-      if (dests.has(target) && gateway && isIP2(gateway)) {
+      if (dests.has(target) && gateway && (0, import_node_net2.isIP)(gateway)) {
         return { gateway, version: family, int: iface ?? null };
       }
     }
@@ -42684,8 +42684,8 @@ var gateway4sync = () => sync(4);
 var import_debug4 = __toESM(require_src(), 1);
 
 // node_modules/@silentbot1/nat-api/lib/upnp/ssdp.js
-import dgram from "dgram";
-import os2 from "os";
+var import_dgram = __toESM(require("dgram"), 1);
+var import_os = __toESM(require("os"), 1);
 
 // node_modules/@silentbot1/nat-api/lib/upnp/device.js
 var import_xml2js = __toESM(require_xml2js(), 1);
@@ -42827,10 +42827,10 @@ var Device = class {
 };
 
 // node_modules/@silentbot1/nat-api/lib/upnp/ssdp.js
-import { EventEmitter as EventEmitter2, once as once3 } from "events";
+var import_events2 = require("events");
 var MULTICAST_IP_ADDRESS = "239.255.255.250";
 var MULTICAST_PORT = 1900;
-var Ssdp = class extends EventEmitter2 {
+var Ssdp = class extends import_events2.EventEmitter {
   constructor(opts) {
     super();
     opts = opts || {};
@@ -42848,7 +42848,7 @@ var Ssdp = class extends EventEmitter2 {
   }
   createSockets() {
     if (this._destroyed) throw new Error("client is destroyed");
-    const interfaces = os2.networkInterfaces();
+    const interfaces = import_os.default.networkInterfaces();
     this.sockets = [];
     for (const key in interfaces) {
       interfaces[key].filter((item) => {
@@ -42870,7 +42870,7 @@ var Ssdp = class extends EventEmitter2 {
         reject(err);
       }, timeoutms).unref?.();
     });
-    const event = once3(this, "_device");
+    const event = (0, import_events2.once)(this, "_device");
     this.sockets.forEach((socket) => {
       socket.send(query, 0, query.length, this.port, this.multicast);
     });
@@ -42880,7 +42880,7 @@ var Ssdp = class extends EventEmitter2 {
   }
   createSocket(interf) {
     if (this._destroyed) throw new Error("client is destroyed");
-    let socket = dgram.createSocket(interf.family === "IPv4" ? "udp4" : "udp6");
+    let socket = import_dgram.default.createSocket(interf.family === "IPv4" ? "udp4" : "udp6");
     socket.on("message", (message, info) => {
       if (this._destroyed) return;
       this._parseResponse(message.toString(), socket.address, info);
@@ -43103,9 +43103,9 @@ var Client = class {
 };
 
 // node_modules/@silentbot1/nat-api/lib/pmp/index.js
+var import_dgram2 = __toESM(require("dgram"), 1);
 var import_debug3 = __toESM(require_src(), 1);
-import dgram2 from "dgram";
-import { EventEmitter as EventEmitter3 } from "events";
+var import_events3 = require("events");
 var debug3 = (0, import_debug3.default)("nat-pmp");
 var CLIENT_PORT = 5350;
 var SERVER_PORT = 5351;
@@ -43121,7 +43121,7 @@ var RESULT_CODES = {
   4: "Out of Resources (no ports left)",
   5: "Unsupported opcode"
 };
-var Client2 = class extends EventEmitter3 {
+var Client2 = class extends import_events3.EventEmitter {
   constructor(gateway) {
     super();
     if (!gateway) throw new Error("gateway is not defined");
@@ -43131,7 +43131,7 @@ var Client2 = class extends EventEmitter3 {
     this._listening = false;
     this._req = null;
     this._reqActive = false;
-    this.socket = dgram2.createSocket({ type: "udp4", reuseAddr: true });
+    this.socket = import_dgram2.default.createSocket({ type: "udp4", reuseAddr: true });
     this.socket.on("listening", this.onListening.bind(this));
     this.socket.on("message", this.onMessage.bind(this));
     this.socket.on("close", this.onClose.bind(this));
@@ -43785,11 +43785,11 @@ var NatAPI = class {
 };
 
 // node_modules/webtorrent/lib/conn-pool.js
+var import_net = __toESM(require("net"), 1);
 var import_debug7 = __toESM(require_src(), 1);
 var import_queue_microtask4 = __toESM(require_queue_microtask(), 1);
 init_peer();
 var import_utp = __toESM(require_utp(), 1);
-import net from "net";
 var debug7 = (0, import_debug7.default)("webtorrent:conn-pool");
 var ConnPool = class {
   constructor(client) {
@@ -43813,7 +43813,7 @@ var ConnPool = class {
       this._client.emit("error", err);
       if (!this._client.listening) this._onListening();
     };
-    this.tcpServer = net.createServer();
+    this.tcpServer = import_net.default.createServer();
     this.tcpServer.on("connection", this._onTCPConnectionBound);
     this.tcpServer.on("error", this._onTCPError);
     this.tcpServer.listen(client.torrentPort, () => {
@@ -43921,11 +43921,11 @@ function noop3() {
 }
 
 // node_modules/webtorrent/lib/torrent.js
-import EventEmitter15 from "events";
-import fs5 from "fs";
-import net2 from "net";
-import os4 from "os";
-import path4 from "path";
+var import_events15 = __toESM(require("events"), 1);
+var import_fs5 = __toESM(require("fs"), 1);
+var import_net2 = __toESM(require("net"), 1);
+var import_os3 = __toESM(require("os"), 1);
+var import_path5 = __toESM(require("path"), 1);
 
 // node_modules/addr-to-ip-port/index.js
 var ADDR_RE = /^\[?([^\]]+)]?:(\d+)$/;
@@ -44008,14 +44008,14 @@ var import_debug21 = __toESM(require_src(), 1);
 
 // node_modules/torrent-discovery/index.js
 var import_debug16 = __toESM(require_src(), 1);
+var import_events9 = require("events");
 var import_run_parallel4 = __toESM(require_run_parallel(), 1);
-import { EventEmitter as EventEmitter9 } from "events";
 
 // node_modules/bittorrent-tracker/client.js
 var import_debug12 = __toESM(require_src(), 1);
+var import_events6 = __toESM(require("events"), 1);
 var import_once3 = __toESM(require_once(), 1);
 var import_run_parallel3 = __toESM(require_run_parallel(), 1);
-import EventEmitter6 from "events";
 var import_queue_microtask6 = __toESM(require_queue_microtask(), 1);
 init_node();
 
@@ -44036,8 +44036,8 @@ __export(common_node_exports, {
   querystringStringify: () => querystringStringify,
   toUInt32: () => toUInt32
 });
+var import_querystring = __toESM(require("querystring"), 1);
 init_node();
-import querystring from "querystring";
 var IPV4_RE = /^[\d.]+$/;
 var IPV6_RE = /^[\da-fA-F:]+$/;
 var REMOVE_IPV4_MAPPED_IPV6_RE = /^::ffff:/;
@@ -44066,9 +44066,9 @@ function toUInt32(n) {
   view.setUint32(0, n);
   return buf;
 }
-var querystringParse = (q) => querystring.parse(q, null, null, { decodeURIComponent: unescape });
+var querystringParse = (q) => import_querystring.default.parse(q, null, null, { decodeURIComponent: unescape });
 var querystringStringify = (obj) => {
-  let ret = querystring.stringify(obj, null, null, { encodeURIComponent: escape });
+  let ret = import_querystring.default.stringify(obj, null, null, { encodeURIComponent: escape });
   ret = ret.replace(/[@*/+]/g, (char) => (
     // `escape` doesn't encode the characters @*/+ so we do it manually
     `%${char.charCodeAt(0).toString(16).toUpperCase()}`
@@ -44104,8 +44104,8 @@ var import_debug8 = __toESM(require_src(), 1);
 init_node();
 
 // node_modules/bittorrent-tracker/lib/client/tracker.js
-import EventEmitter5 from "events";
-var Tracker = class extends EventEmitter5 {
+var import_events5 = __toESM(require("events"), 1);
+var Tracker = class extends import_events5.default {
   constructor(client, announceUrl) {
     super();
     this.client = client;
@@ -44331,9 +44331,9 @@ var http_tracker_default = HTTPTracker;
 // node_modules/bittorrent-tracker/lib/client/udp-tracker.js
 var import_unordered_array_remove5 = __toESM(require_unordered_array_remove(), 1);
 var import_debug9 = __toESM(require_src(), 1);
+var import_dgram3 = __toESM(require("dgram"), 1);
 var import_socks = __toESM(require_build(), 1);
 init_node();
-import dgram3 from "dgram";
 var import_compact2string2 = __toESM(require_compact2string(), 1);
 var debug9 = (0, import_debug9.default)("bittorrent-tracker:udp-tracker");
 var clone2 = (obj) => JSON.parse(JSON.stringify(obj));
@@ -44410,7 +44410,7 @@ var UDPTracker = class extends tracker_default {
     function onGotConnection(err, s2, info) {
       if (err) return onError(err);
       proxySocket = s2;
-      socket = dgram3.createSocket("udp4");
+      socket = import_dgram3.default.createSocket("udp4");
       relay = info;
       timeout = setTimeout(() => {
         if (opts.event === "stopped") cleanup();
@@ -45149,7 +45149,7 @@ var websocket_tracker_default = WebSocketTracker;
 
 // node_modules/bittorrent-tracker/client.js
 var debug12 = (0, import_debug12.default)("bittorrent-tracker:client");
-var Client3 = class extends EventEmitter6 {
+var Client3 = class extends import_events6.default {
   constructor(opts = {}) {
     super();
     if (!opts.peerId) throw new Error("Option `peerId` is required");
@@ -45352,11 +45352,11 @@ var client_default2 = Client3;
 // node_modules/bittorrent-tracker/server.js
 init_bencode();
 var import_debug14 = __toESM(require_src(), 1);
+var import_dgram4 = __toESM(require("dgram"), 1);
+var import_events7 = __toESM(require("events"), 1);
+var import_http = __toESM(require("http"), 1);
 var import_bittorrent_peerid = __toESM(require_bittorrent_peerid(), 1);
 var import_run_series = __toESM(require_run_series(), 1);
-import dgram4 from "dgram";
-import EventEmitter7 from "events";
-import http3 from "http";
 
 // node_modules/string2compact/index.js
 var import_ipaddr = __toESM(require_ipaddr2(), 1);
@@ -45705,7 +45705,7 @@ function parse_websocket_default(socket, opts, params) {
 // node_modules/bittorrent-tracker/server.js
 var debug14 = (0, import_debug14.default)("bittorrent-tracker:server");
 var hasOwnProperty = Object.prototype.hasOwnProperty;
-var Server = class _Server extends EventEmitter7 {
+var Server = class _Server extends import_events7.default {
   constructor(opts = {}) {
     super();
     debug14("new server %s", JSON.stringify(opts));
@@ -45723,7 +45723,7 @@ var Server = class _Server extends EventEmitter7 {
     this.udp6 = null;
     this.ws = null;
     if (opts.http !== false) {
-      this.http = http3.createServer(isObject(opts.http) ? opts.http : void 0);
+      this.http = import_http.default.createServer(isObject(opts.http) ? opts.http : void 0);
       this.http.on("error", (err) => {
         this._onError(err);
       });
@@ -45736,7 +45736,7 @@ var Server = class _Server extends EventEmitter7 {
       });
     }
     if (opts.udp !== false) {
-      this.udp4 = this.udp = dgram4.createSocket({
+      this.udp4 = this.udp = import_dgram4.default.createSocket({
         type: "udp4",
         reuseAddr: true,
         ...isObject(opts.udp) ? opts.udp : void 0
@@ -45748,7 +45748,7 @@ var Server = class _Server extends EventEmitter7 {
         this._onError(err);
       });
       this.udp4.on("listening", onListening);
-      this.udp6 = dgram4.createSocket({
+      this.udp6 = import_dgram4.default.createSocket({
         type: "udp6",
         reuseAddr: true,
         ...isObject(opts.udp) ? opts.udp : void 0
@@ -45764,7 +45764,7 @@ var Server = class _Server extends EventEmitter7 {
     if (opts.ws !== false) {
       const noServer = isObject(opts.ws) && opts.ws.noServer;
       if (!this.http && !noServer) {
-        this.http = http3.createServer();
+        this.http = import_http.default.createServer();
         this.http.on("error", (err) => {
           this._onError(err);
         });
@@ -45799,7 +45799,7 @@ var Server = class _Server extends EventEmitter7 {
     }
     if (opts.stats !== false) {
       if (!this.http) {
-        this.http = http3.createServer();
+        this.http = import_http.default.createServer();
         this.http.on("error", (err) => {
           this._onError(err);
         });
@@ -46354,14 +46354,14 @@ function noop6() {
 }
 
 // node_modules/bittorrent-lsd/index.js
+var import_dgram5 = __toESM(require("dgram"), 1);
+var import_events8 = require("events");
 var import_debug15 = __toESM(require_src(), 1);
-import dgram5 from "dgram";
-import { EventEmitter as EventEmitter8 } from "events";
 var debug15 = (0, import_debug15.default)("bittorrent-lsd");
 var ANNOUNCE_INTERVAL = 3e5;
 var LSD_HOST = "239.192.152.143";
 var LSD_PORT = 6771;
-var LSD = class extends EventEmitter8 {
+var LSD = class extends import_events8.EventEmitter {
   constructor(opts = {}) {
     super();
     if (!opts.peerId) throw new Error("Option `peerId` is required");
@@ -46373,7 +46373,7 @@ var LSD = class extends EventEmitter8 {
     this.cookie = `bittorrent-lsd-${this.peerId}`;
     this.destroyed = false;
     this.annouceIntervalId = null;
-    this.server = dgram5.createSocket({ type: "udp4", reuseAddr: true });
+    this.server = import_dgram5.default.createSocket({ type: "udp4", reuseAddr: true });
     const onListening = () => {
       debug15("listening");
       try {
@@ -46470,7 +46470,7 @@ var bittorrent_lsd_default = LSD;
 
 // node_modules/torrent-discovery/index.js
 var debug16 = (0, import_debug16.default)("torrent-discovery");
-var Discovery = class extends EventEmitter9 {
+var Discovery = class extends import_events9.EventEmitter {
   constructor(opts) {
     super();
     if (!opts.peerId) throw new Error("Option `peerId` is required");
@@ -46648,14 +46648,14 @@ var Discovery = class extends EventEmitter9 {
 var torrent_discovery_default = Discovery;
 
 // node_modules/fs-chunk-store/index.js
+var import_fs4 = require("fs");
+var import_os2 = __toESM(require("os"), 1);
 var import_run_parallel5 = __toESM(require_run_parallel(), 1);
+var import_path4 = require("path");
 var import_queue_microtask7 = __toESM(require_queue_microtask(), 1);
 var import_random_access_file = __toESM(require_random_access_file(), 1);
 init_node();
 var import_thunky = __toESM(require_thunky(), 1);
-import { statSync as statSync2, mkdir, rm } from "fs";
-import os3 from "os";
-import { resolve, join, dirname, basename } from "path";
 
 // node_modules/filename-reserved-regex/index.js
 function filenameReservedRegex() {
@@ -46666,15 +46666,15 @@ function filenameReservedRegex() {
 var RESERVED_FILENAME_REGEX = filenameReservedRegex();
 var TMP;
 try {
-  TMP = statSync2("/tmp") && "/tmp";
+  TMP = (0, import_fs4.statSync)("/tmp") && "/tmp";
 } catch (err) {
-  TMP = os3.tmpdir();
+  TMP = import_os2.default.tmpdir();
 }
 var Storage = class {
   constructor(chunkLength, opts = {}) {
     this.chunkLength = Number(chunkLength);
     if (!this.chunkLength) throw new Error("First argument must be a chunk length");
-    this.name = opts.name || join("fs-chunk-store", arr2hex(randomBytes(20)));
+    this.name = opts.name || (0, import_path4.join)("fs-chunk-store", arr2hex(randomBytes(20)));
     this.addUID = opts.addUID;
     if (opts.files) {
       this.path = opts.path;
@@ -46692,12 +46692,12 @@ var Storage = class {
             file.offset = prevFile.offset + prevFile.length;
           }
         }
-        let newPath = dirname(file.path);
-        const filename = basename(file.path);
+        let newPath = (0, import_path4.dirname)(file.path);
+        const filename = (0, import_path4.basename)(file.path);
         if (this.path) {
-          newPath = this.addUID ? resolve(join(this.path, this.name, newPath)) : resolve(join(this.path, newPath));
+          newPath = this.addUID ? (0, import_path4.resolve)((0, import_path4.join)(this.path, this.name, newPath)) : (0, import_path4.resolve)((0, import_path4.join)(this.path, newPath));
         }
-        newPath = join(newPath, filename.replace(RESERVED_FILENAME_REGEX, ""));
+        newPath = (0, import_path4.join)(newPath, filename.replace(RESERVED_FILENAME_REGEX, ""));
         return { path: newPath, length: file.length, offset: file.offset };
       });
       this.length = this.files.reduce((sum, file) => {
@@ -46710,7 +46710,7 @@ var Storage = class {
       const len = Number(opts.length) || Infinity;
       this.files = [{
         offset: 0,
-        path: resolve(opts.path || join(TMP, this.name)),
+        path: (0, import_path4.resolve)(opts.path || (0, import_path4.join)(TMP, this.name)),
         length: len
       }];
       this.length = len;
@@ -46720,7 +46720,7 @@ var Storage = class {
     this.files.forEach((file) => {
       file.open = (0, import_thunky.default)((cb) => {
         if (this.closed) return cb(new Error("Storage is closed"));
-        mkdir(dirname(file.path), { recursive: true }, (err) => {
+        (0, import_fs4.mkdir)((0, import_path4.dirname)(file.path), { recursive: true }, (err) => {
           if (err) return cb(err);
           if (this.closed) return cb(new Error("Storage is closed"));
           cb(null, new import_random_access_file.default(file.path));
@@ -46849,11 +46849,11 @@ var Storage = class {
   destroy(cb) {
     this.close(() => {
       if (this.addUID && this.path) {
-        rm(resolve(join(this.path, this.name)), { recursive: true, maxBusyTries: 10 }, cb);
+        (0, import_fs4.rm)((0, import_path4.resolve)((0, import_path4.join)(this.path, this.name)), { recursive: true, maxBusyTries: 10 }, cb);
       } else {
         const tasks = this.files.map((file) => {
           return (cb2) => {
-            rm(file.path, { recursive: true, maxRetries: 10 }, (err) => {
+            (0, import_fs4.rm)(file.path, { recursive: true, maxRetries: 10 }, (err) => {
               err && err.code === "ENOENT" ? cb2() : cb2(err);
             });
           };
@@ -46876,11 +46876,11 @@ var import_immediate_chunk_store = __toESM(require_immediate_chunk_store(), 1);
 
 // node_modules/lt_donthave/index.js
 var import_unordered_array_remove7 = __toESM(require_unordered_array_remove(), 1);
+var import_events10 = require("events");
 var import_debug17 = __toESM(require_src(), 1);
-import { EventEmitter as EventEmitter10 } from "events";
 var debug17 = (0, import_debug17.default)("lt_donthave");
 var lt_donthave_default = () => {
-  class ltDontHave extends EventEmitter10 {
+  class ltDontHave extends import_events10.EventEmitter {
     constructor(wire) {
       super();
       this._peerSupports = false;
@@ -47033,17 +47033,17 @@ init_node();
 var import_throughput2 = __toESM(require_throughput(), 1);
 
 // node_modules/ut_metadata/index.js
+var import_events11 = require("events");
 init_bencode();
 init_esm();
 var import_debug18 = __toESM(require_src(), 1);
 init_node();
-import { EventEmitter as EventEmitter11 } from "events";
 var debug18 = (0, import_debug18.default)("ut_metadata");
 var MAX_METADATA_SIZE = 1e7;
 var BITFIELD_GROW2 = 1e3;
 var PIECE_LENGTH = 1 << 14;
 var ut_metadata_default = (metadata) => {
-  class utMetadata extends EventEmitter11 {
+  class utMetadata extends import_events11.EventEmitter {
     constructor(wire) {
       super();
       this._wire = wire;
@@ -47225,8 +47225,8 @@ var ut_metadata_default = (metadata) => {
 };
 
 // node_modules/ut_pex/index.js
+var import_events12 = require("events");
 var import_compact2string3 = __toESM(require_compact2string(), 1);
-import { EventEmitter as EventEmitter12 } from "events";
 init_bencode();
 var PEX_INTERVAL = 65e3;
 var PEX_MAX_PEERS = 50;
@@ -47239,7 +47239,7 @@ var FLAGS = {
   isReachable: 16
 };
 var ut_pex_default = () => {
-  class utPex extends EventEmitter12 {
+  class utPex extends import_events12.EventEmitter {
     constructor(wire) {
       super();
       this._wire = wire;
@@ -47444,15 +47444,15 @@ var ut_pex_default = () => {
 };
 
 // node_modules/webtorrent/lib/file.js
+var import_events14 = __toESM(require("events"), 1);
 var import_streamx5 = __toESM(require_streamx2(), 1);
-import EventEmitter14 from "events";
 var import_lite3 = __toESM(require_lite(), 1);
 
 // node_modules/webtorrent/lib/file-iterator.js
 var import_debug19 = __toESM(require_src(), 1);
-import EventEmitter13 from "events";
+var import_events13 = __toESM(require("events"), 1);
 var debug19 = (0, import_debug19.default)("webtorrent:file-iterator");
-var FileIterator = class extends EventEmitter13 {
+var FileIterator = class extends import_events13.default {
   constructor(file, { start, end }) {
     super();
     this._torrent = file._torrent;
@@ -47534,7 +47534,7 @@ var FileIterator = class extends EventEmitter13 {
 };
 
 // node_modules/webtorrent/lib/file.js
-var File4 = class extends EventEmitter14 {
+var File4 = class extends import_events14.default {
   constructor(torrent, file) {
     super();
     this._torrent = torrent;
@@ -48063,12 +48063,12 @@ var SUPPORTS_FSA = globalThis.navigator?.storage?.getDirectory && globalThis.Fil
 var FALLBACK_STORE = !process.browser || SUPPORTS_FSA ? Storage : import_memory_chunk_store.default;
 var TMP2;
 try {
-  TMP2 = path4.join(fs5.statSync("/tmp") && "/tmp", "webtorrent");
+  TMP2 = import_path5.default.join(import_fs5.default.statSync("/tmp") && "/tmp", "webtorrent");
 } catch (err) {
-  TMP2 = path4.join(typeof os4.tmpdir === "function" ? os4.tmpdir() : "/", "webtorrent");
+  TMP2 = import_path5.default.join(typeof import_os3.default.tmpdir === "function" ? import_os3.default.tmpdir() : "/", "webtorrent");
 }
 var IDLE_CALLBACK = typeof window !== "undefined" && typeof window.requestIdleCallback === "function" && window.requestIdleCallback;
-var Torrent = class extends EventEmitter15 {
+var Torrent = class extends import_events15.default {
   /**
    * Start downloading a new torrent.
    * @param {string|ArrayBufferView|Object} torrentId
@@ -48513,8 +48513,8 @@ var Torrent = class extends EventEmitter15 {
   getFileModtimes(cb) {
     const ret = [];
     (0, import_run_parallel_limit.default)(this.files.map((file, index) => (cb2) => {
-      const filePath = this.addUID ? path4.join(this.name + " - " + this.infoHash.slice(0, 8)) : path4.join(this.path, file.path);
-      fs5.stat(filePath, (err, stat2) => {
+      const filePath = this.addUID ? import_path5.default.join(this.name + " - " + this.infoHash.slice(0, 8)) : import_path5.default.join(this.path, file.path);
+      import_fs5.default.stat(filePath, (err, stat2) => {
         if (err && err.code !== "ENOENT") return cb2(err);
         ret[index] = stat2 && stat2.mtime.getTime();
         cb2(null);
@@ -49578,7 +49578,7 @@ var Torrent = class extends EventEmitter15 {
    */
   _drain() {
     this._debug("_drain numConns %s maxConns %s _peersLength %s", this._numConns, this.client.maxConns, this._peersLength);
-    if (typeof net2.connect !== "function" || this.destroyed || this.paused || this._numConns >= this.client.maxConns) {
+    if (typeof import_net2.default.connect !== "function" || this.destroyed || this.paused || this._numConns >= this.client.maxConns) {
       return;
     }
     this._debug("drain (%s queued, %s/%s peers)", this._numQueued, this.numPeers, this.client.maxConns);
@@ -49593,7 +49593,7 @@ var Torrent = class extends EventEmitter15 {
     if (this.client.utp && peer.type === Peer2.TYPE_UTP_OUTGOING) {
       peer.conn = import_utp2.default.connect(opts.port, opts.host);
     } else {
-      peer.conn = net2.connect(opts);
+      peer.conn = import_net2.default.connect(opts);
     }
     const conn = peer.conn;
     conn.once("connect", () => {
@@ -49681,12 +49681,12 @@ function noop8() {
 }
 
 // node_modules/webtorrent/lib/server.js
+var import_http2 = __toESM(require("http"), 1);
 var import_escape_html = __toESM(require_escape_html(), 1);
 var import_pump = __toESM(require_pump(), 1);
 var import_range_parser = __toESM(require_range_parser(), 1);
 var import_queue_microtask9 = __toESM(require_queue_microtask(), 1);
 var import_streamx6 = __toESM(require_streamx2(), 1);
-import http4 from "http";
 var keepAliveTime = 2e4;
 var ServerBase = class _ServerBase {
   constructor(client, opts = {}) {
@@ -49878,7 +49878,7 @@ var ServerBase = class _ServerBase {
 var NodeServer = class extends ServerBase {
   constructor(client, opts) {
     super(client, opts);
-    this.server = http4.createServer();
+    this.server = import_http2.default.createServer();
     this._listen = this.server.listen;
     this.server.listen = this.listen.bind(this);
     this._close = this.server.close;
@@ -50031,7 +50031,7 @@ var import_version3 = __toESM(require_version2(), 1);
 var debug22 = (0, import_debug22.default)("webtorrent");
 var VERSION_STR = import_version3.default.replace(/\d*./g, (v) => `0${v % 100}`.slice(-2)).slice(0, 4);
 var VERSION_PREFIX = `-WW${VERSION_STR}-`;
-var WebTorrent = class _WebTorrent extends EventEmitter16 {
+var WebTorrent = class _WebTorrent extends import_events16.default {
   constructor(opts = {}) {
     super();
     if (typeof opts.peerId === "string") {
@@ -50263,7 +50263,7 @@ var WebTorrent = class _WebTorrent extends EventEmitter16 {
     opts = opts ? Object.assign({}, opts) : {};
     opts.skipVerify = true;
     const isFilePath = typeof input === "string";
-    if (isFilePath) opts.path = path5.dirname(input);
+    if (isFilePath) opts.path = import_path6.default.dirname(input);
     if (!opts.createdBy) opts.createdBy = `WebTorrent/${VERSION_STR}`;
     const onTorrent = (torrent2) => {
       const tasks = [
@@ -50473,9 +50473,6 @@ function isReadable2(obj) {
 function isFileList2(obj) {
   return typeof FileList !== "undefined" && obj instanceof FileList;
 }
-export {
-  WebTorrent as default
-};
 /*! Bundled license information:
 
 uint8-util/util.js:

@@ -54,6 +54,14 @@ ipcMain.handle('select-folder', async (_event, defaultPath) => {
 });
 
 app.whenReady().then(async () => {
+  // Redirect console.error/log to log file in packaged builds
+  if (app.isPackaged) {
+    const origError = console.error;
+    const origLog = console.log;
+    console.error = (...args) => { logLine('[ERROR] ' + args.join(' ')); origError.apply(console, args); };
+    console.log = (...args) => { logLine('[LOG] ' + args.join(' ')); origLog.apply(console, args); };
+  }
+
   try {
     // In packaged builds, avoid hardcoding :3000 (often already in use).
     // Port 0 lets the OS choose a free port.

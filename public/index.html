@@ -1647,7 +1647,9 @@ async function wizardSave() {
     if (successes > 0) {
       steps[3] = { label: t('ws_videos_dl'), detail: hasBatch ? t('ws_batch_found') : t('ws_started', { n: successes }), status: 'done' };
     } else if (errors > 0) {
-      steps[3] = { label: t('ws_dl_error'), detail: t('ws_check_logs'), status: 'error' };
+      const failedLog = logs.find(l => l.status === 'failed');
+      const errDetail = failedLog && failedLog.message ? failedLog.message : t('ws_check_logs');
+      steps[3] = { label: t('ws_dl_error'), detail: errDetail, status: 'error' };
     } else {
       steps[3] = { label: t('ws_starting_soon'), detail: t('ws_begin_shortly'), status: 'done' };
     }

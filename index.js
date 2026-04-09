@@ -64,7 +64,7 @@ async function runCheck() {
             settings
           );
 
-          const anySuccess = dlResult.results.some((r) => r.success);
+          const anySuccess = dlResult.results.some((r) => r.success && r.target !== 'torrent_file');
           const rangeLabel = batch.episode_range
             ? `Ep ${batch.episode_range.start}-${batch.episode_range.end}`
             : 'Complete';
@@ -133,7 +133,7 @@ async function runCheck() {
             settings
           );
 
-          const anySuccess = dlResult.results.some((r) => r.success);
+          const anySuccess = dlResult.results.some((r) => r.success && r.target !== 'torrent_file');
 
           if (anySuccess) {
             db.addEpisode({
@@ -606,7 +606,7 @@ app.post('/api/animes/:id/download-torrent', async (req, res) => {
       dlResult = await downloader.downloadAndSave(torrent_url, anime, epNum, settings);
     }
 
-    const anySuccess = dlResult.results.some(r => r.success);
+    const anySuccess = dlResult.results.some(r => r.success && r.target !== 'torrent_file');
 
     if (anySuccess) {
       if (is_batch) {
