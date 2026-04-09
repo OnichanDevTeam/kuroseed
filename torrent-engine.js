@@ -1,7 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
-const { createRequire } = require('module');
 
 let client = null;
 let WebTorrent = null;
@@ -12,17 +11,17 @@ let onDoneCallback = null;
 
 function loadWebTorrent() {
   if (!WebTorrent) {
-    // Use createRequire to resolve from the unpacked asar path in packaged Electron builds.
-    // Electron redirects require() from .asar to .asar.unpacked automatically,
-    // but dynamic import() does not get this treatment.
-    const wtPath = require.resolve('webtorrent');
-    const unpackedPath = wtPath.replace('app.asar', 'app.asar.unpacked');
-    const esmPath = fs.existsSync(unpackedPath) ? unpackedPath : wtPath;
-    // Convert to file:// URL for import() on Windows (pathToFileURL handles drive letters correctly)
-    const fileUrl = pathToFileURL(esmPath).href;
+    // Use the pre-bundled ESM file to avoid Electron asar resolution issues.
+    // A single .mjs bundle eliminates the 40+ ESM dependency chain that
+    // Electron's import() cannot resolve from asar.unpacked on Windows.
+    const bundlePath = path.join(__dirname, 'webtorrent-bundle.mjs');
+    const fileUrl = pathToFileURL(bundlePath).href;
     return import(fileUrl).then(mod => {
       WebTorrent = mod.default || mod;
-      console.log('[TorrentEngine] WebTorrent loaded from:', esmPath);
+      console.log('[TorrentEngine] WebTorrent loaded from bundle');
+    }).catch(err => {
+      console.error('[TorrentEngine] Failed to load WebTorrent bundle:', err.message);
+      throw err;
     });
   }
   return Promise.resolve();

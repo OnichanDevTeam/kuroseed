@@ -31,6 +31,9 @@ jobs:
       - name: Rebuild native modules for Electron
         run: npx electron-builder install-app-deps
 
+      - name: Bundle WebTorrent (single ESM file for Electron compat)
+        run: npx esbuild node_modules/webtorrent/index.js --bundle --platform=node --format=esm --outfile=webtorrent-bundle.mjs --external:utp-native --external:node-datachannel --external:electron
+
       - name: Build Windows portable
         run: npx electron-builder --win --publish never
         env:
@@ -66,6 +69,9 @@ jobs:
 
       - name: Rebuild native modules for Electron
         run: npx electron-builder install-app-deps
+
+      - name: Bundle WebTorrent (single ESM file for Electron compat)
+        run: npx esbuild node_modules/webtorrent/index.js --bundle --platform=node --format=esm --outfile=webtorrent-bundle.mjs --external:utp-native --external:node-datachannel --external:electron
 
       - name: Build macOS
         run: npx electron-builder --mac --publish never

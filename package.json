@@ -11,7 +11,8 @@
     "electron:build:win": "electron-builder install-app-deps && electron-builder --win",
     "electron:build:mac": "electron-builder install-app-deps && electron-builder --mac",
     "electron:icons": "node scripts/generate-icons.js",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "bundle:webtorrent": "esbuild node_modules/webtorrent/index.js --bundle --platform=node --format=esm --outfile=webtorrent-bundle.mjs --external:utp-native --external:node-datachannel --external:electron"
   },
   "dependencies": {
     "better-sqlite3": "11.7.0",
@@ -25,7 +26,7 @@
     "productName": "KuroSeed",
     "asar": true,
     "asarUnpack": [
-      "node_modules/**"
+      "**/*.node"
     ],
     "win": {
       "target": "portable",
@@ -35,7 +36,10 @@
       "artifactName": "KuroSeed.${version}.exe"
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "icon": "build/icon.icns"
     },
     "dmg": {
@@ -45,6 +49,7 @@
   "devDependencies": {
     "electron": "33.0.0",
     "electron-builder": "25.0.0",
+    "esbuild": "^0.28.0",
     "rcedit": "5.0.2",
     "sharp": "0.33.5"
   }
