@@ -6,3 +6,23 @@ torrents/
 downloads/
 .DS_Store
 dist/
+
+# Env / secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editores / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude / agentes locales
+.claude/
+.aider*
